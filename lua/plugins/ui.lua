@@ -1,5 +1,5 @@
 return {
-
+    { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
     {
         "akinsho/bufferline.nvim",
         version = "*",
@@ -39,11 +39,14 @@ return {
     {
         "folke/which-key.nvim",
         event = "VeryLazy",
+        dependencies = {
+            "nvim-mini/mini.nvim"
+        },
         opts = {
             ---@type false | "classic" | "modern" | "helix"
             preset = "helix",
             win = {
-                border = "none",
+                -- border = "none",
             }
         },
     }

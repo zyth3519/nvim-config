@@ -19,4 +19,4 @@ vim.g.netrw_liststyle = 3     -- 树形显示文件
 vim.g.netrw_winsize = 25      -- 侧边栏宽度
 
 -- 设置主题
-vim.cmd('colorscheme habamax')
+vim.cmd('colorscheme catppuccin')
