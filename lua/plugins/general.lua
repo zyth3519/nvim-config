@@ -1,4 +1,5 @@
 return {
+    -- 代码提示插件
     {
         'saghen/blink.cmp',
         dependencies = { 'rafamadriz/friendly-snippets' },
@@ -35,4 +36,25 @@ return {
         },
         opts_extend = { "sources.default" }
     },
+    -- 折叠插件
+    {
+        "kevinhwang91/nvim-ufo",
+        dependencies = {
+            "kevinhwang91/promise-async"
+        },
+        config = function()
+            local capabilities = vim.lsp.protocol.make_client_capabilities()
+            capabilities.textDocument.foldingRange = {
+                dynamicRegistration = false,
+                lineFoldingOnly = true
+            }
+            local language_servers = vim.lsp.get_clients() -- or list servers manually like {'gopls', 'clangd'}
+            for _, ls in ipairs(language_servers) do
+                require('lspconfig')[ls].setup({
+                    capabilities = capabilities
+                })
+            end
+            require('ufo').setup()
+        end
+    }
 }

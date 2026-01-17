@@ -46,6 +46,7 @@ wk.add({
 wk.add({
     {"<leader>e", ":Oil --float<cr>", desc = "打开文件管理器"},
     {"<leader>E", ":Oil --float .<cr>", desc = "打开文件管理器(Root)"},
+    {"<leader>t", ":ToggleTerm<cr>", desc = "打开终端"},
 })
 
 vim.keymap.set("n", "grr", telescope.lsp_references , { noremap = true, silent = true, desc = '查看引用' })

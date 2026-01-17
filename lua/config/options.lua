@@ -20,3 +20,13 @@ vim.g.netrw_winsize = 25      -- 侧边栏宽度
 
 -- 设置主题
 vim.cmd('colorscheme catppuccin')
+
+vim.opt.splitright = true    -- 垂直分割时，新窗口默认创建在当前窗口右侧（替代默认左侧）
+vim.opt.splitbelow = true    -- 水平分割时，新窗口默认创建在当前窗口下方（替代默认上方）
+
+
+-- 折叠设置
+vim.o.foldcolumn = '1' -- '0' is not bad
+vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
+vim.o.foldlevelstart = 99
+vim.o.foldenable = true
