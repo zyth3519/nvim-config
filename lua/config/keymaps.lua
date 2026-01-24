@@ -64,6 +64,14 @@ wk.add({
 
 wk.add({
     { "<leader>b", group = "缓冲区" },
+    { "<leader>bl", ":ls <cr>", desc = "显示Buffer列表" },
+    { "<leader>ba", ":ball <cr>", desc = "为每个Buffer打开一个窗口" },
+    { "<leader>bd", ":bd | close <cr>", desc = "删除当前Buffer, 并关闭窗口" },
+    { "<leader>bD", ":bd <cr>", desc = "删除当前的Buffer" },
+    { "<leader>bw", ":bw <cr>", desc = "彻底删除Buffer" },
+    { "<leader>bo", ":%bd | e# | bd# <cr>", desc = "只保留当前编辑的文件" },
+    { "<leader>bf", ":bf <cr>", desc = "跳转到第一个Buffer" },
+    { "<leader>bF", ":bf <cr>", desc = "跳转到最后一个Buffer" },
 })
 
 vim.keymap.set("n", "grr", telescope.lsp_references , { noremap = true, silent = true, desc = '查看引用' })

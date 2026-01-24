@@ -44,10 +44,8 @@ return {
         },
         opts = {
             ---@type false | "classic" | "modern" | "helix"
-            preset = "helix",
-            win = {
-                -- border = "none",
-            }
+            -- preset = "helix",
+            preset = "modern",
         },
     }
 }
