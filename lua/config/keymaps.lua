@@ -49,6 +49,23 @@ wk.add({
     {"<leader>t", ":ToggleTerm<cr>", desc = "打开终端"},
 })
 
+wk.add({
+    { "<leader>w", group = "窗口" },
+    { "<leader>ws", ":split <cr>", desc = "横向分割当前窗口" },
+    { "<leader>wv", ":vsplit <cr>", desc = "垂直分割当前窗口" },
+    { "<leader>wx", "<C-w>x", desc = "窗口互换" },
+    { "<leader>wq", "<C-w>q", desc = "关闭当前窗口" },
+    { "<leader>wo", ":only<cr>", desc = "关闭其他所有窗口" },
+    { "<leader>wn", desc = "新建空白窗口" },
+    { "<leader>wns", ":new <cr>", desc = "横向分割窗口，并创建一个新的空白文件" },
+    { "<leader>wnv", ":vnew <cr>", desc = "垂直分割窗口，并创建一个新的空白文件" }
+})
+
+
+wk.add({
+    { "<leader>b", group = "缓冲区" },
+})
+
 vim.keymap.set("n", "grr", telescope.lsp_references , { noremap = true, silent = true, desc = '查看引用' })
 vim.keymap.set("n", "grt", telescope.lsp_type_definitions, { noremap = true, silent = true, desc = '查看类型定义' })
 vim.keymap.set("n", "gd", telescope.lsp_definitions, { noremap = true, silent = true, desc = "跳转到定义" })
