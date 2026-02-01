@@ -38,9 +38,6 @@ return {
     -- 1. 核心 LSP 配置
     {
         "neovim/nvim-lspconfig",
-        dependencies = {
-            "j-hui/fidget.nvim"
-        },
         config = function()
             vim.lsp.enable('lua_ls')
             vim.lsp.enable('rust_analyzer')
@@ -58,16 +55,15 @@ return {
     -- mason
     {
         "williamboman/mason-lspconfig.nvim",
+        event = { "BufReadPre", "BufNewFile" },
         opts = {
             ensure_installed = { "lua_ls", "rust_analyzer" },
             automatic_installation = true
         },
         dependencies = {
-            { "mason-org/mason.nvim", opts = {} },
-            "neovim/nvim-lspconfig",
+            "williamboman/mason.nvim",
         },
     },
-    -- mason
     {
         "williamboman/mason.nvim",
         opts = {
@@ -94,8 +90,8 @@ return {
             },
             window = {
                 relative = 'editor', -- 窗口定位方式
-                blend = 0,   -- 窗口透明度（0 为不透明）
-                border = 'none', -- 窗口边框（none 为无边框）
+                blend = 0,           -- 窗口透明度（0 为不透明）
+                border = 'none',     -- 窗口边框（none 为无边框）
             },
             sources = {
                 -- 针对特定 LSP 进行配置（* 为匹配所有 LSP）
