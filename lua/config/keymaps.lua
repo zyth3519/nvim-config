@@ -51,7 +51,7 @@ wk.add({
 
 wk.add({
     { "<leader>w", group = "窗口" },
-    { "<leader>ws", ":split <cr>", desc = "横向分割当前窗口" },
+    { "<leader>wh", ":split <cr>", desc = "水平分割当前窗口" },
     { "<leader>wv", ":vsplit <cr>", desc = "垂直分割当前窗口" },
     { "<leader>wx", "<C-w>x", desc = "窗口互换" },
     { "<leader>wq", "<C-w>q", desc = "关闭当前窗口" },
