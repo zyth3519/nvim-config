@@ -44,9 +44,9 @@ wk.add({
 })
 
 wk.add({
-    {"<leader>e", ":Oil --float<cr>", desc = "打开文件管理器"},
-    {"<leader>E", ":Oil --float .<cr>", desc = "打开文件管理器(Root)"},
-    {"<leader>t", ":ToggleTerm<cr>", desc = "打开终端"},
+    { "<leader>e", ":Oil --float<cr>", desc = "打开文件管理器" },
+    { "<leader>E", ":Oil --float .<cr>", desc = "打开文件管理器(Root)" },
+    { "<leader>t", ":ToggleTerm<cr>", desc = "打开终端" },
 })
 
 wk.add({
@@ -73,7 +73,7 @@ wk.add({
     { "<leader>bF", ":bf <cr>", desc = "跳转到最后一个Buffer" },
 })
 
-vim.keymap.set("n", "grr", telescope.lsp_references , { noremap = true, silent = true, desc = '查看引用' })
+vim.keymap.set("n", "grr", telescope.lsp_references, { noremap = true, silent = true, desc = '查看引用' })
 vim.keymap.set("n", "grt", telescope.lsp_type_definitions, { noremap = true, silent = true, desc = '查看类型定义' })
 vim.keymap.set("n", "gd", telescope.lsp_definitions, { noremap = true, silent = true, desc = "跳转到定义" })
 vim.keymap.set("n", "gri", telescope.lsp_implementations, { noremap = true, silent = true, desc = "跳转到实现" })
@@ -83,3 +83,31 @@ vim.keymap.set("n", "gO", vim.lsp.buf.document_symbol, { noremap = true, silent 
 vim.keymap.set("n", "K", vim.lsp.buf.hover, { noremap = true, silent = true, desc = "悬浮显示文档注释" })
 vim.keymap.set("n", "gra", vim.lsp.buf.code_action, { noremap = true, silent = true, desc = '代码操作' })
 vim.keymap.set("n", "grn", vim.lsp.buf.rename, { noremap = true, silent = true, desc = '重命名' })
+
+
+local dap, dapui = require("dap"), require("dapui")
+dap.listeners.before.attach.dapui_config = function()
+    dapui.open()
+end
+dap.listeners.before.launch.dapui_config = function()
+    dapui.open()
+end
+dap.listeners.before.event_terminated.dapui_config = function()
+    dapui.close()
+end
+dap.listeners.before.event_exited.dapui_config = function()
+    dapui.close()
+end
+
+wk.add({
+    {"<leader>d", group="Debug"},
+})
+
+vim.keymap.set('n', '<F5>', function() dap.continue() end, { noremap = true, silent = true, desc = '继续' })
+vim.keymap.set('n', '<F6>', function() dap.disconnect({ terminateDebuggee = true }) end,
+    { noremap = true, silent = true, desc = '断开连接' })
+vim.keymap.set('n', '<F10>', function() dap.step_over() end, { noremap = true, silent = true, desc = '逐过程' })
+vim.keymap.set('n', '<F11>', function() dap.step_into() end, { noremap = true, silent = true, desc = '单步调试' })
+vim.keymap.set('n', '<F12>', function() dap.step_out() end, { noremap = true, silent = true, desc = '单步跳出' })
+vim.keymap.set('n', '<Leader>dp', function() dap.toggle_breakpoint() end, { noremap = true, silent = true, desc = '断点' })
+vim.keymap.set('n', '<Leader>dt', function() dapui.toggle() end, { noremap = true, silent = true, desc = '切换窗口显示' })
