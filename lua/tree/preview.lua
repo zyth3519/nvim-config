@@ -62,7 +62,7 @@ end
 ---@return string[], string   lines, filetype
 local function file_lines(resolved)
     if not utils.is_text_file(resolved) then
-        local lines = ok and result or { "⚠️ 无法预览二进制文件" }
+        local lines = { "⚠️ 无法预览二进制文件" }
         return lines
     end
 
