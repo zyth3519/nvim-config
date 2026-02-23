@@ -146,8 +146,8 @@ end
 vim.api.nvim_create_user_command("Tree", function(opts)
     if not check_deps() then return end
 
-    local path        = opts.args
-    local target_path = path == "" and "." or path
+    -- local path        = opts.args
+    local target_path = "."
     local abs_root    = vim.fn.fnamemodify(target_path, ":p"):gsub("/$", "")
 
     run(target_path, abs_root)
