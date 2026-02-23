@@ -43,9 +43,9 @@ local function run(target_path, abs_root)
         on_stdout = function(_, data)
             if not data then return end
             for _, line in ipairs(data) do
-                if not string.match(line, "^%./") then
-                    line = string.format("./%s", line)
-                end
+                -- if not string.match(line, "^%./") then
+                --     line = string.format("./%s", line)
+                -- end
                 if line ~= "" then table.insert(fd_paths, line) end
             end
         end,
@@ -122,7 +122,8 @@ vim.api.nvim_create_user_command("Tree", function(opts)
     if not check_deps() then return end
     local path        = opts.args
     local target_path = path == "" and "." or path
-    local abs_root    = vim.fn.fnamemodify(target_path, ":p"):gsub("/$", "")
+    target_path = target_path:gsub("/+$", "")
+    local abs_root = vim.fn.fnamemodify(target_path, ":p"):gsub("/+$", "")
 
     if not is_path_inside_cwd(target_path) then
         vim.notify(string.format("路径不能是项目目录的上级或同级: %s", target_path))
