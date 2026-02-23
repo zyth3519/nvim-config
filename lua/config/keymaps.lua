@@ -43,9 +43,12 @@ wk.add({
     { "<leader>fS", telescope.lsp_workspace_symbols, desc = "查询工作区 LSP 符号" },
 })
 
+
 wk.add({
-    { "<leader>e", ":Oil --float<cr>", desc = "打开文件管理器" },
-    { "<leader>E", ":Oil --float .<cr>", desc = "打开文件管理器(Root)" },
+    { "<leader>e", group = "文件管理器" },
+    { "<leader>et", ":Tree<cr>", desc = "打开树形浏览器" },
+    { "<leader>ee", ":Oil --float<cr>", desc = "打开文件管理器" },
+    { "<leader>eE", ":Oil --float .<cr>", desc = "打开文件管理器(Root)" },
     { "<leader>t", ":ToggleTerm<cr>", desc = "打开终端" },
 })
 
@@ -100,7 +103,7 @@ dap.listeners.before.event_exited.dapui_config = function()
 end
 
 wk.add({
-    {"<leader>d", group="Debug"},
+    { "<leader>d", group = "Debug" },
 })
 
 vim.keymap.set('n', '<F5>', function() dap.continue() end, { noremap = true, silent = true, desc = '继续' })
