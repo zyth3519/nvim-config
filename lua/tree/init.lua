@@ -178,10 +178,23 @@ vim.api.nvim_create_user_command("Tree", function(opts)
     local target_path = path == "" and "." or path
     local abs_root    = vim.fn.fnamemodify(target_path, ":p"):gsub("/$", "")
 
-    if is_path_inside_cwd(target_path) then
-        run(target_path, abs_root)
-    else
-        local abs_path = vim.fn.fnamemodify(target_path, ":p")
-        vim.notify(string.format("路径不能是项目目录的上级或同级: %s", abs_path))
+
+    if not is_path_inside_cwd(target_path) then
+        vim.notify(string.format("路径不能是项目目录的上级或同级: %s", target_path))
+        return
     end
+
+    local stat = vim.uv.fs_stat(abs_root)
+
+    if not stat then
+        vim.notify(string.format("路径不存在: %s", target_path))
+        return
+    end
+
+    if stat.type == 'file' then
+        vim.notify(string.format("路径必须是文件夹: %s", target_path))
+        return
+    end
+
+    run(target_path, abs_root)
 end, { nargs = "?", complete = "dir", desc = "浮动目录树" })
