@@ -46,9 +46,9 @@ wk.add({
 
 wk.add({
     { "<leader>e", group = "文件管理器" },
-    { "<leader>et", ":Tree<cr>", desc = "打开树形浏览器" },
-    { "<leader>ee", ":Oil --float<cr>", desc = "打开文件管理器" },
-    { "<leader>eE", ":Oil --float .<cr>", desc = "打开文件管理器(Root)" },
+    { "<leader>ee", ":Tree<cr>", desc = "打开树形浏览器" },
+    { "<leader>eo", ":Oil --float<cr>", desc = "打开文件管理器" },
+    { "<leader>eO", ":Oil --float .<cr>", desc = "打开文件管理器(Root)" },
     { "<leader>t", ":ToggleTerm<cr>", desc = "打开终端" },
 })
 
