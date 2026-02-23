@@ -1,14 +1,18 @@
 -- lua/tree/highlight.lua
--- 在指定 buffer 上注册 tree 专用语法高亮规则
-
 local M = {}
 
 local RULES = {
-    { "syntax", "match TreeLines /^[│├└─ \\+/]/" },
+    -- 树形连接线
+    { "syntax", [[match TreeLines /[│├└─]/]] },
     { "hi", "default link TreeLines Comment" },
-    { "syntax", "match TreeDir /[^│├└─ ]\\S*\\/$/" },
+    -- 目录（以 / 结尾，或带 [+] 标记）
+    { "syntax", [[match TreeDir /\S\+\/\(\s*\[+\]\)\?$/]] },
     { "hi", "default link TreeDir Directory" },
-    { "syntax", "match TreeExt /\\.\\w\\+$/" },
+    -- 折叠标记 [+]
+    { "syntax", [[match TreeFold /\[+\]/]] },
+    { "hi", "default link TreeFold WarningMsg" },
+    -- 文件扩展名
+    { "syntax", [[match TreeExt /\.\w\+$/]] },
     { "hi", "default link TreeExt Type" },
 }
 

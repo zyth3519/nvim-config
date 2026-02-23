@@ -1,29 +1,22 @@
 -- lua/tree/init.lua
--- 入口：注册 :Tree 命令，串联各模块
 local ui       = require("tree.ui")
 local hl       = require("tree.highlight")
 local trie_mod = require("tree.trie")
-local parser   = require("tree.parser")
+local renderer = require("tree.renderer") -- ← 替换 parser
 local preview  = require("tree.preview")
 local keymaps  = require("tree.keymaps")
 local fold     = require("tree.fold")
 local cfg      = require("tree.config").defaults
 
---- 检查外部依赖
----@return boolean
 local function check_deps()
-    for _, bin in ipairs({ "fd", "tree" }) do
-        if vim.fn.executable(bin) == 0 then
-            vim.notify("⚠️ 必须安装 '" .. bin .. "'", vim.log.levels.ERROR)
-            return false
-        end
+    -- 只需要 fd，不再需要 tree
+    if vim.fn.executable("fd") == 0 then
+        vim.notify("⚠️ 必须安装 'fd'", vim.log.levels.ERROR)
+        return false
     end
     return true
 end
 
---- 构建 fd 命令行
----@param target string
----@return string[]
 local function build_fd_cmd(target)
     local cmd = { "fd", "--type", "f", "--type", "d", "--hidden" }
     for _, ex in ipairs(cfg.fd_exclude) do
@@ -33,18 +26,18 @@ local function build_fd_cmd(target)
     return cmd
 end
 
---- 主流程
----@param target_path string
----@param abs_root    string
 local function run(target_path, abs_root)
     local layout = ui.create_layout(target_path)
     local buf, win, pbuf, pwin =
         layout.buf, layout.win, layout.pbuf, layout.pwin
+
     ui.set_loading(buf, "⏳ 正在扫描 [" .. target_path .. "] ...")
     ui.setup_close_autocmd(layout)
     hl.apply(buf)
+
     local fd_paths = {}
     local fd_job
+
     fd_job = vim.fn.jobstart(build_fd_cmd(target_path), {
         stdout_buffered = true,
         on_stdout = function(_, data)
@@ -63,69 +56,52 @@ local function run(target_path, abs_root)
                     ui.set_loading(buf, "⚠️ 未找到任何文件。")
                     return
                 end
+
+                -- ── 1. 构建 Trie ────────────────────────────────
                 local trie = trie_mod.build(fd_paths, target_path, abs_root)
-                local tree_lines = {}
-                local tree_job = vim.fn.jobstart(
-                    { "tree", "-F", "--fromfile", "--noreport" },
-                    {
-                        stdout_buffered = true,
-                        on_stdout = function(_, data)
-                            if not data then return end
-                            for _, line in ipairs(data) do
-                                if line ~= "" then
-                                    table.insert(tree_lines, line)
-                                end
-                            end
-                        end,
-                        on_exit = function(_, tree_code)
-                            vim.schedule(function()
-                                if not vim.api.nvim_buf_is_valid(buf) then return end
-                                if tree_code ~= 0 then
-                                    ui.set_loading(buf, "❌ tree 命令失败")
-                                    return
-                                end
-                                local file_map, is_dir_map =
-                                    parser.parse(tree_lines, trie, abs_root)
-                                -- ── 6. 写入 buffer ──────────────
-                                vim.bo[buf].modifiable = true
-                                vim.api.nvim_buf_set_lines(buf, 0, -1, false, tree_lines)
-                                vim.bo[buf].modifiable = false
-                                -- ── 7. 初始化折叠 ───────────────  ← 新增
-                                vim.api.nvim_win_call(win, function()
-                                    vim.wo.foldmethod = "manual"
-                                    vim.wo.foldenable = true
-                                    vim.wo.foldlevel  = 99  -- 默认全展开
-                                end)
-                                fold.init(buf, tree_lines, is_dir_map, file_map)
-                                -- ── 8. 绑定快捷键 & 预览 ────────
-                                local ctx = {
-                                    buf        = buf,
-                                    win        = win, -- ← 新增 win
-                                    pbuf       = pbuf,
-                                    pwin       = pwin,
-                                    file_map   = file_map,
-                                    is_dir_map = is_dir_map,
-                                    abs_root   = abs_root,
-                                }
-                                keymaps.setup(ctx, preview, fold) -- ← 传入 fold
-                                vim.schedule(function()
-                                    preview.update(ctx)
-                                end)
-                            end)
-                        end,
-                    }
-                )
-                local stdin_data = table.concat(fd_paths, "\n") .. "\n"
-                vim.fn.chansend(tree_job, stdin_data)
-                vim.fn.chanclose(tree_job, "stdin")
+
+                -- ── 2. 首次渲染 ─────────────────────────────────
+                local result = renderer.render(trie, abs_root, {})
+
+                -- ctx 用闭包共享，折叠刷新后更新 file_map/is_dir_map
+                local ctx = {
+                    buf        = buf,
+                    win        = win,
+                    pbuf       = pbuf,
+                    pwin       = pwin,
+                    file_map   = result.file_map,
+                    is_dir_map = result.is_dir_map,
+                    abs_root   = abs_root,
+                }
+
+                -- ── 3. 写入 buffer ──────────────────────────────
+                vim.bo[buf].modifiable = true
+                vim.api.nvim_buf_set_lines(buf, 0, -1, false, result.lines)
+                vim.bo[buf].modifiable = false
+
+                -- ── 4. 初始化折叠模块 ───────────────────────────
+                fold.init(buf, win, trie, abs_root, function(new_file_map, new_is_dir_map)
+                    -- 折叠刷新后同步 ctx，让 preview / keymaps 拿到最新数据
+                    ctx.file_map   = new_file_map
+                    ctx.is_dir_map = new_is_dir_map
+                end)
+
+                -- ── 5. 绑定快捷键 ───────────────────────────────
+                keymaps.setup(ctx, preview, fold)
+
+                -- ── 6. 初始预览 ─────────────────────────────────
+                vim.schedule(function()
+                    preview.update(ctx)
+                end)
             end)
         end,
     })
+
     vim.api.nvim_create_autocmd("BufWipeout", {
         buffer   = buf,
         once     = true,
         callback = function()
-            fold.cleanup(buf) -- ← 新增：清理折叠状态
+            fold.cleanup(buf)
             if fd_job and fd_job > 0 then
                 pcall(vim.fn.jobstop, fd_job)
             end
@@ -133,55 +109,33 @@ local function run(target_path, abs_root)
     })
 end
 
---- 判断路径是否在 cwd 内（子目录）
---- @param input_path string 输入路径
---- @return boolean
+-- is_path_inside_cwd / 命令注册 不变
 local function is_path_inside_cwd(input_path)
-    if input_path == "." then
-        return true
-    end
-
-    local cwd = vim.fn.getcwd()
-
-    -- 转为绝对路径
-    local abs_path = vim.fn.fnamemodify(input_path, ":p")
-
-    -- 去掉末尾的 /
-    abs_path = abs_path:gsub("/$", "")
-    cwd = cwd:gsub("/$", "")
-
-    if not vim.startswith(abs_path, cwd .. "/") then
-        return false
-    end
-
-    return true
+    if input_path == "." then return true end
+    local cwd      = vim.fn.getcwd()
+    local abs_path = vim.fn.fnamemodify(input_path, ":p"):gsub("/$", "")
+    cwd            = cwd:gsub("/$", "")
+    return vim.startswith(abs_path, cwd .. "/")
 end
 
--- ── 注册命令 ───────────────────────────────────────────────────
 vim.api.nvim_create_user_command("Tree", function(opts)
     if not check_deps() then return end
-
     local path        = opts.args
     local target_path = path == "" and "." or path
     local abs_root    = vim.fn.fnamemodify(target_path, ":p"):gsub("/$", "")
-
 
     if not is_path_inside_cwd(target_path) then
         vim.notify(string.format("路径不能是项目目录的上级或同级: %s", target_path))
         return
     end
-
     local stat = vim.uv.fs_stat(abs_root)
-
     if not stat then
         vim.notify(string.format("路径不存在: %s", target_path))
         return
     end
-
-    if stat.type == 'file' then
+    if stat.type == "file" then
         vim.notify(string.format("路径必须是文件夹: %s", target_path))
         return
     end
-
     run(target_path, abs_root)
 end, { nargs = "?", complete = "dir", desc = "浮动目录树" })
