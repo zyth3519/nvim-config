@@ -19,9 +19,34 @@ vim.api.nvim_create_user_command('Tree', function(opts)
     local buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, { "⏳ 正在扫描 [" .. target_path .. "] ..." })
 
+
+    -- 主窗口占左边 40%，预览窗口占右边 60%
+    local main_width = math.ceil(width * 0.4)
+    local preview_width = width - main_width - 1 -- -1 留边框间隙
+
+    local preview_buf = vim.api.nvim_create_buf(false, true)
+    vim.bo[preview_buf].buftype = "nofile"
+    vim.bo[preview_buf].modifiable = false
+
+    local preview_win = vim.api.nvim_open_win(preview_buf, false, {
+        relative = 'editor',
+        width = preview_width,
+        height = height,
+        row = row,
+        col = col + main_width + 1,
+        style = 'minimal',
+        border = 'rounded',
+        title = ' Preview ',
+        title_pos = 'center',
+    })
+
+    -- 主窗口宽度也要改
+    -- 把原来的 width = width 改成：
+    -- width = main_width
+
     local win = vim.api.nvim_open_win(buf, true, {
         relative = 'editor',
-        width = width,
+        width = main_width,
         height = height,
         row = row,
         col = col,
@@ -43,6 +68,13 @@ vim.api.nvim_create_user_command('Tree', function(opts)
         once = true,
         callback = function()
             vim.schedule(function()
+                -- BufLeave 的 callback 里加：
+                if vim.api.nvim_win_is_valid(preview_win) then
+                    vim.api.nvim_win_close(preview_win, true)
+                end
+                if vim.api.nvim_buf_is_valid(preview_buf) then
+                    vim.api.nvim_buf_delete(preview_buf, { force = true })
+                end
                 if vim.api.nvim_win_is_valid(win) then vim.api.nvim_win_close(win, true) end
                 if vim.api.nvim_buf_is_valid(buf) then vim.api.nvim_buf_delete(buf, { force = true }) end
             end)
@@ -250,6 +282,10 @@ vim.api.nvim_create_user_command('Tree', function(opts)
                                 vim.api.nvim_buf_set_lines(buf, 0, -1, false, tree_lines)
                                 vim.bo[buf].modifiable = false
 
+
+
+                                local preview_ns = vim.api.nvim_create_namespace('tree_preview')
+
                                 -- ==========================================
                                 -- 7. 获取当前行路径的辅助函数
                                 -- ==========================================
@@ -266,6 +302,78 @@ vim.api.nvim_create_user_command('Tree', function(opts)
                                     end
                                     return nil
                                 end
+
+                                local function scroll_preview(direction)
+                                    if not vim.api.nvim_win_is_valid(preview_win) then return end
+                                    local total_lines = vim.api.nvim_buf_line_count(preview_buf)
+                                    local win_height = vim.api.nvim_win_get_height(preview_win)
+                                    local current_top = vim.fn.getwininfo(preview_win)[1].topline
+                                    local step = math.ceil(win_height * 0.8) -- 每次滚动 80% 屏幕高度
+
+                                    if direction == "down" then
+                                        local new_top = math.min(current_top + step, total_lines - win_height + 1)
+                                        vim.api.nvim_win_set_cursor(preview_win, { math.max(1, new_top), 0 })
+                                        vim.api.nvim_win_call(preview_win, function()
+                                            vim.fn.winrestview({ topline = math.max(1, new_top) })
+                                        end)
+                                    else
+                                        local new_top = math.max(1, current_top - step)
+                                        vim.api.nvim_win_call(preview_win, function()
+                                            vim.fn.winrestview({ topline = new_top })
+                                        end)
+                                    end
+                                end
+
+                                local function update_preview()
+                                    if not vim.api.nvim_buf_is_valid(preview_buf) then return end
+                                    if not vim.api.nvim_win_is_valid(preview_win) then return end
+
+                                    local lnum = vim.fn.line('.')
+                                    local fpath = file_map[lnum]
+                                    local is_dir = is_dir_map[lnum]
+                                    local resolved = fpath and resolve_path(fpath) or nil
+
+                                    vim.bo[preview_buf].modifiable = true
+                                    vim.api.nvim_buf_clear_namespace(preview_buf, preview_ns, 0, -1)
+
+                                    -- 目录：列出子条目
+                                    if resolved and vim.fn.isdirectory(resolved) == 1 then
+                                        local items = vim.fn.readdir(resolved)
+                                        local lines = { "📁 " .. resolved, "" }
+                                        for _, item in ipairs(items) do
+                                            local full = resolved .. "/" .. item
+                                            if vim.fn.isdirectory(full) == 1 then
+                                                table.insert(lines, "  📂 " .. item .. "/")
+                                            else
+                                                table.insert(lines, "  📄 " .. item)
+                                            end
+                                        end
+                                        vim.api.nvim_buf_set_lines(preview_buf, 0, -1, false, lines)
+                                        vim.bo[preview_buf].filetype = ""
+
+                                        -- 文件：读取内容预览
+                                    elseif resolved and vim.fn.filereadable(resolved) == 1 then
+                                        -- 限制只读前200行，避免大文件卡顿
+                                        local lines = {}
+                                        local ok, result = pcall(vim.fn.readfile, resolved, "", 200)
+                                        if ok then
+                                            lines = result
+                                        else
+                                            lines = { "⚠️ 无法读取文件" }
+                                        end
+                                        vim.api.nvim_buf_set_lines(preview_buf, 0, -1, false, lines)
+                                        -- 自动检测文件类型以高亮
+                                        local ext = vim.fn.fnamemodify(resolved, ":e")
+                                        local ft_ok, ft = pcall(vim.filetype.match, { filename = resolved })
+                                        vim.bo[preview_buf].filetype = (ft_ok and ft) or ext or ""
+                                    else
+                                        vim.api.nvim_buf_set_lines(preview_buf, 0, -1, false, { "　" })
+                                        vim.bo[preview_buf].filetype = ""
+                                    end
+
+                                    vim.bo[preview_buf].modifiable = false
+                                end
+
 
                                 -- 获取路径所在的目录
                                 local function get_dir(fpath, is_dir)
@@ -335,6 +443,21 @@ vim.api.nvim_create_user_command('Tree', function(opts)
                                     { buffer = buf, silent = true, desc = '新标签页' })
                                 vim.keymap.set('n', 'o', function() open_oil() end,
                                     { buffer = buf, silent = true, desc = 'Oil 打开目录' })
+                                vim.api.nvim_create_autocmd("CursorMoved", {
+                                    buffer = buf,
+                                    callback = function()
+                                        vim.schedule(update_preview)
+                                    end,
+                                })
+
+
+                                -- 进入浮窗时立刻触发一次
+                                vim.schedule(update_preview)
+
+                                vim.keymap.set('n', '<C-n>', function() scroll_preview("down") end,
+                                    { buffer = buf, silent = true, desc = '预览向下翻页' })
+                                vim.keymap.set('n', '<C-p>', function() scroll_preview("up") end,
+                                    { buffer = buf, silent = true, desc = '预览向上翻页' })
                             end)
                         end,
                     }
