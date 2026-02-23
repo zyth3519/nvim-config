@@ -54,7 +54,7 @@ local function run(target_path, abs_root)
         on_stdout = function(_, data)
             if not data then return end
             for _, line in ipairs(data) do
-                line = line:gsub("\r$", ""):gsub("/$", "")
+                -- line = line:gsub("\r$", ""):gsub("/$", "")
                 if line ~= "" then table.insert(fd_paths, line) end
             end
         end,

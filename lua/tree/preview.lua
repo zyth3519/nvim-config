@@ -37,6 +37,12 @@ end
 local function dir_lines(resolved)
     local lines = { "📁 " .. resolved, "" }
     local ok, items = pcall(vim.fn.readdir, resolved)
+
+    if #items == 0 then
+        table.insert(lines, "  (空目录)")
+        return lines
+    end
+
     if ok then
         for _, item in ipairs(items) do
             local full = resolved .. "/" .. item

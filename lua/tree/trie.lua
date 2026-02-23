@@ -18,12 +18,15 @@ end
 --- 递归标记含子节点的节点为目录
 ---@param node TrieNode
 local function mark_dirs(node)
-    if next(node.children) then
+    if node.full_path:match("/$") then
         node.is_dir = true
     end
-    for _, child in pairs(node.children) do
-        mark_dirs(child)
-    end
+    -- if next(node.children) then
+    --     node.is_dir = true
+    -- end
+    -- for _, child in pairs(node.children) do
+    --     mark_dirs(child)
+    -- end
 end
 
 --- 将 fd 原始路径规范化为相对路径片段列表
@@ -62,7 +65,8 @@ function M.build(fd_paths, target, abs_root)
                 node = node.children[part]
                 if i < #parts then node.is_dir = true end
             end
-            node.full_path = p:gsub("/$", "")
+            -- node.full_path = p:gsub("/$", "")
+            node.full_path = p
         end
     end
 
