@@ -2,6 +2,8 @@
 
 依赖 
   1. [ripgrep](https://github.com/BurntSushi/ripgrep)
-  2. [lazygit](https://github.com/jesseduffield/lazygit)
-  3. `Nerd Font`
-  4. `yazi`
+  1. [lazygit](https://github.com/jesseduffield/lazygit)
+  1. [fd](https://github.com/sharkdp/fd)
+  1. `tree`
+  1. `Nerd Font`
+  1. `yazi`
