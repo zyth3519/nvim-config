@@ -7,6 +7,7 @@ local parser   = require("tree.parser")
 local preview  = require("tree.preview")
 local keymaps  = require("tree.keymaps")
 local cfg      = require("tree.config").defaults
+local log      = require("tree.log")
 
 --- 检查外部依赖
 ---@return boolean
@@ -55,6 +56,9 @@ local function run(target_path, abs_root)
             if not data then return end
             for _, line in ipairs(data) do
                 -- line = line:gsub("\r$", ""):gsub("/$", "")
+                if not string.match(line, "^%./") then
+                    line = string.format("./%s", line)
+                end
                 if line ~= "" then table.insert(fd_paths, line) end
             end
         end,
@@ -142,13 +146,42 @@ local function run(target_path, abs_root)
     })
 end
 
+--- 判断路径是否在 cwd 内（子目录）
+--- @param input_path string 输入路径
+--- @return boolean
+local function is_path_inside_cwd(input_path)
+    if input_path == "." then
+        return true
+    end
+
+    local cwd = vim.fn.getcwd()
+
+    -- 转为绝对路径
+    local abs_path = vim.fn.fnamemodify(input_path, ":p")
+
+    -- 去掉末尾的 /
+    abs_path = abs_path:gsub("/$", "")
+    cwd = cwd:gsub("/$", "")
+
+    if not vim.startswith(abs_path, cwd .. "/") then
+        return false
+    end
+
+    return true
+end
+
 -- ── 注册命令 ───────────────────────────────────────────────────
 vim.api.nvim_create_user_command("Tree", function(opts)
     if not check_deps() then return end
 
-    -- local path        = opts.args
-    local target_path = "."
+    local path        = opts.args
+    local target_path = path == "" and "." or path
     local abs_root    = vim.fn.fnamemodify(target_path, ":p"):gsub("/$", "")
 
-    run(target_path, abs_root)
+    if is_path_inside_cwd(target_path) then
+        run(target_path, abs_root)
+    else
+        local abs_path = vim.fn.fnamemodify(target_path, ":p")
+        vim.notify(string.format("路径不能是项目目录的上级或同级: %s", abs_path))
+    end
 end, { nargs = "?", complete = "dir", desc = "浮动目录树" })
