@@ -3,6 +3,7 @@
 
 local M = {}
 local cfg = require("tree.config").defaults
+local utils = require('tree.utils')
 
 local NS = vim.api.nvim_create_namespace("tree_preview")
 
@@ -60,6 +61,11 @@ end
 ---@param resolved string
 ---@return string[], string   lines, filetype
 local function file_lines(resolved)
+    if not utils.is_text_file(resolved) then
+        local lines = ok and result or { "⚠️ 无法预览二进制文件" }
+        return lines
+    end
+
     local ok, result = pcall(vim.fn.readfile, resolved, "", cfg.preview_max_lines)
     local lines = ok and result or { "⚠️ 无法读取文件" }
     local ft_ok, ft = pcall(vim.filetype.match, { filename = resolved })

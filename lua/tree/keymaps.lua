@@ -2,6 +2,7 @@
 -- 注册主窗口的所有快捷键
 
 local M = {}
+local utils = require('tree.utils')
 
 --- 解析路径（同 preview 里的逻辑，独立以免循环依赖）
 ---@param fpath    string|nil
@@ -39,6 +40,12 @@ local function make_open(file_map, is_dir_map, abs_root, open_cmd)
             vim.notify("📁 目录: " .. resolved, vim.log.levels.INFO)
             return
         end
+
+        if not utils.is_text_file(resolved) then
+            vim.notify("⚠️无法打开二进制文件: " .. resolved, vim.log.levels.WARN)
+            return
+        end
+
         vim.cmd("close")
         vim.cmd(open_cmd .. " " .. vim.fn.fnameescape(resolved))
     end
