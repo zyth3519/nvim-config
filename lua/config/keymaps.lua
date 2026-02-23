@@ -29,7 +29,7 @@ wk.add({
     { "<leader>cr", vim.lsp.buf.rename, desc = '重命名' },
     { "<leader>ca", vim.lsp.buf.code_action, desc = '代码操作' },
     { "<leader>cf", vim.lsp.buf.format, desc = '格式化' },
-    { "<leader>cd", telescope.diagnostics, desc = '查看诊断' },
+    { "<leader>cd", vim.diagnostic.open_float, desc = '查看诊断' },
 })
 
 
@@ -41,6 +41,7 @@ wk.add({
     { "<leader>fh", telescope.help_tags, desc = "查询 Neovim 帮助文档" },
     { "<leader>fs", telescope.lsp_document_symbols, desc = "查询当前文档 LSP 符号" },
     { "<leader>fS", telescope.lsp_workspace_symbols, desc = "查询工作区 LSP 符号" },
+    { "<leader>dd", telescope.diagnostics, desc = '查找诊断' },
 })
 
 
