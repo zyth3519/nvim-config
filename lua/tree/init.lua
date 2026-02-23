@@ -7,7 +7,6 @@ local parser   = require("tree.parser")
 local preview  = require("tree.preview")
 local keymaps  = require("tree.keymaps")
 local cfg      = require("tree.config").defaults
-local log      = require("tree.log")
 
 --- 检查外部依赖
 ---@return boolean
