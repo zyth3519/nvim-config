@@ -41,6 +41,7 @@ return {
         config = function()
             vim.lsp.enable('lua_ls')
             vim.lsp.enable('rust_analyzer')
+            vim.lsp.enable('ts_ls')
             lua_ls_config()
             -- 全局 LSP 诊断配置：支持所有缓冲区诊断
             vim.diagnostic.config({
@@ -57,7 +58,7 @@ return {
         "williamboman/mason-lspconfig.nvim",
         event = { "BufReadPre", "BufNewFile" },
         opts = {
-            ensure_installed = { "lua_ls", "rust_analyzer" },
+            ensure_installed = { "lua_ls", "rust_analyzer", "ts_ls" },
             automatic_installation = true
         },
         dependencies = {
