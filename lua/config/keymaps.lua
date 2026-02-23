@@ -41,7 +41,7 @@ wk.add({
     { "<leader>fh", telescope.help_tags, desc = "查询 Neovim 帮助文档" },
     { "<leader>fs", telescope.lsp_document_symbols, desc = "查询当前文档 LSP 符号" },
     { "<leader>fS", telescope.lsp_workspace_symbols, desc = "查询工作区 LSP 符号" },
-    { "<leader>dd", telescope.diagnostics, desc = '查找诊断' },
+    { "<leader>fd", telescope.diagnostics, desc = '查找诊断' },
 })
 
 
