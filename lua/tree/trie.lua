@@ -35,7 +35,7 @@ function M.build(fd_paths, target, abs_root)
                 if not node.children[part] then
                     node.children[part] = {
                         children  = {},
-                        full_path = nil,
+                        full_path =  node.full_path .. "/" .. part,
                         is_dir    = false,
                     }
                 end

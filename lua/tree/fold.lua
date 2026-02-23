@@ -33,6 +33,28 @@ function M.init(buf, win, trie_root, abs_root, on_refresh)
     }
 end
 
+local function restore_cursor(st, cur_path, file_map)
+    if not cur_path then return end
+
+    -- 1. 精确匹配
+    for lnum, path in pairs(file_map) do
+        if path == cur_path then
+            pcall(vim.api.nvim_win_set_cursor, st.win, { lnum, 0 })
+            return
+        end
+    end
+
+    -- 2. 找最近的父路径
+    local best_lnum, best_len = 1, 0
+    for lnum, path in pairs(file_map) do
+        if vim.startswith(cur_path, path .. "/") and #path > best_len then
+            best_lnum = lnum
+            best_len  = #path
+        end
+    end
+    pcall(vim.api.nvim_win_set_cursor, st.win, { best_lnum, 0 })
+end
+
 --- 重渲染 buf 并调用回调更新 ctx
 ---@param st FoldState
 local function refresh(st)
@@ -53,7 +75,8 @@ local function refresh(st)
     if cur_path then
         for lnum, path in pairs(result.file_map) do
             if path == cur_path then
-                pcall(vim.api.nvim_win_set_cursor, st.win, { lnum, 0 })
+                -- pcall(vim.api.nvim_win_set_cursor, st.win, { lnum, 0 })
+                restore_cursor()
                 break
             end
         end
@@ -100,16 +123,23 @@ function M.close_all(buf, file_map, is_dir_map)
     local st = store[buf]
     if not st then return end
 
+    -- 清空旧状态，只标记顶层可见目录
+    st.fold_state = {}
+
+    -- 找顶层目录：父路径是 abs_root 的直接子目录
     for lnum, is_dir in pairs(is_dir_map) do
         if is_dir and lnum ~= 1 then
             local path = file_map[lnum]
             if path then
-                st.fold_state[path] = true
+                local parent = vim.fn.fnamemodify(path, ":h")
+                -- 只折叠根目录的直接子目录
+                if parent == st.abs_root then
+                    st.fold_state[path] = true
+                end
             end
         end
     end
 
-    -- 只保留顶层折叠状态（子目录折叠被父目录覆盖时无意义，但状态保留无害）
     refresh(st)
 end
 
