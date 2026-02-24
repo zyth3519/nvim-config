@@ -83,6 +83,10 @@ function M.create_layout(target_path)
         title_pos = "center",
     })
 
+    -- 设置窗口换行
+    vim.api.nvim_set_option_value("wrap", false, { win = win })
+    vim.api.nvim_set_option_value("linebreak", false, { win = win })
+
     return { buf = buf, win = win, pbuf = pbuf, pwin = pwin, geo = geo }
 end
 

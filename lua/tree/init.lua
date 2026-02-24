@@ -7,6 +7,8 @@ local preview  = require("tree.preview")
 local keymaps  = require("tree.keymaps")
 local fold     = require("tree.fold")
 local cfg      = require("tree.config").defaults
+local log      = require('tree.log')
+local utils    = require('tree.utils')
 
 local function check_deps()
     -- 只需要 fd，不再需要 tree
@@ -26,7 +28,7 @@ local function build_fd_cmd(target)
     return cmd
 end
 
-local function run(target_path, abs_root)
+local function run(target_path, abs_root, args)
     local layout = ui.create_layout(target_path)
     local buf, win, pbuf, pwin =
         layout.buf, layout.win, layout.pbuf, layout.pwin
@@ -43,9 +45,6 @@ local function run(target_path, abs_root)
         on_stdout = function(_, data)
             if not data then return end
             for _, line in ipairs(data) do
-                -- if not string.match(line, "^%./") then
-                --     line = string.format("./%s", line)
-                -- end
                 if line ~= "" then table.insert(fd_paths, line) end
             end
         end,
@@ -82,7 +81,7 @@ local function run(target_path, abs_root)
                 -- ── 4. 初始化折叠模块 ───────────────────────────
                 fold.init(buf, win, trie, abs_root, function(new_file_map, new_is_dir_map)
                     -- 折叠刷新后同步 ctx，让 preview / keymaps 拿到最新数据
-                    ctx.file_map   = new_file_map
+                    ctx.file_map = new_file_map
                     ctx.is_dir_map = new_is_dir_map
                 end)
 
@@ -93,6 +92,20 @@ local function run(target_path, abs_root)
                 vim.schedule(function()
                     preview.update(ctx)
                 end)
+
+                -- 设置光标位置
+                local row = 1
+                local col = 0
+                for index, value in ipairs(result.file_map) do
+                    if value == args then
+                        row = index
+                        local name = vim.fn.fnamemodify(value, ":t")
+                        col = string.len(result.lines[index]) - string.len(name)
+                        break;
+                    end
+                end
+
+                utils.safe_set_cursor(ctx.win, ctx.buf, row, col)
             end)
         end,
     })
@@ -109,34 +122,28 @@ local function run(target_path, abs_root)
     })
 end
 
--- is_path_inside_cwd / 命令注册 不变
 local function is_path_inside_cwd(input_path)
     if input_path == "." then return true end
-    local cwd      = vim.fn.getcwd()
+    local cwd      = vim.fn.getcwd():gsub("/$", "")
     local abs_path = vim.fn.fnamemodify(input_path, ":p"):gsub("/$", "")
-    cwd            = cwd:gsub("/$", "")
-    return vim.startswith(abs_path, cwd .. "/")
+
+    return vim.startswith(abs_path .. "/", cwd .. "/")
 end
 
 vim.api.nvim_create_user_command("Tree", function(opts)
     if not check_deps() then return end
-    local path        = opts.args
-    local target_path = path == "" and "." or path
-    target_path = target_path:gsub("/+$", "")
-    local abs_root = vim.fn.fnamemodify(target_path, ":p"):gsub("/+$", "")
 
-    if not is_path_inside_cwd(target_path) then
-        vim.notify(string.format("路径不能是项目目录的上级或同级: %s", target_path))
+    local file_path = vim.fn.expand("%:p")
+    if string.len(opts.args) > 0 then
+        file_path = vim.fn.fnamemodify(opts.args, ":p")
+    end
+    file_path = file_path:gsub("^oil://", ""):gsub("/+$", "")
+
+    local abs_root = vim.fn.getcwd()
+    if not is_path_inside_cwd(file_path) then
+        vim.notify(string.format("路径不能是项目目录的上级或同级: %s", file_path))
         return
     end
-    local stat = vim.uv.fs_stat(abs_root)
-    if not stat then
-        vim.notify(string.format("路径不存在: %s", target_path))
-        return
-    end
-    if stat.type == "file" then
-        vim.notify(string.format("路径必须是文件夹: %s", target_path))
-        return
-    end
-    run(target_path, abs_root)
+
+    run(abs_root, abs_root, file_path)
 end, { nargs = "?", complete = "dir", desc = "浮动目录树" })
