@@ -82,7 +82,7 @@ function M.var(name, value)
 end
 
 -- 记录表格数据
-function M.table(tbl, label)
+function M.table(label, tbl)
     label = label or "Table"
     write_log("DEBUG", "%s: %s", label, vim.inspect(tbl))
 end

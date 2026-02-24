@@ -7,7 +7,6 @@ local preview  = require("tree.preview")
 local keymaps  = require("tree.keymaps")
 local fold     = require("tree.fold")
 local cfg      = require("tree.config").defaults
-local log      = require('tree.log')
 local utils    = require('tree.utils')
 
 local function check_deps()

@@ -2,6 +2,7 @@
 -- 折叠状态管理：维护 path → closed 的映射
 -- 折叠/展开后触发 renderer 重渲染并刷新 buf
 
+local utils = require('tree.utils')
 local M = {}
 local renderer = require("tree.renderer")
 
@@ -100,9 +101,12 @@ function M.toggle(buf, lnum, file_map, is_dir_map)
         if lnum == 1 then return end
         target_path = file_map[lnum]
     else
+        local deep = utils.safe_length(vim.split(file_map[lnum], "/"))
         -- 当前行是文件，向上找最近的目录行
         for l = lnum - 1, 2, -1 do
-            if is_dir_map[l] and file_map[l] then
+            local cur_deep = utils.safe_length(vim.split(file_map[l], "/"))
+
+            if is_dir_map[l] and file_map[l] and cur_deep < deep then
                 target_path = file_map[l]
                 break
             end

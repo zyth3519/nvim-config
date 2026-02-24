@@ -42,4 +42,14 @@ function M.safe_set_cursor(win_id, buf_id, row, col)
     vim.api.nvim_win_set_cursor(win_id, { row, col })
 end
 
+
+-- 获取Table元素个数
+---@param t table
+---@return integer
+function M.safe_length(t)
+    if type(t) ~= "table" then return 0 end
+    return vim.tbl_count(t)
+end
+
 return M
+
