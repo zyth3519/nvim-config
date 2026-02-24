@@ -66,5 +66,12 @@ return {
                 winblend = 10,        -- 悬浮终端透明度
             },
         },
+    },
+    {
+        'nvim-lualine/lualine.nvim',
+        dependencies = { 'nvim-tree/nvim-web-devicons' },
+        config = function()
+            require('lualine').setup()
+        end
     }
 }
