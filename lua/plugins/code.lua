@@ -92,5 +92,10 @@ return {
         'windwp/nvim-autopairs',
         event = "InsertEnter",
         config = true
+    },
+    {
+        "kylechui/nvim-surround",
+        version = "*", -- 使用稳定版
+        event = "VeryLazy",
     }
 }
