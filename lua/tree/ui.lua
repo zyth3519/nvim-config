@@ -7,11 +7,16 @@ local cfg = require("tree.config").defaults
 --- 计算浮窗的几何参数
 ---@return table { width, height, row, col, main_width, preview_width }
 local function calc_geometry()
-    local width         = math.ceil(vim.o.columns * cfg.win_width_ratio)
-    local height        = math.ceil(vim.o.lines * cfg.win_height_ratio)
-    local row           = math.ceil((vim.o.lines - height) / 2 - 1)
-    local col           = math.ceil((vim.o.columns - width) / 2)
-    local main_width    = math.ceil(width * cfg.main_width_ratio)
+    local width      = math.ceil(vim.o.columns * cfg.win_width_ratio)
+    local height     = math.ceil(vim.o.lines * cfg.win_height_ratio)
+    local row        = math.ceil((vim.o.lines - height) / 2 - 1)
+    local col        = math.ceil((vim.o.columns - width) / 2)
+    local main_width = 0
+    if cfg.preview then
+        main_width = math.ceil(width * cfg.main_width_ratio)
+    else
+        main_width = width
+    end
     local preview_width = width - main_width - 1 -- -1 留边框间隙
     return {
         width = width,
@@ -56,22 +61,25 @@ function M.create_layout(target_path)
     local geo  = calc_geometry()
     local pbuf = create_preview_buf()
     local buf  = create_main_buf()
+    local pwin = 0
 
-    -- 先创建预览窗口（false = 不聚焦）
-    local pwin = vim.api.nvim_open_win(pbuf, false, {
-        relative  = "editor",
-        width     = geo.preview_width,
-        height    = geo.height,
-        row       = geo.row,
-        col       = geo.col + geo.main_width + 1,
-        style     = "minimal",
-        border    = "rounded",
-        title     = " Preview ",
-        title_pos = "center",
-    })
+    if cfg.preview then
+        -- 先创建预览窗口（false = 不聚焦）
+        pwin = vim.api.nvim_open_win(pbuf, false, {
+            relative  = "editor",
+            width     = geo.preview_width,
+            height    = geo.height,
+            row       = geo.row,
+            col       = geo.col + geo.main_width + 1,
+            style     = "minimal",
+            border    = "rounded",
+            title     = " Preview ",
+            title_pos = "center",
+        })
+    end
 
     -- 再创建主窗口（true = 聚焦）
-    local win  = vim.api.nvim_open_win(buf, true, {
+    local win = vim.api.nvim_open_win(buf, true, {
         relative  = "editor",
         width     = geo.main_width,
         height    = geo.height,
@@ -101,10 +109,17 @@ function M.setup_close_autocmd(layout)
         once     = true,
         callback = function()
             vim.schedule(function()
-                for _, pair in ipairs({
-                    { pwin, pbuf },
-                    { win,  buf },
-                }) do
+                local t = { { win, buf } }
+
+                if cfg.preview then
+                    t = {
+                        { pwin, pbuf },
+                        { win,  buf },
+                    }
+                end
+
+
+                for _, pair in ipairs(t) do
                     local w, b = pair[1], pair[2]
                     if vim.api.nvim_win_is_valid(w) then vim.api.nvim_win_close(w, true) end
                     if vim.api.nvim_buf_is_valid(b) then vim.api.nvim_buf_delete(b, { force = true }) end

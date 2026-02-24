@@ -11,6 +11,7 @@
 
 
 local M = {}
+local cfg = require('tree.config')
 local utils = require("tree.utils")
 
 local function resolve(fpath, abs_root)
@@ -119,14 +120,16 @@ function M.setup(ctx, preview, fold)
         fold.open_all(buf)
     end, "展开所有目录")
 
-    vim.api.nvim_create_autocmd("CursorMoved", {
-        buffer   = buf,
-        callback = function()
-            vim.schedule(function()
-                preview.update(ctx)
-            end)
-        end,
-    })
+    if cfg.preview then
+        vim.api.nvim_create_autocmd("CursorMoved", {
+            buffer   = buf,
+            callback = function()
+                vim.schedule(function()
+                    preview.update(ctx)
+                end)
+            end,
+        })
+    end
 end
 
 return M

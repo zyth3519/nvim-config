@@ -87,10 +87,12 @@ local function run(target_path, abs_root, args)
                 -- ── 5. 绑定快捷键 ───────────────────────────────
                 keymaps.setup(ctx, preview, fold)
 
-                -- ── 6. 初始预览 ─────────────────────────────────
-                vim.schedule(function()
-                    preview.update(ctx)
-                end)
+                if cfg.preview then
+                    -- ── 6. 初始预览 ─────────────────────────────────
+                    vim.schedule(function()
+                        preview.update(ctx)
+                    end)
+                end
 
                 -- 设置光标位置
                 local row = 1

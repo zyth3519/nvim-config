@@ -5,7 +5,7 @@ local M = {}
 
 M.defaults = {
     -- 浮窗尺寸比例
-    win_width_ratio      = 0.8,
+    win_width_ratio      = 0.6,
     win_height_ratio     = 0.8,
     -- 主/预览窗口宽度比例
     main_width_ratio     = 0.4,
@@ -15,6 +15,7 @@ M.defaults = {
     preview_max_lines    = 200,
     -- 预览滚动步进比例
     preview_scroll_ratio = 0.8,
+    preview              = false
 }
 
 return M
