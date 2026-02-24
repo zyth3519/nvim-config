@@ -1,6 +1,20 @@
 return {
     {
-        "kdheepak/lazygit.nvim"
+        "kdheepak/lazygit.nvim",
+        cmd = {
+            "LazyGit",
+            "LazyGitConfig",
+            "LazyGitCurrentFile",
+            "LazyGitFilter",
+            "LazyGitFilterCurrentFile",
+        },
+        -- optional for floating window border decoration
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+        },
+        config = function()
+            vim.g.lazygit_use_neovim_remote = 0
+        end
     },
     {
         'lewis6991/gitsigns.nvim',
