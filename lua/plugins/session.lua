@@ -24,9 +24,6 @@ return {
 
                         -- 2. 触发 FileType 事件让 LSP 附加
                         vim.cmd("bufdo do FileType")
-
-                        -- 3. 回到当前 buffer
-                        vim.cmd("b#")
                     end, 300)
                 end,
             },
