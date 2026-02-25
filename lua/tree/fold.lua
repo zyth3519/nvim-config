@@ -74,10 +74,9 @@ local function refresh(st)
 
     -- 恢复光标到同一路径的行（折叠后行号会变）
     if cur_path then
-        for lnum, path in pairs(result.file_map) do
+        for _, path in pairs(result.file_map) do
             if path == cur_path then
-                -- pcall(vim.api.nvim_win_set_cursor, st.win, { lnum, 0 })
-                restore_cursor()
+                restore_cursor(st, cur_path, result.file_map)
                 break
             end
         end

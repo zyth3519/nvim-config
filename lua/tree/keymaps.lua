@@ -28,7 +28,7 @@ local function resolve(fpath, abs_root)
     return nil
 end
 
-local function make_open(file_map, is_dir_map, abs_root, open_cmd)
+local function make_open(file_map, _, abs_root, open_cmd)
     return function()
         local lnum     = vim.fn.line(".")
         local fpath    = file_map[lnum]

@@ -6,7 +6,8 @@ local RULES = {
     { "syntax", [[match TreeLines /[│├└─]/]] },
     { "hi", "default link TreeLines Comment" },
     -- 目录（以 / 结尾，或带 [+] 标记）
-    { "syntax", [[match TreeDir /\S\+\/\(\s*\[+\]\)\?$/]] },
+    -- 使用更严谨的正则：匹配整行中最后一个符号之后直到行尾包含 / 的部分，支持空格
+    { "syntax", [[match TreeDir /\(│\s\+\|├── \|└── \|^\s*\)\@<=[^\/│├└─]\+\/\(\s*\[+\]\)\?$/]] },
     { "hi", "default link TreeDir Directory" },
     -- 折叠标记 [+]
     { "syntax", [[match TreeFold /\[+\]/]] },

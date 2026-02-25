@@ -11,7 +11,7 @@ local function calc_geometry()
     local height     = math.ceil(vim.o.lines * cfg.win_height_ratio)
     local row        = math.ceil((vim.o.lines - height) / 2 - 1)
     local col        = math.ceil((vim.o.columns - width) / 2)
-    local main_width = 0
+    local main_width
     if cfg.preview then
         main_width = math.ceil(width * cfg.main_width_ratio)
     else
@@ -104,7 +104,7 @@ function M.setup_close_autocmd(layout)
     local buf, win, pbuf, pwin =
         layout.buf, layout.win, layout.pbuf, layout.pwin
 
-    vim.api.nvim_create_autocmd("BufLeave", {
+    vim.api.nvim_create_autocmd({ "BufLeave", "WinClosed" }, {
         buffer   = buf,
         once     = true,
         callback = function()
