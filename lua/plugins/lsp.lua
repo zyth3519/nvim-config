@@ -1,75 +1,65 @@
-local function lua_ls_config()
-    vim.lsp.config('lua_ls', {
-        on_init = function(client)
-            if client.workspace_folders then
-                local path = client.workspace_folders[1].name
-                if
-                    path ~= vim.fn.stdpath('config')
-                    and (vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc'))
-                then
-                    return
-                end
-            end
-
-            client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
-                runtime = {
-                    version = 'LuaJIT',
-                    path = {
-                        'lua/?.lua',
-                        'lua/?/init.lua',
-                    },
-                },
-                workspace = {
-                    checkThirdParty = false,
-                    library = {
-                        vim.env.VIMRUNTIME
-                    }
-                }
-            })
-        end,
-        settings = {
-            Lua = {}
+local function get_lua_ls_settings()
+    return {
+        runtime = {
+            version = 'LuaJIT',
+            path = { 'lua/?.lua', 'lua/?/init.lua' },
+        },
+        workspace = {
+            checkThirdParty = false,
+            library = { vim.env.VIMRUNTIME }
         }
-    })
+    }
 end
-
 
 return {
     -- 1. 核心 LSP 配置
     {
         "neovim/nvim-lspconfig",
+        dependencies = {
+            "williamboman/mason.nvim",
+            "williamboman/mason-lspconfig.nvim",
+        },
         config = function()
-            vim.lsp.enable('lua_ls')
-            vim.lsp.enable('rust_analyzer')
-            vim.lsp.enable('ts_ls')
-            lua_ls_config()
-            -- 全局 LSP 诊断配置：支持所有缓冲区诊断
+            -- 全局 LSP 诊断配置
             vim.diagnostic.config({
                 virtual_text = {
                     enable = true,
-                    severity = { min = vim.diagnostic.severity.HINT }, -- 显示所有级别诊断（Error/Warn/Info/Hint）
+                    severity = { min = vim.diagnostic.severity.HINT },
                 },
                 severity_sort = true
             })
+
+            -- 注入 Ufo 折叠能力
+            local capabilities = vim.lsp.protocol.make_client_capabilities()
+            capabilities.textDocument.foldingRange = {
+                dynamicRegistration = false,
+                lineFoldingOnly = true
+            }
+
+            -- 依据 Neovim 0.11+ 标准使用 vim.lsp.config 配置并启用
+            vim.lsp.config('lua_ls', {
+                capabilities = capabilities,
+                settings = {
+                    Lua = get_lua_ls_settings()
+                }
+            })
+            vim.lsp.enable('lua_ls')
+
+            -- 对其他服务器按需配参数并启动
+            vim.lsp.config('rust_analyzer', { capabilities = capabilities })
+            vim.lsp.enable('rust_analyzer')
+            
+            vim.lsp.config('ts_ls', { capabilities = capabilities })
+            vim.lsp.enable('ts_ls')
         end,
     },
-    -- mason
-    {
-        "williamboman/mason-lspconfig.nvim",
-        event = { "BufReadPre", "BufNewFile" },
-        opts = {
-            ensure_installed = { "lua_ls", "rust_analyzer", "ts_ls" },
-            automatic_installation = true
-        },
-        dependencies = {
-            "williamboman/mason.nvim",
-        },
-    },
+
+    -- 2. 依赖管理总管 (Mason)
     {
         "williamboman/mason.nvim",
         opts = {
             ui = {
-                border = "rounded", -- 圆角窗口，可选 "none" | "single" | "double" | "rounded"
+                border = "rounded",
                 icons = {
                     package_installed = "✓",
                     package_pending = "➜",
@@ -78,28 +68,34 @@ return {
             }
         },
     },
-    -- lsp加载进度条
-    {
-        'j-hui/fidget.nvim',
-        tag = 'legacy',
-        opts = {
-            text = {
-                spinner = 'dots', -- 加载动画样式（可选：dots、circle、arc 等）
-                done = '✓', -- 加载完成标识
-                commenced = '启动中...', -- 开始加载提示
-                completed = '加载完成', -- 完成加载提示
-            },
-            window = {
-                relative = 'editor', -- 窗口定位方式
-                blend = 0,           -- 窗口透明度（0 为不透明）
-                border = 'none',     -- 窗口边框（none 为无边框）
-            },
-            sources = {
-                -- 针对特定 LSP 进行配置（* 为匹配所有 LSP）
-                ['*'] = { ignore = false }
-            },
-        },
-        event = 'LspAttach', -- 延迟加载：LSP 附加到缓冲区时才启动
-    }
 
+    -- 3. LSP 服务器自动安装
+    {
+        "williamboman/mason-lspconfig.nvim",
+        event = { "BufReadPre", "BufNewFile" },
+        opts = {
+            ensure_installed = { "lua_ls", "rust_analyzer", "ts_ls" },
+            automatic_installation = true
+        },
+    },
+
+    -- 4. 格式化器及其他工具自动安装
+    {
+        "WhoIsSethDaniel/mason-tool-installer.nvim",
+        event = "VeryLazy",
+        opts = {
+            ensure_installed = {
+                -- 代码格式化器
+                "stylua",     -- Lua 格式化
+                "prettier",   -- 前端 & Markdown 格式化
+                -- "rustfmt", -- (注: Rust 社区推荐直接使用 rustup 安装 rustfmt, 故注释掉)
+                
+                -- DAP 调试适配器
+                "codelldb",   -- C/C++/Rust 调试器
+            },
+            auto_update = false,
+            run_on_start = true,
+            start_delay = 3000, -- 延迟 3 秒执行，不影响编辑器启动速度
+        },
+    }
 }
