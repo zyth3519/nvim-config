@@ -67,6 +67,11 @@ map("n", "<leader>bo", "<cmd>BufferLineCloseOthers<cr>", { desc = "只保留当�
 map("n", "<leader>bf", "<cmd>bf<cr>", { desc = "跳转到第一个 Buffer" })
 map("n", "<leader>bF", "<cmd>bl<cr>", { desc = "跳转到最后一个 Buffer" })
 
+-- Bufferline 数字切换 (1-9)
+for i = 1, 9 do
+    map("n", "<leader>" .. i, "<cmd>BufferLineGoToBuffer " .. i .. "<cr>", { desc = "跳转到 Buffer " .. i })
+end
+
 -- 【Telescope 搜索 (Search)】
 map("n", "<leader>sf", "<cmd>Telescope find_files<cr>", { desc = "查找文件 (find_files)" })
 map("n", "<leader>sg", "<cmd>Telescope live_grep<cr>", { desc = "全局搜索内容 (live_grep)" })
