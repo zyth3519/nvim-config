@@ -38,6 +38,8 @@ if wk_ok then
         { "<leader>s", group = "搜索 (Search)", icon = "󰍉" },
         { "<leader>w", group = "窗口 (Window)", icon = "󱂬" },
         { "g", group = "导航/跳转 (Go)", icon = "󰜎" },
+        { "<leader>e", desc = "打开Tree", icon = "󰙅" },
+        { "<leader>t", desc = "终端", icon = "󰆍" },
     })
 end
 
