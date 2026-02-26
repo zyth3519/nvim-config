@@ -17,6 +17,19 @@ local function auto_build_rust()
     end
 end
 
+local function auto_build_zig()
+    vim.cmd("silent wa")
+    local build_cmd = "zig build"
+    print(string.format("[Auto Build] 执行命令: %s", build_cmd))
+    local build_output = vim.fn.system(build_cmd)
+    if vim.v.shell_error ~= 0 then
+        vim.notify("❌ Zig 构建失败:\n" .. build_output, vim.log.levels.ERROR)
+        error("构建失败，终止调试")
+    else
+        vim.notify("✅ Zig 构建成功!", vim.log.levels.INFO)
+    end
+end
+
 -- 配置 Rust 调试项
 local function rust_config()
     local dap = require('dap')
@@ -64,6 +77,30 @@ local function rust_config()
     }
 end
 
+-- 配置 Zig 调试项
+local function zig_config()
+    local dap = require('dap')
+    dap.configurations.zig = {
+        {
+            name = "Launch file (Auto Build)",
+            type = "codelldb",
+            request = "launch",
+            program = function()
+                local cwd = vim.fn.getcwd()
+                -- 简单推导: zig build 默认将可执行文件放到 zig-out/bin/ 项目名同名文件
+                local project_name = vim.fn.fnamemodify(cwd, ":t")
+                local default_path = cwd .. "/zig-out/bin/" .. project_name
+                
+                return vim.fn.input('Path to executable: ', default_path, 'file')
+            end,
+            cwd = '${workspaceFolder}',
+            stopOnEntry = false,
+            args = {},
+            console = "integratedTerminal",
+            preLaunchTask = auto_build_zig,
+        },
+    }
+end
 
 return {
     {
@@ -81,6 +118,7 @@ return {
             }
             
             rust_config()
+            zig_config()
         end
     },
     {

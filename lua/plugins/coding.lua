@@ -49,6 +49,7 @@ return {
             formatters_by_ft = {
                 lua = { "stylua" },
                 rust = { "rustfmt" },
+                zig = { "zigfmt" }, -- 添加 Zig 格式化
                 javascript = { "prettier" },
                 typescript = { "prettier" },
                 javascriptreact = { "prettier" },
