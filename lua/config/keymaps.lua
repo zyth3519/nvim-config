@@ -63,7 +63,7 @@ map("n", "<leader>bl", "<cmd>ls<cr>", { desc = "显示 Buffer 列表" })
 map("n", "<leader>ba", "<cmd>ball<cr>", { desc = "为每个 Buffer 打开窗口" })
 map("n", "<leader>bd", "<cmd>bd<cr>", { desc = "删除 Buffer 并关闭窗口" })
 map("n", "<leader>bD", "<cmd>bw<cr>", { desc = "彻底删除当前 Buffer" })
-map("n", "<leader>bo", "<cmd>%bd | e# | bd#<cr>", { desc = "只保留当前编辑的文件" })
+map("n", "<leader>bo", "<cmd>BufferLineCloseOthers<cr>", { desc = "只保留当前编辑的文件" })
 map("n", "<leader>bf", "<cmd>bf<cr>", { desc = "跳转到第一个 Buffer" })
 map("n", "<leader>bF", "<cmd>bl<cr>", { desc = "跳转到最后一个 Buffer" })
 
