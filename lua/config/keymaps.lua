@@ -46,7 +46,7 @@ map("n", "<leader>e", "<cmd>Tree<cr>", { desc = "打开Tree" })
 -- 在使用 cmd 调用时如果带有 insert 等其他模式，前置 <Esc> 或者 <C-\><C-n> 可以退回到 normal
 map({ "n", "i", "v", "c" }, "<C-e>", "<cmd>stopinsert | Tree<cr>", { desc = "快速打开目录树" })
 
-map("n", "<leader>ft", "<cmd>Oil --float<cr>", { desc = "打开Tree" })
+map("n", "<leader>ft", "<cmd>Tree<cr>", { desc = "打开Tree" })
 map("n", "<leader>ff", "<cmd>Oil --float<cr>", { desc = "打开 Oil 文件管理器" })
 map("n", "<leader>fF", "<cmd>Oil --float .<cr>", { desc = "打开 Oil (Root)" })
 map("n", "<leader>t", "<cmd>ToggleTerm<cr>", { desc = "终端" })
