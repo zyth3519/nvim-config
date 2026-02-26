@@ -2,9 +2,9 @@
 -- 折叠状态管理：维护 path → closed 的映射
 -- 折叠/展开后触发 renderer 重渲染并刷新 buf
 
-local utils = require("tree.utils")
 local M = {}
 local renderer = require("tree.renderer")
+local utils = require("tree.utils")
 local log = require("tree.log")
 
 ---@class FoldState
@@ -43,24 +43,26 @@ local function restore_cursor(st, cur_path, file_map)
 	-- 1. 精确匹配
 	for lnum, path in pairs(file_map) do
 		if path == cur_path then
-			local name = vim.fn.fnamemodify(cur_path, ":t")
-			local col = string.len(path) - string.len(name)
-			pcall(vim.api.nvim_win_set_cursor, st.win, { lnum, col + 1 })
+			pcall(vim.api.nvim_win_set_cursor, st.win, { lnum, 0 })
+			vim.schedule(function()
+				local col = utils.get_cur_col_pos(cur_path)
+				pcall(vim.api.nvim_win_set_cursor, st.win, { lnum, col })
+			end)
 			return
 		end
 	end
 
 	-- 2. 找最近的父路径
-	local best_lnum, best_len, col = 1, 0, 0
+	local best_lnum, best_len = 1, 0
 	for lnum, path in pairs(file_map) do
 		if vim.startswith(cur_path, path .. "/") and #path > best_len then
 			local name = vim.fn.fnamemodify(cur_path, ":t")
-			col = string.len(path) - string.len(name)
 			best_lnum = lnum
 			best_len = #path
 		end
 	end
-	pcall(vim.api.nvim_win_set_cursor, st.win, { best_lnum, col + 1 })
+	local col = utils.get_cur_col_pos(cur_path)
+	pcall(vim.api.nvim_win_set_cursor, st.win, { best_lnum, col })
 end
 
 --- 重渲染 buf 并调用回调更新 ctx
@@ -78,7 +80,9 @@ local function refresh(st, target_path)
 
 	-- 回调：让 keymaps / preview 拿到最新的 file_map / is_dir_map / icon_hl_map
 	st.on_refresh(result.file_map, result.is_dir_map, result.icon_hl_map)
-	restore_cursor(st, target_path, result.file_map)
+	vim.schedule(function()
+		restore_cursor(st, target_path, result.file_map)
+	end)
 end
 
 --- 切换当前行的折叠状态

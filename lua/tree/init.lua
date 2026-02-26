@@ -7,7 +7,6 @@ local preview = require("tree.preview")
 local keymaps = require("tree.keymaps")
 local fold = require("tree.fold")
 local cfg = require("tree.config").defaults
-local log = require("tree.log")
 
 local function check_deps()
 	if vim.fn.executable("fd") == 0 then
@@ -106,18 +105,19 @@ local function run(target_path, abs_root, args)
 				end
 
 				-- 设置光标位置
-				local row = 1
-				local col = 0
 				for index, value in ipairs(result.file_map) do
 					if value == args then
-						row = index
 						local name = vim.fn.fnamemodify(value, ":t")
-						col = string.len(result.lines[index]) - string.len(name)
+						local col = string.len(result.lines[index]) - string.len(name)
+
+						if result.is_dir_map[index] then
+							col = col - 1
+						end
+
+						pcall(vim.api.nvim_win_set_cursor, ctx.win, { index, col })
 						break
 					end
 				end
-
-				pcall(vim.api.nvim_win_set_cursor, ctx.win, { row, col })
 			end)
 		end,
 	})

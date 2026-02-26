@@ -18,26 +18,23 @@ local has_mini_icons, mini_icons = pcall(require, "mini.icons")
 
 local function get_icon(name, is_dir)
 	if is_dir then
-		if has_devicons then
-			local icon, hl_group = devicons.get_icon("dir", "directory", { default = true })
-			return icon or "📁", hl_group or "Directory"
-		elseif has_mini_icons then
+		if has_mini_icons then
 			local icon, hl_group = mini_icons.get("directory", name)
 			return icon or "📁", hl_group or "Directory"
 		end
 		return "📁", "Directory"
-	end
+	else
+		local ext = name:match("^.+%.(.+)$") or ""
+		if has_devicons then
+			local icon, hl_group = devicons.get_icon(name, ext, { default = true })
+			return icon or "📄", hl_group or "File"
+		elseif has_mini_icons then
+			local icon, hl_group = mini_icons.get("file", name)
+			return icon or "📄", hl_group or "File"
+		end
 
-	local ext = name:match("^.+%.(.+)$") or ""
-	if has_devicons then
-		local icon, hl_group = devicons.get_icon(name, ext, { default = true })
-		return icon or "📄", hl_group or "File"
-	elseif has_mini_icons then
-		local icon, hl_group = mini_icons.get("file", name)
-		return icon or "📄", hl_group or "File"
+		return "📄", "File"
 	end
-
-	return "📄", "File"
 end
 
 ---@class RenderResult

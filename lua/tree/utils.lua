@@ -1,4 +1,5 @@
 local M = {}
+local log = require("tree.log")
 
 --- 判断文件是否为文本文件
 ---@param filepath string
@@ -28,6 +29,18 @@ function M.safe_length(t)
 		return 0
 	end
 	return vim.tbl_count(t)
+end
+
+function M.get_cur_col_pos(cur_path)
+	local line = vim.fn.getline(".")
+	local name = vim.fn.fnamemodify(cur_path, ":t")
+	local result = line:find(name)
+
+	if result then
+		return result - 1
+	end
+
+	return 0
 end
 
 return M
