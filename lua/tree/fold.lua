@@ -69,8 +69,8 @@ local function refresh(st)
     vim.api.nvim_buf_set_lines(st.buf, 0, -1, false, result.lines)
     vim.bo[st.buf].modifiable = false
 
-    -- 回调：让 keymaps / preview 拿到最新的 file_map / is_dir_map
-    st.on_refresh(result.file_map, result.is_dir_map)
+    -- 回调：让 keymaps / preview 拿到最新的 file_map / is_dir_map / icon_hl_map
+    st.on_refresh(result.file_map, result.is_dir_map, result.icon_hl_map)
 
     -- 恢复光标到同一路径的行（折叠后行号会变）
     if cur_path then

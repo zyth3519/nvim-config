@@ -2,7 +2,7 @@
 local ui       = require("tree.ui")
 local hl       = require("tree.highlight")
 local trie_mod = require("tree.trie")
-local renderer = require("tree.renderer") -- ← 替换 parser
+local renderer = require("tree.renderer")
 local preview  = require("tree.preview")
 local keymaps  = require("tree.keymaps")
 local fold     = require("tree.fold")
@@ -10,7 +10,6 @@ local cfg      = require("tree.config").defaults
 local utils    = require('tree.utils')
 
 local function check_deps()
-    -- 只需要 fd，不再需要 tree
     if vim.fn.executable("fd") == 0 then
         vim.notify("⚠️ 必须安装 'fd'", vim.log.levels.ERROR)
         return false
@@ -77,11 +76,18 @@ local function run(target_path, abs_root, args)
                 vim.api.nvim_buf_set_lines(buf, 0, -1, false, result.lines)
                 vim.bo[buf].modifiable = false
 
+                -- 应用图标颜色高亮
+                if result.icon_hl_map then
+                    hl.apply_icons(buf, result.icon_hl_map)
+                end
+
                 -- ── 4. 初始化折叠模块 ───────────────────────────
-                fold.init(buf, win, trie, abs_root, function(new_file_map, new_is_dir_map)
-                    -- 折叠刷新后同步 ctx，让 preview / keymaps 拿到最新数据
+                fold.init(buf, win, trie, abs_root, function(new_file_map, new_is_dir_map, new_icon_hl_map)
                     ctx.file_map = new_file_map
                     ctx.is_dir_map = new_is_dir_map
+                    if new_icon_hl_map then
+                        hl.apply_icons(buf, new_icon_hl_map)
+                    end
                 end)
 
                 -- ── 5. 绑定快捷键 ───────────────────────────────

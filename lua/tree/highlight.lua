@@ -1,6 +1,8 @@
 -- lua/tree/highlight.lua
 local M = {}
 
+local NS = vim.api.nvim_create_namespace("tree_icons")
+
 local RULES = {
     -- 树形连接线
     { "syntax", [[match TreeLines /[│├└─]/]] },
@@ -12,7 +14,7 @@ local RULES = {
     -- 折叠标记 [+]
     { "syntax", [[match TreeFold /\[+\]/]] },
     { "hi", "default link TreeFold WarningMsg" },
-    -- 文件扩展名
+    -- 文件扩展名 (排除了可能混淆的图标字符，更精准匹配末尾 .ext)
     { "syntax", [[match TreeExt /\.\w\+$/]] },
     { "hi", "default link TreeExt Type" },
 }
@@ -24,6 +26,26 @@ function M.apply(buf)
             vim.cmd(rule[1] .. " " .. rule[2])
         end
     end)
+end
+
+--- 应用图标颜色高亮 (Extmarks)
+---@param buf integer
+---@param icon_hl_map table<integer, {col_start: number, col_end: number, hl_group: string}>
+function M.apply_icons(buf, icon_hl_map)
+    if not vim.api.nvim_buf_is_valid(buf) then return end
+
+    -- 清理旧的图标高亮
+    vim.api.nvim_buf_clear_namespace(buf, NS, 0, -1)
+
+    for lnum, hl_info in pairs(icon_hl_map) do
+        -- lnum 转换为 0 索引
+        pcall(vim.api.nvim_buf_set_extmark, buf, NS, lnum - 1, hl_info.col_start, {
+            end_row = lnum - 1,
+            end_col = hl_info.col_end,
+            hl_group = hl_info.hl_group,
+            priority = 100,
+        })
+    end
 end
 
 return M
