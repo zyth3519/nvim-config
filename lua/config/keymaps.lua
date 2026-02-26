@@ -41,9 +41,8 @@ if wk_ok then
     })
 end
 
--- 【文件管理器 (Explorer)】
+-- 【文件管理 (File)】
 map("n", "<leader>e", "<cmd>Tree<cr>", { desc = "打开Tree" })
-map("n", "<leader>ee", "<cmd>Tree<cr>", { desc = "打开Tree" })
 -- 在使用 cmd 调用时如果带有 insert 等其他模式，前置 <Esc> 或者 <C-\><C-n> 可以退回到 normal
 map({ "n", "i", "v", "c" }, "<C-e>", "<cmd>stopinsert | Tree<cr>", { desc = "快速打开目录树" })
 
@@ -58,8 +57,6 @@ map("n", "<leader>wv", "<cmd>vsplit<cr>", { desc = "垂直分割当前窗口" })
 map("n", "<leader>wx", "<C-w>x", { desc = "窗口互换" })
 map("n", "<leader>wq", "<C-w>q", { desc = "关闭当前窗口" })
 map("n", "<leader>wo", "<cmd>only<cr>", { desc = "关闭其他所有窗口" })
-map("n", "<leader>wns", "<cmd>new<cr>", { desc = "横向分割并新建文件" })
-map("n", "<leader>wnv", "<cmd>vnew<cr>", { desc = "垂直分割并新建文件" })
 
 -- 【缓冲区管理 (Buffer)】
 map("n", "<leader>bl", "<cmd>ls<cr>", { desc = "显示 Buffer 列表" })
