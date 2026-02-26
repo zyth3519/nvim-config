@@ -20,8 +20,8 @@ map("n", "<C-Left>", "5<C-w><", { desc = "窗口宽度减少", noremap = true, s
 map("n", "<C-Right>", "5<C-w>>", { desc = "窗口宽度增加", noremap = true, silent = true })
 
 -- 缓冲区切换 (Shift + hl)
-map("n", "<S-h>", ":bp<cr>", { desc = "上一个缓冲区", noremap = true, silent = true })
-map("n", "<S-l>", ":bn<cr>", { desc = "下一个缓冲区", noremap = true, silent = true })
+map("n", "<S-h>", "<cmd>bp<cr>", { desc = "上一个缓冲区", noremap = true, silent = true })
+map("n", "<S-l>", "<cmd>bn<cr>", { desc = "下一个缓冲区", noremap = true, silent = true })
 
 -- =========================================================================
 -- 2. 插件快捷键注册 (统合至此以实现统一管理)
@@ -42,28 +42,28 @@ if wk_ok then
 end
 
 -- 【文件管理器 (Explorer)】
-map("n", "<leader>ee", ":Tree<cr>", { desc = "打开树形浏览器", noremap = true, silent = true })
-map("n", "<leader>eo", ":Oil --float<cr>", { desc = "打开 Oil 文件管理器", noremap = true, silent = true })
-map("n", "<leader>eO", ":Oil --float .<cr>", { desc = "打开 Oil (Root)", noremap = true, silent = true })
-map("n", "<leader>t", ":ToggleTerm<cr>", { desc = "打开终端", noremap = true, silent = true })
+map("n", "<leader>ee", "<cmd>Tree<cr>", { desc = "打开树形浏览器", noremap = true, silent = true })
+map("n", "<leader>eo", "<cmd>Oil --float<cr>", { desc = "打开 Oil 文件管理器", noremap = true, silent = true })
+map("n", "<leader>eO", "<cmd>Oil --float .<cr>", { desc = "打开 Oil (Root)", noremap = true, silent = true })
+map("n", "<leader>t", "<cmd>ToggleTerm<cr>", { desc = "打开终端", noremap = true, silent = true })
 
 -- 【窗口管理 (Window)】
-map("n", "<leader>wh", ":split<cr>", { desc = "水平分割当前窗口", noremap = true, silent = true })
-map("n", "<leader>wv", ":vsplit<cr>", { desc = "垂直分割当前窗口", noremap = true, silent = true })
+map("n", "<leader>wh", "<cmd>split<cr>", { desc = "水平分割当前窗口", noremap = true, silent = true })
+map("n", "<leader>wv", "<cmd>vsplit<cr>", { desc = "垂直分割当前窗口", noremap = true, silent = true })
 map("n", "<leader>wx", "<C-w>x", { desc = "窗口互换", noremap = true, silent = true })
 map("n", "<leader>wq", "<C-w>q", { desc = "关闭当前窗口", noremap = true, silent = true })
-map("n", "<leader>wo", ":only<cr>", { desc = "关闭其他所有窗口", noremap = true, silent = true })
-map("n", "<leader>wns", ":new<cr>", { desc = "横向分割并新建文件", noremap = true, silent = true })
-map("n", "<leader>wnv", ":vnew<cr>", { desc = "垂直分割并新建文件", noremap = true, silent = true })
+map("n", "<leader>wo", "<cmd>only<cr>", { desc = "关闭其他所有窗口", noremap = true, silent = true })
+map("n", "<leader>wns", "<cmd>new<cr>", { desc = "横向分割并新建文件", noremap = true, silent = true })
+map("n", "<leader>wnv", "<cmd>vnew<cr>", { desc = "垂直分割并新建文件", noremap = true, silent = true })
 
 -- 【缓冲区管理 (Buffer)】
-map("n", "<leader>bl", ":ls<cr>", { desc = "显示 Buffer 列表", noremap = true, silent = true })
-map("n", "<leader>ba", ":ball<cr>", { desc = "为每个 Buffer 打开窗口", noremap = true, silent = true })
-map("n", "<leader>bd", ":bd<cr>", { desc = "删除 Buffer 并关闭窗口", noremap = true, silent = true })
-map("n", "<leader>bD", ":bw<cr>", { desc = "彻底删除当前 Buffer", noremap = true, silent = true })
-map("n", "<leader>bo", ":%bd | e# | bd#<cr>", { desc = "只保留当前编辑的文件", noremap = true, silent = true })
-map("n", "<leader>bf", ":bf<cr>", { desc = "跳转到第一个 Buffer", noremap = true, silent = true })
-map("n", "<leader>bF", ":bl<cr>", { desc = "跳转到最后一个 Buffer", noremap = true, silent = true })
+map("n", "<leader>bl", "<cmd>ls<cr>", { desc = "显示 Buffer 列表", noremap = true, silent = true })
+map("n", "<leader>ba", "<cmd>ball<cr>", { desc = "为每个 Buffer 打开窗口", noremap = true, silent = true })
+map("n", "<leader>bd", "<cmd>bd<cr>", { desc = "删除 Buffer 并关闭窗口", noremap = true, silent = true })
+map("n", "<leader>bD", "<cmd>bw<cr>", { desc = "彻底删除当前 Buffer", noremap = true, silent = true })
+map("n", "<leader>bo", "<cmd>%bd | e# | bd#<cr>", { desc = "只保留当前编辑的文件", noremap = true, silent = true })
+map("n", "<leader>bf", "<cmd>bf<cr>", { desc = "跳转到第一个 Buffer", noremap = true, silent = true })
+map("n", "<leader>bF", "<cmd>bl<cr>", { desc = "跳转到最后一个 Buffer", noremap = true, silent = true })
 
 -- 【Telescope 搜索 (Search)】
 map("n", "<leader>sf", "<cmd>Telescope find_files<cr>", { desc = "查找文件 (find_files)", noremap = true, silent = true })
