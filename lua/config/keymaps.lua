@@ -31,13 +31,13 @@ map("n", "<S-l>", "<cmd>bn<cr>", { desc = "下一个缓冲区" })
 local wk_ok, wk = pcall(require, "which-key")
 if wk_ok then
     wk.add({
-        { "<leader>b", group = "缓冲区 (Buffer)" },
-        { "<leader>c", group = "代码 (Code)" },
-        { "<leader>d", group = "调试 (Debug)" },
-        { "<leader>f", group = "文件 (File)" },
-        { "<leader>s", group = "搜索 (Search)" },
-        { "<leader>w", group = "窗口 (Window)" },
-        { "g", group = "导航/跳转 (Go)" },
+        { "<leader>b", group = "缓冲区 (Buffer)", icon = "󰓩" },
+        { "<leader>c", group = "代码 (Code)", icon = "󰅩" },
+        { "<leader>d", group = "调试 (Debug)", icon = "󰃤" },
+        { "<leader>f", group = "文件 (File)", icon = "󰉋" },
+        { "<leader>s", group = "搜索 (Search)", icon = "󰍉" },
+        { "<leader>w", group = "窗口 (Window)", icon = "󱂬" },
+        { "g", group = "导航/跳转 (Go)", icon = "󰜎" },
     })
 end
 
