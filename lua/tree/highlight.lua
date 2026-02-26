@@ -14,9 +14,6 @@ local RULES = {
     -- 折叠标记 [+]
     { "syntax", [[match TreeFold /\[+\]/]] },
     { "hi", "default link TreeFold WarningMsg" },
-    -- 文件扩展名 (排除了可能混淆的图标字符，更精准匹配末尾 .ext)
-    { "syntax", [[match TreeExt /\.\w\+$/]] },
-    { "hi", "default link TreeExt Type" },
 }
 
 ---@param buf integer
