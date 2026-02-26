@@ -30,17 +30,17 @@ map("n", "<S-l>", "<cmd>bn<cr>", { desc = "下一个缓冲区" })
 -- 配置 Which-Key 的快捷键组描述 (仅用于弹出面板的菜单分类提示)
 local wk_ok, wk = pcall(require, "which-key")
 if wk_ok then
-    wk.add({
-        { "<leader>b", group = "缓冲区 (Buffer)", icon = "󰓩" },
-        { "<leader>c", group = "代码 (Code)", icon = "󰅩" },
-        { "<leader>d", group = "调试 (Debug)", icon = "󰃤" },
-        { "<leader>f", group = "文件 (File)", icon = "󰉋" },
-        { "<leader>s", group = "搜索 (Search)", icon = "󰍉" },
-        { "<leader>w", group = "窗口 (Window)", icon = "󱂬" },
-        { "g", group = "导航/跳转 (Go)", icon = "󰜎" },
-        { "<leader>e", desc = "打开Tree", icon = "󰙅" },
-        { "<leader>t", desc = "终端", icon = "󰆍" },
-    })
+	wk.add({
+		{ "<leader>b", group = "缓冲区 (Buffer)", icon = "󰓩" },
+		{ "<leader>c", group = "代码 (Code)", icon = "󰅩" },
+		{ "<leader>d", group = "调试 (Debug)", icon = "󰃤" },
+		{ "<leader>f", group = "文件 (File)", icon = "󰉋" },
+		{ "<leader>s", group = "搜索 (Search)", icon = "󰍉" },
+		{ "<leader>w", group = "窗口 (Window)", icon = "󱂬" },
+		{ "g", group = "导航/跳转 (Go)", icon = "󰜎" },
+		{ "<leader>e", desc = "打开Tree", icon = "󰙅" },
+		{ "<leader>t", desc = "终端", icon = "󰆍" },
+	})
 end
 
 -- 【文件管理 (File)】
@@ -71,7 +71,7 @@ map("n", "<leader>bF", "<cmd>bl<cr>", { desc = "跳转到最后一个 Buffer" })
 
 -- Bufferline 数字切换 (1-9)
 for i = 1, 9 do
-    map("n", "<leader>" .. i, "<cmd>BufferLineGoToBuffer " .. i .. "<cr>", { desc = "跳转到 Buffer " .. i })
+	map("n", "<leader>" .. i, "<cmd>BufferLineGoToBuffer " .. i .. "<cr>", { desc = "跳转到 Buffer " .. i })
 end
 
 -- 【Telescope 搜索 (Search)】
@@ -87,8 +87,9 @@ map("n", "<leader>sd", "<cmd>Telescope diagnostics<cr>", { desc = "查找诊断�
 map("n", "<leader>cr", vim.lsp.buf.rename, { desc = "重命名符号 (Rename)" })
 map("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "代码操作 (Code Action)" })
 map("n", "<leader>cd", vim.diagnostic.open_float, { desc = "显示悬浮诊断 (Diagnostic)" })
-map("n", "<leader>cf", function() require("conform").format({ async = true, lsp_fallback = true }) end,
-    { desc = "格式化缓冲区 (Format)" })
+map("n", "<leader>cf", function()
+	require("conform").format({ async = true, lsp_fallback = true })
+end, { desc = "格式化缓冲区 (Format)" })
 
 -- 【LSP 导航与查看 (Go)】
 map("n", "gd", "<cmd>Telescope lsp_definitions<cr>", { desc = "跳转到定义" })
@@ -102,16 +103,40 @@ map("n", "gra", vim.lsp.buf.code_action, { desc = "代码操作" })
 map("n", "grn", vim.lsp.buf.rename, { desc = "重命名" })
 
 -- 【DAP 调试 (Debug)】
-map("n", "<F5>", function() require('dap').continue() end, { desc = "启动/继续调试" })
-map("n", "<F6>", function() require('dap').disconnect({ terminateDebuggee = true }) end, { desc = "断开调试" })
-map("n", "<F10>", function() require('dap').step_over() end, { desc = "逐过程 (Step Over)" })
-map("n", "<F11>", function() require('dap').step_into() end, { desc = "单步调试 (Step Into)" })
-map("n", "<F12>", function() require('dap').step_out() end, { desc = "单步跳出 (Step Out)" })
-map("n", "<leader>dc", function() require('dap').continue() end, { desc = "启动/继续调试" })
-map("n", "<leader>ds", function() require('dap').disconnect({ terminateDebuggee = true }) end, { desc = "断开调试" })
-map("n", "<leader>dv", function() require('dap').step_over() end, { desc = "逐过程 (Step Over)" })
-map("n", "<leader>di", function() require('dap').step_into() end, { desc = "单步调试 (Step Into)" })
-map("n", "<leader>do", function() require('dap').step_out() end, { desc = "单步跳出 (Step Out)" })
+map("n", "<F5>", function()
+	require("dap").continue()
+end, { desc = "启动/继续调试" })
+map("n", "<F6>", function()
+	require("dap").disconnect({ terminateDebuggee = true })
+end, { desc = "断开调试" })
+map("n", "<F10>", function()
+	require("dap").step_over()
+end, { desc = "逐过程 (Step Over)" })
+map("n", "<F11>", function()
+	require("dap").step_into()
+end, { desc = "单步调试 (Step Into)" })
+map("n", "<F12>", function()
+	require("dap").step_out()
+end, { desc = "单步跳出 (Step Out)" })
+map("n", "<leader>dc", function()
+	require("dap").continue()
+end, { desc = "启动/继续调试" })
+map("n", "<leader>ds", function()
+	require("dap").disconnect({ terminateDebuggee = true })
+end, { desc = "断开调试" })
+map("n", "<leader>dv", function()
+	require("dap").step_over()
+end, { desc = "逐过程 (Step Over)" })
+map("n", "<leader>di", function()
+	require("dap").step_into()
+end, { desc = "单步调试 (Step Into)" })
+map("n", "<leader>do", function()
+	require("dap").step_out()
+end, { desc = "单步跳出 (Step Out)" })
 
-map("n", "<leader>dp", function() require('dap').toggle_breakpoint() end, { desc = "切换断点" })
-map("n", "<leader>dt", function() require('dapui').toggle() end, { desc = "显示/隐藏调试 UI" })
+map("n", "<leader>dp", function()
+	require("dap").toggle_breakpoint()
+end, { desc = "切换断点" })
+map("n", "<leader>dt", function()
+	require("dapui").toggle()
+end, { desc = "显示/隐藏调试 UI" })
