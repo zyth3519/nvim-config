@@ -4,6 +4,15 @@ return {
 		"catppuccin/nvim",
 		name = "catppuccin",
 		priority = 1000,
+		opts = {
+			integrations = {
+				indent_blankline = {
+					enabled = true,
+					scope_color = "lavender",
+					colored_indent_levels = false,
+				},
+			},
+		},
 	},
 
 	-- 2. 状态栏 (Statusline)
@@ -85,7 +94,58 @@ return {
 		},
 		event = "LspAttach",
 	},
-	-- 6. UI 增强 (Noice)
+
+	-- 6. 缩进线 (Indent Blankline)
+	{
+		"lukas-reineke/indent-blankline.nvim",
+		main = "ibl",
+		event = { "BufReadPost", "BufNewFile" },
+		config = function()
+			local hooks = require("ibl.hooks")
+			hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
+				vim.api.nvim_set_hl(0, "IblScope", { fg = "#585b70" })
+			end)
+
+			require("ibl").setup({
+				indent = { char = "┊" },
+				scope = {
+					show_start = false,
+					show_end = false,
+					include = {
+						node_type = {
+							["*"] = {
+								"arguments",
+								"block",
+								"bracket",
+								"declaration",
+								"field",
+								"for_statement",
+								"func_literal",
+								"function",
+								"function_call",
+								"function_declaration",
+								"if_statement",
+								"import_statement",
+								"list",
+								"method",
+								"object",
+								"return_statement",
+								"switch_statement",
+								"table",
+								"try_statement",
+							},
+							lua = {
+								"table_constructor",
+								"function_definition",
+							},
+						},
+					},
+				},
+			})
+		end,
+	},
+
+	-- 7. UI 增强 (Noice)
 	{
 		"folke/noice.nvim",
 		event = "VeryLazy",
