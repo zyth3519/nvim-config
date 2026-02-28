@@ -1,75 +1,81 @@
 -- lua/tree/init.lua
 local ui = require("tree.ui")
 local hl = require("tree.highlight")
-local trie_mod = require("tree.trie")
 local renderer = require("tree.renderer")
-local preview = require("tree.preview")
 local keymaps = require("tree.keymaps")
 local fold = require("tree.fold")
 local cfg = require("tree.config").defaults
 local log = require("tree.log")
 
 local tree = {
-	fd_paths = {},
-	fd_job = nil,
+	tree_output = {},
+	tree_job = nil,
 }
 
 local function check_deps()
-	if vim.fn.executable("fd") == 0 then
-		vim.notify("⚠️ 必须安装 'fd'", vim.log.levels.ERROR)
+	if vim.fn.executable("tree") == 0 then
+		vim.notify("⚠️ 必须安装 'tree' 并且支持 -J 参数", vim.log.levels.ERROR)
 		return false
 	end
 	return true
 end
 
-local function build_fd_cmd(target)
-	local cmd = { "fd", "--type", "f", "--type", "d", "--hidden" }
+local function build_tree_cmd()
+	local cmd = { "tree", "-J", "-a", "--noreport", "--gitignore" }
 	for _, ex in ipairs(cfg.fd_exclude) do
-		vim.list_extend(cmd, { "--exclude", ex })
+		vim.list_extend(cmd, { "-I", ex })
 	end
-	vim.list_extend(cmd, { ".", target })
 	return cmd
 end
 
-local function fd_on_stdout(_, data)
+local function tree_on_stdout(_, data)
 	if not data then
 		return
 	end
 	for _, line in ipairs(data) do
 		if line ~= "" then
-			table.insert(tree.fd_paths, line)
+			table.insert(tree.tree_output, line)
 		end
 	end
 end
 
-local function fd_on_exit(fd_code, target_path, abs_root, args)
+local function tree_on_exit(exit_code, abs_root, target)
 	vim.schedule(function()
 		if not vim.api.nvim_buf_is_valid(tree.buf) then
 			return
 		end
-		if fd_code ~= 0 or #tree.fd_paths == 0 then
-			ui.set_loading(tree.buf, "⚠️ 未找到任何文件。")
+		if exit_code ~= 0 or #tree.tree_output == 0 then
+			ui.set_loading(tree.buf, "⚠️ 未找到任何文件或扫描出错。")
 			return
 		end
 
-		-- ── 1. 构建 Trie ────────────────────────────────
-		local trie = trie_mod.build(tree.fd_paths, target_path, abs_root)
+		local json_str = table.concat(tree.tree_output, "")
+		local ok, tree_json = pcall(vim.json.decode, json_str)
 
-		-- ── 2. 首次渲染 ─────────────────────────────────
-		local result = renderer.render(trie, abs_root, {})
+		if not ok or not tree_json then
+			ui.set_loading(tree.buf, "⚠️ 解析 JSON 失败。")
+			return
+		end
 
-		-- ctx 用闭包共享，折叠刷新后更新 file_map/is_dir_map
+		-- ── 1. 首次渲染 ─────────────────────────────────
+		local result = renderer.render(tree_json, abs_root, {})
+
+		if not result then
+			ui.set_loading(tree.buf, "⚠️ 渲染树结构失败。")
+			return
+		end
+
+		-- ctx 用闭包共享
 		local ctx = {
 			buf = tree.buf,
 			win = tree.win,
-			pbuf = tree.pbuf,
-			pwin = tree.pwin,
 			file_map = result.file_map,
 			is_dir_map = result.is_dir_map,
 			abs_root = abs_root,
+			parent_map = result.parent_map,
 		}
 
-		-- ── 3. 写入 buffer ──────────────────────────────
+		-- ── 2. 写入 buffer ──────────────────────────────
 		vim.bo[tree.buf].modifiable = true
 		vim.api.nvim_buf_set_lines(tree.buf, 0, -1, false, result.lines)
 		vim.bo[tree.buf].modifiable = false
@@ -79,35 +85,27 @@ local function fd_on_exit(fd_code, target_path, abs_root, args)
 			hl.apply_icons(tree.buf, result.icon_hl_map)
 		end
 
-		-- ── 4. 初始化折叠模块 ───────────────────────────
-		fold.init(tree.buf, tree.win, trie, abs_root, function(new_file_map, new_is_dir_map, new_icon_hl_map)
-			ctx.file_map = new_file_map
-			ctx.is_dir_map = new_is_dir_map
-			if new_icon_hl_map then
-				hl.apply_icons(tree.buf, new_icon_hl_map)
+		-- ── 3. 初始化折叠模块 ───────────────────────────
+		fold.init(tree.buf, tree.win, tree_json, abs_root, function(res)
+			ctx.file_map = res.file_map
+			ctx.is_dir_map = res.is_dir_map
+			ctx.parent_map = res.parent_map
+			if result.icon_hl_map then
+				hl.apply_icons(tree.buf, res.icon_hl_map)
 			end
 		end)
 
-		-- ── 5. 绑定快捷键 ───────────────────────────────
-		keymaps.setup(ctx, preview, fold)
-
-		if cfg.preview then
-			-- ── 6. 初始预览 ─────────────────────────────────
-			vim.schedule(function()
-				preview.update(ctx)
-			end)
-		end
+		-- ── 4. 绑定快捷键 ───────────────────────────────
+		keymaps.setup(ctx, fold)
 
 		-- 设置光标位置
 		for index, value in ipairs(result.file_map) do
-			if value == args then
+			if value == target then
 				local name = vim.fn.fnamemodify(value, ":t")
 				local col = string.len(result.lines[index]) - string.len(name)
-
 				if result.is_dir_map[index] then
 					col = col - 1
 				end
-
 				pcall(vim.api.nvim_win_set_cursor, ctx.win, { index, col })
 				break
 			end
@@ -115,19 +113,19 @@ local function fd_on_exit(fd_code, target_path, abs_root, args)
 	end)
 end
 
-local function run(target_path, abs_root, args)
-	tree.layout = ui.create_layout(target_path)
-	tree.buf, tree.win, tree.pbuf, tree.pwin = tree.layout.buf, tree.layout.win, tree.layout.pbuf, tree.layout.pwin
-
-	ui.set_loading(tree.buf, "⏳ 正在扫描 [" .. target_path .. "] ...")
+local function run(root, target)
+	tree.layout = ui.create_layout(root)
+	tree.buf, tree.win = tree.layout.buf, tree.layout.win
+	ui.set_loading(tree.buf, "⏳ 正在扫描 [" .. root .. "] ...")
 	ui.setup_close_autocmd(tree.layout)
 	hl.apply(tree.buf)
 
-	tree.fd_job = vim.fn.jobstart(build_fd_cmd(target_path), {
+	tree.tree_output = {}
+	tree.tree_job = vim.fn.jobstart(build_tree_cmd(), {
 		stdout_buffered = true,
-		on_stdout = fd_on_stdout,
-		on_exit = function(_, fd_code)
-			fd_on_exit(fd_code, target_path, abs_root, args)
+		on_stdout = tree_on_stdout,
+		on_exit = function(_, exit_code)
+			tree_on_exit(exit_code, root, target)
 		end,
 	})
 
@@ -136,8 +134,8 @@ local function run(target_path, abs_root, args)
 		once = true,
 		callback = function()
 			fold.cleanup(tree.buf)
-			if tree.fd_job and tree.fd_job > 0 then
-				pcall(vim.fn.jobstop, tree.fd_job)
+			if tree.tree_job and tree.tree_job > 0 then
+				pcall(vim.fn.jobstop, tree.tree_job)
 			end
 		end,
 	})
@@ -160,29 +158,30 @@ vim.api.nvim_create_user_command("Tree", function(opts)
 	end
 
 	-- 获取当前文件路径
-	local file_path = vim.fn.expand("%:p")
+	local target = vim.fn.expand("%:p")
 	-- 如果拥有输入的参数，就按照参数来
 	if string.len(opts.args) > 0 then
-		file_path = vim.fn.fnamemodify(opts.args, ":p")
+		target = vim.fn.fnamemodify(opts.args, ":p")
 	end
 
 	local is_oil = false
-	if vim.startswith(file_path, "oil://") then
+	if vim.startswith(target, "oil://") then
 		is_oil = true
 	end
-	file_path = file_path:gsub("^oil://", ""):gsub("/+$", "")
+	target = target:gsub("^oil://", ""):gsub("/+$", "")
 	-- 判断当前是不是oil插件，如果是就将光标定位到oil插件所在的路径
 	if is_oil then
 		local ok, oil = pcall(require, "oil")
 		if ok then
 			local name = oil.get_cursor_entry().name
-			file_path = vim.fs.joinpath(file_path, name)
+			target = vim.fs.joinpath(target, name)
 		end
 	end
 
-	local abs_root = vim.fn.getcwd()
-	if not is_path_inside_cwd(file_path) then
-		file_path = abs_root
+	local root = vim.fn.getcwd()
+	if not is_path_inside_cwd(target) then
+		target = root
 	end
-	run(abs_root, abs_root, file_path)
+
+	run(root, target)
 end, { nargs = "?", complete = "dir", desc = "浮动目录树" })

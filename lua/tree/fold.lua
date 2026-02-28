@@ -9,7 +9,7 @@ local log = require("tree.log")
 
 ---@class FoldState
 ---@field fold_state  table<string, boolean>  path → closed
----@field trie_root   TrieNode
+---@field tree_json   table
 ---@field abs_root    string
 ---@field buf         integer
 ---@field win         integer
@@ -21,13 +21,13 @@ local store = {}
 --- 注册一个 buf 的折叠上下文
 ---@param buf       integer
 ---@param win       integer
----@param trie_root TrieNode
+---@param tree_json table
 ---@param abs_root  string
 ---@param on_refresh function
-function M.init(buf, win, trie_root, abs_root, on_refresh)
+function M.init(buf, win, tree_json, abs_root, on_refresh)
 	store[buf] = {
 		fold_state = {},
-		trie_root = trie_root,
+		tree_json = tree_json,
 		abs_root = abs_root,
 		buf = buf,
 		win = win,
@@ -56,7 +56,6 @@ local function restore_cursor(st, cur_path, file_map)
 	local best_lnum, best_len = 1, 0
 	for lnum, path in pairs(file_map) do
 		if vim.startswith(cur_path, path .. "/") and #path > best_len then
-			local name = vim.fn.fnamemodify(cur_path, ":t")
 			best_lnum = lnum
 			best_len = #path
 		end
@@ -68,18 +67,18 @@ end
 --- 重渲染 buf 并调用回调更新 ctx
 ---@param st FoldState
 local function refresh(st, target_path)
-	local result = renderer.render(st.trie_root, st.abs_root, st.fold_state)
+	local result = renderer.render(st.tree_json, st.abs_root, st.fold_state)
 
-	-- 记住光标行对应的路径，渲染后恢复
-	-- local cur_lnum = vim.api.nvim_win_get_cursor(st.win)[1]
-	-- local cur_path = result.file_map[cur_lnum]
+	if not result then
+		return
+	end
 
 	vim.bo[st.buf].modifiable = true
 	vim.api.nvim_buf_set_lines(st.buf, 0, -1, false, result.lines)
 	vim.bo[st.buf].modifiable = false
 
 	-- 回调：让 keymaps / preview 拿到最新的 file_map / is_dir_map / icon_hl_map
-	st.on_refresh(result.file_map, result.is_dir_map, result.icon_hl_map)
+	st.on_refresh(result)
 	vim.schedule(function()
 		restore_cursor(st, target_path, result.file_map)
 	end)
@@ -90,32 +89,22 @@ end
 ---@param lnum integer   当前光标行号（基于最新 file_map）
 ---@param file_map   table<integer, string>
 ---@param is_dir_map table<integer, boolean>
-function M.toggle(buf, lnum, file_map, is_dir_map)
+function M.toggle(buf, lnum, file_map, is_dir_map, parent_name)
+	-- 第一行（根目录）不允许折叠
+	if lnum == 1 then
+		return
+	end
+
 	local st = store[buf]
 	if not st then
 		return
 	end
 
-	-- 找到要折叠的目录：优先当前行（若是目录），否则向上找父目录
 	local target_path = nil
-
 	if is_dir_map[lnum] and file_map[lnum] then
-		-- 第一行（根目录）不允许折叠
-		if lnum == 1 then
-			return
-		end
 		target_path = file_map[lnum]
 	else
-		local deep = utils.safe_length(vim.split(file_map[lnum], "/"))
-		-- 当前行是文件，向上找最近的目录行
-		for l = lnum - 1, 2, -1 do
-			local cur_deep = utils.safe_length(vim.split(file_map[l], "/"))
-
-			if is_dir_map[l] and file_map[l] and cur_deep < deep then
-				target_path = file_map[l]
-				break
-			end
-		end
+		target_path = file_map[parent_name[lnum]]
 	end
 
 	if not target_path then

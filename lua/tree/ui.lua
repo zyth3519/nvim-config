@@ -5,36 +5,19 @@ local M = {}
 local cfg = require("tree.config").defaults
 
 --- 计算浮窗的几何参数
----@return table { width, height, row, col, main_width, preview_width }
+---@return table { width, height, row, col  }
 local function calc_geometry()
 	local width = math.ceil(vim.o.columns * cfg.win_width_ratio)
 	local height = math.ceil(vim.o.lines * cfg.win_height_ratio)
 	local row = math.ceil((vim.o.lines - height) / 2 - 1)
 	local col = math.ceil((vim.o.columns - width) / 2)
-	local main_width
-	if cfg.preview then
-		main_width = math.ceil(width * cfg.main_width_ratio)
-	else
-		main_width = width
-	end
-	local preview_width = width - main_width - 1 -- -1 留边框间隙
+
 	return {
 		width = width,
 		height = height,
 		row = row,
 		col = col,
-		main_width = main_width,
-		preview_width = preview_width,
 	}
-end
-
---- 创建预览 buffer（只读 nofile）
----@return integer buf_handle
-local function create_preview_buf()
-	local pbuf = vim.api.nvim_create_buf(false, true)
-	vim.bo[pbuf].buftype = "nofile"
-	vim.bo[pbuf].modifiable = false
-	return pbuf
 end
 
 --- 创建主 buffer（nofile / mytree filetype）
@@ -50,8 +33,6 @@ end
 ---@class WinPair
 ---@field buf     integer  主 buffer
 ---@field win     integer  主窗口
----@field pbuf    integer  预览 buffer
----@field pwin    integer  预览窗口
 ---@field geo     table    几何参数
 
 --- 一次性创建双窗口布局，返回句柄集合
@@ -59,29 +40,12 @@ end
 ---@return WinPair
 function M.create_layout(target_path)
 	local geo = calc_geometry()
-	local pbuf = create_preview_buf()
 	local buf = create_main_buf()
-	local pwin = 0
-
-	if cfg.preview then
-		-- 先创建预览窗口（false = 不聚焦）
-		pwin = vim.api.nvim_open_win(pbuf, false, {
-			relative = "editor",
-			width = geo.preview_width,
-			height = geo.height,
-			row = geo.row,
-			col = geo.col + geo.main_width + 1,
-			style = "minimal",
-			border = "rounded",
-			title = " Preview ",
-			title_pos = "center",
-		})
-	end
 
 	-- 再创建主窗口（true = 聚焦）
 	local win = vim.api.nvim_open_win(buf, true, {
 		relative = "editor",
-		width = geo.main_width,
+		width = geo.width,
 		height = geo.height,
 		row = geo.row,
 		col = geo.col,
@@ -95,13 +59,13 @@ function M.create_layout(target_path)
 	vim.api.nvim_set_option_value("wrap", false, { win = win })
 	vim.api.nvim_set_option_value("linebreak", false, { win = win })
 
-	return { buf = buf, win = win, pbuf = pbuf, pwin = pwin, geo = geo }
+	return { buf = buf, win = win, geo = geo }
 end
 
 --- 注册窗口关闭联动（主窗口离开时一并关闭预览）
 ---@param layout WinPair
 function M.setup_close_autocmd(layout)
-	local buf, win, pbuf, pwin = layout.buf, layout.win, layout.pbuf, layout.pwin
+	local buf, win = layout.buf, layout.win
 
 	vim.api.nvim_create_autocmd({ "BufLeave", "WinClosed" }, {
 		buffer = buf,
@@ -109,13 +73,6 @@ function M.setup_close_autocmd(layout)
 		callback = function()
 			vim.schedule(function()
 				local t = { { win, buf } }
-
-				if cfg.preview then
-					t = {
-						{ pwin, pbuf },
-						{ win, buf },
-					}
-				end
 
 				for _, pair in ipairs(t) do
 					local w, b = pair[1], pair[2]

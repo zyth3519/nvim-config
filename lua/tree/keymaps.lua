@@ -2,15 +2,13 @@
 
 ---@class KeymapCtx
 ---@field buf        integer
----@field pbuf       integer
 ---@field win       integer
----@field pwin       integer
 ---@field file_map   table<integer, string>
 ---@field is_dir_map table<integer, boolean>
+---@field parent_map table<integer, integer>
 ---@field abs_root   string
 
 local M = {}
-local cfg = require("tree.config")
 local utils = require("tree.utils")
 
 local function resolve(fpath, abs_root)
@@ -73,9 +71,8 @@ local function make_open(file_map, is_dir_map, abs_root, open_cmd)
 end
 
 ---@param ctx     KeymapCtx
----@param preview table
 ---@param fold    table
-function M.setup(ctx, preview, fold)
+function M.setup(ctx, fold)
 	local buf = ctx.buf
 	local abs_root = ctx.abs_root
 
@@ -109,38 +106,18 @@ function M.setup(ctx, preview, fold)
 		make_open_oil(ctx.file_map, ctx.is_dir_map, abs_root)()
 	end, "Oil 打开目录")
 
-	if cfg.preview then
-		map("<C-n>", function()
-			preview.scroll(ctx.pwin, ctx.pbuf, "down")
-		end, "预览向下翻页")
-		map("<C-p>", function()
-			preview.scroll(ctx.pwin, ctx.pbuf, "up")
-		end, "预览向上翻页")
-	end
-
 	-- 折叠快捷键
 	map("za", function()
-		fold.toggle(buf, vim.fn.line("."), ctx.file_map, ctx.is_dir_map)
+		fold.toggle(buf, vim.fn.line("."), ctx.file_map, ctx.is_dir_map, ctx.parent_map)
 	end, "折叠/展开当前目录")
 
 	map("zM", function()
-		fold.close_all(buf, ctx.file_map, ctx.is_dir_map)
+		fold.close_all(buf, ctx.file_map, ctx.is_dir_map, ctx.parent_map)
 	end, "折叠所有目录")
 
 	map("zR", function()
 		fold.open_all(buf)
 	end, "展开所有目录")
-
-	if cfg.preview then
-		vim.api.nvim_create_autocmd("CursorMoved", {
-			buffer = buf,
-			callback = function()
-				vim.schedule(function()
-					preview.update(ctx)
-				end)
-			end,
-		})
-	end
 end
 
 return M
