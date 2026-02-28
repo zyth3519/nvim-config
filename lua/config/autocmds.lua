@@ -10,7 +10,11 @@ vim.api.nvim_create_autocmd("TermOpen", {
 		vim.keymap.set("t", "<C-k>", [[<Cmd>wincmd k<CR>]], opts)
 		vim.keymap.set("t", "<C-l>", [[<Cmd>wincmd l<CR>]], opts)
 		vim.keymap.set("t", "<C-w>", [[<C-\><C-n><C-w>]], opts)
-		-- 打开终端时自动进入插入模式
-		vim.cmd("startinsert")
+
+		-- 自动隐藏终端中的行号
+		vim.opt_local.number = false
+		vim.opt_local.relativenumber = false
+		-- 允许终端随着 nvim 退出而自动清理进程（避免 E948）
+		vim.opt_local.bufhidden = "hide"
 	end,
 })

@@ -109,6 +109,38 @@ return {
 		opts = {
 			suppressed_dirs = { "~/", "~/Projects", "~/Downloads", "/" },
 			log_level = "error",
+			bypass_save_filetypes = {
+				"terminal",
+				"oil",
+				"MyTree",
+				"qf",
+				"help",
+				"checkhealth",
+				"lazy",
+				"mason",
+				"TelescopePrompt",
+				"OverseerList",
+			},
+			pre_save_cmds = {
+				function()
+					-- 在保存会话前，强制关闭所有终端窗口和其他不需要的界面
+					local bufs = vim.api.nvim_list_bufs()
+					for _, bufnr in ipairs(bufs) do
+						if vim.api.nvim_buf_is_valid(bufnr) then
+							local bt = vim.bo[bufnr].buftype
+							local ft = vim.bo[bufnr].filetype
+							if bt == "terminal" or bt == "nofile" or bt == "prompt" or ft == "qf" then
+								-- 关闭所有包含这些 buffer 的窗口
+								for _, winid in ipairs(vim.fn.win_findbuf(bufnr)) do
+									vim.api.nvim_win_close(winid, true)
+								end
+								-- 删除 buffer
+								vim.api.nvim_buf_delete(bufnr, { force = true })
+							end
+						end
+					end
+				end,
+			},
 			post_restore_cmds = {
 				function()
 					vim.defer_fn(function()
@@ -186,5 +218,39 @@ return {
 	{
 		"stevearc/overseer.nvim",
 		cmd = { "OverseerRun", "OverseerToggle", "OverseerTaskAction", "OverseerOpen" },
+		config = function()
+			local overseer = require("overseer")
+
+			overseer.setup({
+				task_list = {
+					direction = "bottom",
+					min_height = 15,
+					max_height = 15,
+					default_detail = 1,
+					bindings = {
+						["q"] = "<Cmd>OverseerClose<CR>",
+					},
+				},
+				component_aliases = {
+					default = {
+						"on_exit_set_status",
+						"on_complete_notify",
+						"open_on_finish",
+					},
+				},
+			})
+
+			-- 为 OverseerList 提供窗口跳转快捷键
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = "OverseerList",
+				callback = function()
+					local opts = { buffer = 0, noremap = true, silent = true }
+					vim.keymap.set("n", "<C-h>", "<Cmd>wincmd h<CR>", opts)
+					vim.keymap.set("n", "<C-j>", "<Cmd>wincmd j<CR>", opts)
+					vim.keymap.set("n", "<C-k>", "<Cmd>wincmd k<CR>", opts)
+					vim.keymap.set("n", "<C-l>", "<Cmd>wincmd l<CR>", opts)
+				end,
+			})
+		end,
 	},
 }
