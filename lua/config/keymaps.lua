@@ -40,6 +40,7 @@ if wk_ok then
 		{ "g", group = "导航/跳转 (Go)", icon = "󰜎" },
 		{ "<leader>e", desc = "打开Tree", icon = "󰙅" },
 		{ "<leader>t", desc = "终端", icon = "󰆍" },
+		{ "<leader>r", group = "任务 (Overseer)", icon = "" },
 	})
 end
 
@@ -52,6 +53,11 @@ map("n", "<leader>ft", "<cmd>Tree<cr>", { desc = "打开Tree" })
 map("n", "<leader>ff", "<cmd>Oil --float<cr>", { desc = "打开 Oil 文件管理器" })
 map("n", "<leader>fF", "<cmd>Oil --float .<cr>", { desc = "打开 Oil (Root)" })
 map("n", "<leader>t", "<cmd>belowright 10%split | terminal<cr>", { desc = "终端" })
+
+-- 【任务运行 (Overseer)】
+map("n", "<leader>rr", "<cmd>OverseerRun<cr>", { desc = "运行任务" })
+map("n", "<leader>rt", "<cmd>OverseerToggle<cr>", { desc = "切换任务列表" })
+map("n", "<leader>ra", "<cmd>OverseerTaskAction<cr>", { desc = "任务操作" })
 
 -- 【窗口管理 (Window)】
 map("n", "<leader>wh", "<cmd>split<cr>", { desc = "水平分割当前窗口" })

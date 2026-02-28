@@ -45,6 +45,49 @@ return {
 			"nvim-lua/plenary.nvim",
 			{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
 		},
+		config = function()
+			-- 使用 Telescope picker 替代 vim.ui.select
+			vim.ui.select = function(items, opts, on_choice)
+				local pickers = require("telescope.pickers")
+				local finders = require("telescope.finders")
+				local conf = require("telescope.config").values
+				local actions = require("telescope.actions")
+				local action_state = require("telescope.actions.state")
+
+				local format = (opts and opts.format_item) or tostring
+
+				pickers
+					.new({}, {
+						prompt_title = (opts and opts.prompt) or "Select",
+						finder = finders.new_table({
+							results = items,
+							entry_maker = function(item)
+								local text = format(item)
+								return { value = item, display = text, ordinal = text }
+							end,
+						}),
+						sorter = conf.generic_sorter({}),
+						attach_mappings = function(bufnr)
+							actions.select_default:replace(function()
+								local selection = action_state.get_selected_entry()
+								actions.close(bufnr)
+								if selection then
+									-- 找到原始 index
+									for i, item in ipairs(items) do
+										if item == selection.value then
+											on_choice(selection.value, i)
+											return
+										end
+									end
+								end
+								on_choice(nil, nil)
+							end)
+							return true
+						end,
+					})
+					:find()
+			end
+		end,
 	},
 
 	-- 2. 强大的文件管理器 (Oil)
@@ -137,5 +180,11 @@ return {
 			-- 修复多光标模式下的退出问题 (ESC)
 			vim.g.VM_quit_after_leaving_insert_mode = 1
 		end,
+	},
+
+	-- 8. 任务运行器 (Overseer)
+	{
+		"stevearc/overseer.nvim",
+		cmd = { "OverseerRun", "OverseerToggle", "OverseerTaskAction", "OverseerOpen" },
 	},
 }
