@@ -59,20 +59,7 @@ return {
 		lazy = false,
 	},
 
-	-- 3. 内置终端控制 (Toggleterm)
-	{
-		"akinsho/toggleterm.nvim",
-		version = "*",
-		opts = {
-			size = 10,
-			direction = "horizontal",
-			close_on_exit = true,
-			shade_terminals = true,
-			float_opts = { border = "rounded", winblend = 10 },
-		},
-	},
-
-	-- 4. 会话管理 (Auto-Session)
+	-- 3. 会话管理 (Auto-Session)
 	{
 		"rmagatti/auto-session",
 		lazy = false,
@@ -90,7 +77,7 @@ return {
 		},
 	},
 
-	-- 5. Git 集成客户端 (Lazygit)
+	-- 4. Git 集成客户端 (Lazygit)
 	{
 		"kdheepak/lazygit.nvim",
 		cmd = {
@@ -106,7 +93,7 @@ return {
 		end,
 	},
 
-	-- 6. Git 状态栏提示 (Gitsigns)
+	-- 5. Git 状态栏提示 (Gitsigns)
 	{
 		"lewis6991/gitsigns.nvim",
 		config = function()
@@ -128,7 +115,7 @@ return {
 		end,
 	},
 
-	-- 7. 优秀的折叠插件 (Ufo)
+	-- 6. 优秀的折叠插件 (Ufo)
 	{
 		"kevinhwang91/nvim-ufo",
 		dependencies = { "kevinhwang91/promise-async" },
@@ -137,7 +124,7 @@ return {
 		end,
 	},
 
-	-- 8. 多光标支持 (Vim-Visual-Multi)
+	-- 7. 多光标支持 (Vim-Visual-Multi)
 	{
 		"mg979/vim-visual-multi",
 		branch = "master",

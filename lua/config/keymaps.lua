@@ -51,7 +51,7 @@ map({ "n", "i", "v", "c" }, "<C-e>", "<cmd>stopinsert | Tree<cr>", { desc = "快
 map("n", "<leader>ft", "<cmd>Tree<cr>", { desc = "打开Tree" })
 map("n", "<leader>ff", "<cmd>Oil --float<cr>", { desc = "打开 Oil 文件管理器" })
 map("n", "<leader>fF", "<cmd>Oil --float .<cr>", { desc = "打开 Oil (Root)" })
-map("n", "<leader>t", "<cmd>ToggleTerm<cr>", { desc = "终端" })
+map("n", "<leader>t", "<cmd>belowright 10%split | terminal<cr>", { desc = "终端" })
 
 -- 【窗口管理 (Window)】
 map("n", "<leader>wh", "<cmd>split<cr>", { desc = "水平分割当前窗口" })
