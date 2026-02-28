@@ -4,6 +4,8 @@
 
 local M = {}
 
+local log = require("tree.log")
+
 -- 树形绘制符号
 local SYM = {
 	branch = "├── ",
