@@ -3,6 +3,10 @@ local map = vim.keymap.set
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
+local key_obj = {
+	dapui_show = false,
+}
+
 -- =========================================================================
 -- 1. 核心基础快捷键 (Core)
 -- =========================================================================
@@ -134,11 +138,11 @@ map("n", "<leader>gp", "<cmd>Neogit pull<cr>", { desc = "Git 拉取 (Pull)" })
 map("n", "<leader>gP", "<cmd>Neogit push<cr>", { desc = "Git 推送 (Push)" })
 map("n", "<leader>gd", "<cmd>DiffviewOpen<cr>", { desc = "打开差异视图 (Diffview)" })
 map("n", "<leader>gD", "<cmd>DiffviewClose<cr>", { desc = "关闭差异视图 (Diffview)" })
--- map("n", "<leader>gb", "<cmd>Gitsigns blame_line<cr>", { desc = "单行责备 (Blame)" })
--- map("n", "<leader>gB", "<cmd>Gitsigns toggle_current_line_blame<cr>", { desc = "开启单行责备" })
--- map("n", "<leader>gr", "<cmd>Gitsigns reset_hunk<cr>", { desc = "回滚代码块 (Reset)" })
--- map("n", "<leader>gR", "<cmd>Gitsigns reset_buffer<cr>", { desc = "回滚整个文件" })
--- map("n", "<leader>gh", "<cmd>Gitsigns preview_hunk<cr>", { desc = "预览代码块差异" })
+map("n", "<leader>gb", "<cmd>Gitsigns blame_line<cr>", { desc = "单行责备 (Blame)" })
+map("n", "<leader>gB", "<cmd>Gitsigns toggle_current_line_blame<cr>", { desc = "开启单行责备" })
+map("n", "<leader>gr", "<cmd>Gitsigns reset_hunk<cr>", { desc = "回滚代码块 (Reset)" })
+map("n", "<leader>gR", "<cmd>Gitsigns reset_buffer<cr>", { desc = "回滚整个文件" })
+map("n", "<leader>gh", "<cmd>Gitsigns preview_hunk<cr>", { desc = "预览代码块差异" })
 
 -- 【LSP 代码操作 (Code)】
 map("n", "<leader>cr", vim.lsp.buf.rename, { desc = "重命名符号 (Rename)" })
@@ -195,6 +199,25 @@ map("n", "<leader>dp", function()
 	require("dap").toggle_breakpoint()
 end, { desc = "切换断点" })
 
+map("n", "<F9>", function()
+	require("dap").toggle_breakpoint()
+end, { desc = "切换断点" })
+
+local dapui_show = false
 map("n", "<leader>dt", function()
-	require("dapui").toggle()
+	local dapui = require("dapui")
+	local api = require("nvim-tree.api")
+
+	if not dapui_show then
+		dapui.open()
+		api.tree.close()
+		dapui_show = true
+	else
+		dapui.close()
+		if not api.tree.is_visible() then
+			api.tree.open()
+			vim.cmd("wincmd p")
+		end
+		dapui_show = false
+	end
 end, { desc = "显示/隐藏调试 UI" })
