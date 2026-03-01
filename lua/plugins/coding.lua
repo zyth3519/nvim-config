@@ -21,6 +21,26 @@ return {
 			completion = { documentation = { auto_show = true } },
 			sources = { default = { "lsp", "path", "snippets", "buffer" } },
 			signature = { enabled = true },
+			fuzzy = {
+				implementation = "prefer_rust_with_warning",
+				sorts = {
+					"exact",
+					-- 降低下划线开头的条目优先级 (如 _private_var)
+					function(a, b)
+						local _, a_under = a.label:find("^_+")
+						local _, b_under = b.label:find("^_+")
+						a_under = a_under or 0
+						b_under = b_under or 0
+						if a_under > b_under then
+							return false
+						elseif a_under < b_under then
+							return true
+						end
+					end,
+					"score",
+					"sort_text",
+				},
+			},
 		},
 		opts_extend = { "sources.default" },
 	},
