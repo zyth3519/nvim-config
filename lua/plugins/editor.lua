@@ -247,6 +247,18 @@ return {
 					-- 如果带参数启动（比如 nvim file.txt），不要加载会话
 					if vim.fn.argc(-1) == 0 then
 						resession.load(vim.fn.getcwd(), { dir = "dirsession", silence_errors = true })
+						-- 会话恢复后，重新触发文件类型检测和 BufReadPost 事件
+						-- 以激活懒加载的插件（gitsigns、ufo、indent-blankline 等）
+						vim.defer_fn(function()
+							for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+								if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].buflisted then
+									vim.api.nvim_buf_call(buf, function()
+										vim.cmd("filetype detect")
+									end)
+								end
+							end
+							vim.api.nvim_exec_autocmds("BufReadPost", { modeline = false })
+						end, 50)
 					end
 				end,
 			})
