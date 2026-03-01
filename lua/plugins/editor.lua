@@ -201,46 +201,6 @@ return {
 		end,
 	},
 
-	-- 任务运行器 (Overseer)
-	{
-		"stevearc/overseer.nvim",
-		-- cmd = { "OverseerRun", "OverseerToggle", "OverseerTaskAction", "OverseerOpen" },
-		config = function()
-			local overseer = require("overseer")
-
-			overseer.setup({
-				task_list = {
-					direction = "bottom",
-					min_height = 10,
-					max_height = 10,
-					default_detail = 1,
-					bindings = {
-						["q"] = "<Cmd>OverseerClose<CR>",
-					},
-				},
-				component_aliases = {
-					default = {
-						"on_exit_set_status",
-						"on_complete_notify",
-					},
-				},
-			})
-
-			-- 为 OverseerList 提供窗口跳转快捷键
-			vim.api.nvim_create_autocmd("FileType", {
-				pattern = "OverseerList",
-				callback = function()
-					local opts = { buffer = 0, noremap = true, silent = true }
-					vim.keymap.set("n", "<C-h>", "<Cmd>wincmd h<CR>", opts)
-					vim.keymap.set("n", "<C-j>", "<Cmd>wincmd j<CR>", opts)
-					vim.keymap.set("n", "<C-k>", "<Cmd>wincmd k<CR>", opts)
-					vim.keymap.set("n", "<C-l>", "<Cmd>wincmd l<CR>", opts)
-				end,
-			})
-
-			vim.cmd.cnoreabbrev("OS OverseerShell")
-		end,
-	},
 	-- 强大且安全的会话管理 (Resession)
 	{
 		"stevearc/resession.nvim",
