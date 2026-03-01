@@ -90,7 +90,6 @@ return {
 		end,
 	},
 
-	-- 2. 强大的文件管理器 (Oil)
 	{
 		"nvim-tree/nvim-tree.lua",
 		dependencies = {
@@ -108,7 +107,7 @@ return {
 				api.config.mappings.default_on_attach(bufnr)
 
 				-- 移除不需要的文件操作快捷键，使用 oil 进行管理
-				local del_keys = { "a", "d", "D", "r", "e", "c", "x", "p", "y", "Y" }
+				local del_keys = { "a", "d", "D", "r", "e", "x", "p" }
 				for _, key in ipairs(del_keys) do
 					pcall(vim.keymap.del, "n", key, { buffer = bufnr })
 				end
@@ -116,7 +115,8 @@ return {
 				-- 绑定 o 打开 Oil
 				vim.keymap.set("n", "o", function()
 					local node = api.tree.get_node_under_cursor()
-					local path = node.type == "directory" and node.absolute_path or vim.fn.fnamemodify(node.absolute_path, ":h")
+					local path = node.type == "directory" and node.absolute_path
+						or vim.fn.fnamemodify(node.absolute_path, ":h")
 					-- 切换回主窗口并打开 Oil
 					vim.cmd("wincmd p")
 					require("oil").open(path)
@@ -132,6 +132,7 @@ return {
 		end,
 	},
 
+	-- 强大的文件管理器 (Oil)
 	{
 		"stevearc/oil.nvim",
 		opts = {
