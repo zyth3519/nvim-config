@@ -147,17 +147,9 @@ return {
 			end
 			dap.listeners.before.event_terminated.dapui_config = function()
 				dapui.close()
-				if not api.tree.is_visible() then
-					api.tree.open()
-					vim.cmd("wincmd p")
-				end
 			end
 			dap.listeners.before.event_exited.dapui_config = function()
 				dapui.close()
-				if not api.tree.is_visible() then
-					api.tree.open()
-					vim.cmd("wincmd p")
-				end
 			end
 		end,
 	},

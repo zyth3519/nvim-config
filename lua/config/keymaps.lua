@@ -203,21 +203,7 @@ map("n", "<F9>", function()
 	require("dap").toggle_breakpoint()
 end, { desc = "切换断点" })
 
-local dapui_show = false
 map("n", "<leader>dt", function()
-	local dapui = require("dapui")
-	local api = require("nvim-tree.api")
-
-	if not dapui_show then
-		dapui.open()
-		api.tree.close()
-		dapui_show = true
-	else
-		dapui.close()
-		if not api.tree.is_visible() then
-			api.tree.open()
-			vim.cmd("wincmd p")
-		end
-		dapui_show = false
-	end
+	require("dapui").toggle()
+	require("nvim-tree.api").tree.close()
 end, { desc = "显示/隐藏调试 UI" })
