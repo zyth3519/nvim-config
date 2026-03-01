@@ -173,26 +173,26 @@ return {
 	},
 
 	-- Git 状态栏提示 (Gitsigns)
-	-- {
-	-- 	"lewis6991/gitsigns.nvim",
-	-- 	config = function()
-	-- 		require("gitsigns").setup({
-	-- 			signs = {
-	-- 				add = { text = "┃" },
-	-- 				change = { text = "┃" },
-	-- 				delete = { text = "_" },
-	-- 				topdelete = { text = "‾" },
-	-- 				changedelete = { text = "~" },
-	-- 				untracked = { text = "┆" },
-	-- 			},
-	-- 			signcolumn = true,
-	-- 			watch_gitdir = { follow_files = true },
-	-- 			auto_attach = true,
-	-- 			sign_priority = 6,
-	-- 			update_debounce = 100,
-	-- 		})
-	-- 	end,
-	-- },
+	{
+		"lewis6991/gitsigns.nvim",
+		config = function()
+			require("gitsigns").setup({
+				signs = {
+					add = { text = "┃" },
+					change = { text = "┃" },
+					delete = { text = "_" },
+					topdelete = { text = "‾" },
+					changedelete = { text = "~" },
+					untracked = { text = "┆" },
+				},
+				signcolumn = true,
+				watch_gitdir = { follow_files = true },
+				auto_attach = true,
+				sign_priority = 6,
+				update_debounce = 100,
+			})
+		end,
+	},
 
 	-- 优秀的折叠插件 (Ufo)
 	{
