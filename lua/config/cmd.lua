@@ -6,32 +6,7 @@ vim.api.nvim_create_user_command("Run", function(opts)
 	end
 end, {
 	nargs = "+",
-
-	complete = function(_, cmd_line)
-		-- 移除命令名前的空格
-		cmd_line = cmd_line:gsub("^Run", "")
-		cmd_line:gsub("^%s*", "")
-
-		-- 使用 fish 补全
-		local fish_cmd = string.format('fish -c "complete -C %s"', vim.fn.shellescape(cmd_line))
-
-		local handle = io.popen(fish_cmd)
-		if not handle then
-			return {}
-		end
-
-		local results = {}
-		for line in handle:lines() do
-			local completion = line:match("^([^\t]+)")
-			if completion and completion ~= "" then
-				table.insert(results, completion)
-			end
-		end
-		handle:close()
-
-		return results
-	end,
-
+	complete = "shellcmd",
 	desc = "运行命令",
 })
 
