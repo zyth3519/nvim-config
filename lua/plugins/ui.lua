@@ -149,10 +149,20 @@ return {
 		"folke/noice.nvim",
 		event = "VeryLazy",
 		opts = {
-			presets = {
-				bottom_search = true, -- 搜索使用经典底部命令行
-				long_message_to_split = true, -- 长消息（包括 :! 命令输出）自动用 split 窗口显示
-				lsp_doc_border = true, -- LSP 文档加上边框
+			routes = {
+				{
+					view = "split",
+					filter = {
+						event = "msg_show",
+						kind = {
+							"shell_out",
+							"shell_err",
+						},
+					},
+					opts = {
+						skip = false,
+					},
+				},
 			},
 		},
 		dependencies = {
