@@ -126,14 +126,12 @@ return {
 			},
 			bottom = {
 				{
-					ft = "dap-repl",
-					size = { heigh = 10, width = 0.5 },
-
-					open = "vsplit",
+					ft = "dapui_console",
+					size = { height = 10 },
 				},
 				{
-					ft = "apui_console",
-					size = { heigh = 10, width = 0.5 },
+					ft = "dap-repl",
+					size = { height = 10 },
 				},
 			},
 			options = {
