@@ -204,15 +204,15 @@ return {
 	-- 任务运行器 (Overseer)
 	{
 		"stevearc/overseer.nvim",
-		cmd = { "OverseerRun", "OverseerToggle", "OverseerTaskAction", "OverseerOpen" },
+		-- cmd = { "OverseerRun", "OverseerToggle", "OverseerTaskAction", "OverseerOpen" },
 		config = function()
 			local overseer = require("overseer")
 
 			overseer.setup({
 				task_list = {
 					direction = "bottom",
-					min_height = 15,
-					max_height = 15,
+					min_height = 10,
+					max_height = 10,
 					default_detail = 1,
 					bindings = {
 						["q"] = "<Cmd>OverseerClose<CR>",
@@ -222,7 +222,6 @@ return {
 					default = {
 						"on_exit_set_status",
 						"on_complete_notify",
-						"open_on_finish",
 					},
 				},
 			})
@@ -238,6 +237,8 @@ return {
 					vim.keymap.set("n", "<C-l>", "<Cmd>wincmd l<CR>", opts)
 				end,
 			})
+
+			vim.cmd.cnoreabbrev("OS OverseerShell")
 		end,
 	},
 	-- 强大且安全的会话管理 (Resession)
