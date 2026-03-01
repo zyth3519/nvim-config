@@ -57,13 +57,21 @@ return {
 		"stevearc/resession.nvim",
 		config = function()
 			local resession = require("resession")
+			-- 定期保存会话
 			resession.setup({
-				-- 自动在退出时保存会话
 				autosave = {
 					enabled = true,
 					interval = 60,
 					notify = false,
 				},
+			})
+
+			-- 退出自动保存会话
+			vim.api.nvim_create_autocmd("VimLeavePre", {
+				callback = function()
+					-- Always save a special session named "last"
+					resession.save("last")
+				end,
 			})
 
 			-- 在进入 Neovim 时自动恢复当前目录的会话（不带参数时）
