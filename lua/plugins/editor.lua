@@ -64,6 +64,9 @@ return {
 					interval = 60,
 					notify = false,
 				},
+						extensions = {
+							dap = {}, -- 保存 dap 断点信息
+						},
 			})
 
 			-- 退出自动保存会话
