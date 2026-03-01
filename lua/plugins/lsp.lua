@@ -12,7 +12,7 @@ local function get_lua_ls_settings()
 end
 
 return {
-	-- 0. Zig 官方文件类型与高亮支持
+	-- Zig 官方文件类型与高亮支持
 	{
 		"ziglang/zig.vim",
 		ft = { "zig" },
@@ -22,7 +22,7 @@ return {
 		end,
 	},
 
-	-- 1. 核心 LSP 配置
+	-- 核心 LSP 配置
 	{
 		"neovim/nvim-lspconfig",
 		dependencies = {
@@ -69,7 +69,7 @@ return {
 		end,
 	},
 
-	-- 2. 依赖管理总管 (Mason)
+	-- 依赖管理总管 (Mason)
 	{
 		"williamboman/mason.nvim",
 		opts = {
@@ -84,7 +84,7 @@ return {
 		},
 	},
 
-	-- 3. LSP 服务器自动安装
+	-- LSP 服务器自动安装
 	{
 		"williamboman/mason-lspconfig.nvim",
 		event = { "BufReadPre", "BufNewFile" },

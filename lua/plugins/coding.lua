@@ -1,5 +1,5 @@
 return {
-	-- 1. 代码补全与提示 (Blink.cmp)
+	-- 代码补全与提示 (Blink.cmp)
 	{
 		"saghen/blink.cmp",
 		dependencies = { "rafamadriz/friendly-snippets" },
@@ -25,22 +25,21 @@ return {
 		opts_extend = { "sources.default" },
 	},
 
-	-- 2. 括号自动补全 (Autopairs)
+	-- 括号自动补全 (Autopairs)
 	{
 		"windwp/nvim-autopairs",
 		event = "InsertEnter",
 		config = true,
 	},
 
-	-- 3. 环绕字符编辑支持 (Surround)
+	-- 环绕字符编辑支持 (Surround)
 	{
 		"kylechui/nvim-surround",
 		version = "*",
 		event = "VeryLazy",
 	},
 
-	-- 4. 代码格式化引擎 (Conform)
-	-- (注：格式化快捷键已被统一管理至 lua/config/keymaps.lua 中)
+	-- 代码格式化引擎 (Conform)
 	{
 		"stevearc/conform.nvim",
 		event = { "BufWritePre" },

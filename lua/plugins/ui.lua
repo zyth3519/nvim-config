@@ -1,5 +1,5 @@
 return {
-	-- 1. 主题 (Colorscheme)
+	-- 主题 (Colorscheme)
 	{
 		"catppuccin/nvim",
 		name = "catppuccin",
@@ -15,7 +15,7 @@ return {
 		},
 	},
 
-	-- 2. 状态栏 (Statusline)
+	-- 状态栏 (Statusline)
 	{
 		"nvim-lualine/lualine.nvim",
 		dependencies = { "nvim-tree/nvim-web-devicons" },
@@ -24,7 +24,7 @@ return {
 		end,
 	},
 
-	-- 3. 顶部标签栏/缓冲区 (Bufferline)
+	-- 顶部标签栏/缓冲区 (Bufferline)
 	{
 		"akinsho/bufferline.nvim",
 		version = "*",
@@ -62,7 +62,7 @@ return {
 		end,
 	},
 
-	-- 4. 快捷键提示 (Which-key)
+	-- 快捷键提示 (Which-key)
 	{
 		"folke/which-key.nvim",
 		event = "VeryLazy",
@@ -72,7 +72,7 @@ return {
 		},
 	},
 
-	-- 5. LSP 加载进度提示 (Fidget)
+	-- LSP 加载进度提示 (Fidget)
 	{
 		"j-hui/fidget.nvim",
 		tag = "legacy",
@@ -95,7 +95,7 @@ return {
 		event = "LspAttach",
 	},
 
-	-- 6. 缩进线 (Indent Blankline)
+	-- 缩进线 (Indent Blankline)
 	{
 		"lukas-reineke/indent-blankline.nvim",
 		main = "ibl",
@@ -145,7 +145,7 @@ return {
 		end,
 	},
 
-	-- 7. UI 增强 (Noice)
+	-- UI 增强 (Noice)
 	{
 		"folke/noice.nvim",
 		event = "VeryLazy",

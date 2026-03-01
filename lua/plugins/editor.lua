@@ -172,7 +172,6 @@ return {
 		lazy = false,
 	},
 
-
 	-- Git 状态栏提示 (Gitsigns)
 	{
 		"lewis6991/gitsigns.nvim",
@@ -295,8 +294,8 @@ return {
 	{
 		"NeogitOrg/neogit",
 		dependencies = {
-			"nvim-lua/plenary.nvim",         -- 必须
-			"sindrets/diffview.nvim",        -- 推荐: 用于解决合并冲突和强大的差异视图
+			"nvim-lua/plenary.nvim", -- 必须
+			"sindrets/diffview.nvim", -- 推荐: 用于解决合并冲突和强大的差异视图
 			"nvim-telescope/telescope.nvim", -- 推荐
 		},
 		config = true,
