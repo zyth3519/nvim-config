@@ -66,13 +66,6 @@ return {
 				},
 			})
 
-			-- 在离开 Neovim 时自动保存当前目录的会话
-			vim.api.nvim_create_autocmd("VimLeavePre", {
-				callback = function()
-					resession.save(vim.fn.getcwd(), { dir = "dirsession", notify = false })
-				end,
-			})
-
 			-- 在进入 Neovim 时自动恢复当前目录的会话（不带参数时）
 			vim.api.nvim_create_autocmd("VimEnter", {
 				callback = function()
