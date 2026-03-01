@@ -25,6 +25,7 @@ return {
 	-- 核心 LSP 配置
 	{
 		"neovim/nvim-lspconfig",
+		event = { "BufReadPre", "BufNewFile" },
 		dependencies = {
 			"williamboman/mason.nvim",
 			"williamboman/mason-lspconfig.nvim",
@@ -72,6 +73,7 @@ return {
 	-- 依赖管理总管 (Mason)
 	{
 		"williamboman/mason.nvim",
+		cmd = { "Mason", "MasonInstall", "MasonUpdate", "MasonUninstall" },
 		opts = {
 			ui = {
 				border = "rounded",

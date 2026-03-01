@@ -104,6 +104,12 @@ end
 return {
 	{
 		"mfussenegger/nvim-dap",
+		cmd = { "DapContinue", "DapToggleBreakpoint" },
+		keys = {
+			{ "<F5>", desc = "启动/继续调试" },
+			{ "<leader>dc", desc = "启动/继续调试" },
+			{ "<leader>dp", desc = "切换断点" },
+		},
 		config = function()
 			local dap = require("dap")
 			-- 配置 codelldb 适配器
