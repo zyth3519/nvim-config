@@ -132,6 +132,23 @@ return {
 					enable = true,
 				},
 			})
+
+			-- 启动时自动打开 NvimTree
+			vim.api.nvim_create_autocmd("VimEnter", {
+				callback = function()
+					-- 稍微延迟，等 resession 恢复完成后再判断
+					vim.defer_fn(function()
+						local api = require("nvim-tree.api")
+						if not api.tree.is_visible() then
+							api.tree.open()
+							-- 如果启动时带了文件参数，则把光标移回文件窗口
+							if vim.fn.argc(-1) > 0 then
+								vim.cmd("wincmd p")
+							end
+						end
+					end, 50)
+				end,
+			})
 		end,
 	},
 
