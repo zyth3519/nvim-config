@@ -59,22 +59,11 @@ return {
 				css = { "prettier" },
 				markdown = { "prettier" },
 			},
-			-- 将 format_on_save 改为一个动态函数来避免在退出时触发格式化进而导致 auto-session 报错
-			format_on_save = function(bufnr)
-				-- 忽略在退出等特殊过程中的触发
-				if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
-					return
-				end
-
-				-- 当使用 :wq 或 :x 退出时，往往会触发 session 保存，此时异步格式化会导致错乱
-				-- 通过判断这几种边缘情况，直接返回跳过格式化
-				local bufname = vim.api.nvim_buf_get_name(bufnr)
-				if bufname:match("Session.vim") or vim.bo[bufnr].filetype == "mytree" then
-					return
-				end
-
-				return { timeout_ms = 500, lsp_fallback = true }
-			end,
+			format_on_save = {
+				-- These options will be passed to conform.format()
+				timeout_ms = 500,
+				lsp_format = "fallback",
+			},
 		},
 	},
 }
