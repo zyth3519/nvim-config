@@ -258,4 +258,36 @@ return {
 			})
 		end,
 	},
+	-- 强大且安全的会话管理 (Resession)
+	{
+		"stevearc/resession.nvim",
+		config = function()
+			local resession = require("resession")
+			resession.setup({
+				-- 自动在退出时保存会话
+				autosave = {
+					enabled = true,
+					interval = 60,
+					notify = false,
+				},
+			})
+
+			-- 在离开 Neovim 时自动保存当前目录的会话
+			vim.api.nvim_create_autocmd("VimLeavePre", {
+				callback = function()
+					resession.save(vim.fn.getcwd(), { dir = "dirsession", notify = false })
+				end,
+			})
+
+			-- 在进入 Neovim 时自动恢复当前目录的会话（不带参数时）
+			vim.api.nvim_create_autocmd("VimEnter", {
+				callback = function()
+					-- 如果带参数启动（比如 nvim file.txt），不要加载会话
+					if vim.fn.argc(-1) == 0 then
+						resession.load(vim.fn.getcwd(), { dir = "dirsession", silence_errors = true })
+					end
+				end,
+			})
+		end,
+	},
 }
