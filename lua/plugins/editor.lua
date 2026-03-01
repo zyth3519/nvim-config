@@ -92,4 +92,17 @@ return {
 			})
 		end,
 	},
+	{
+		"folke/edgy.nvim",
+		event = "VeryLazy",
+		opts = {
+			left = {
+				{
+					ft = "NvimTree",
+					title = "Nvim Tree",
+					size = { width = 30 },
+				},
+			},
+		},
+	},
 }

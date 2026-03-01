@@ -26,6 +26,9 @@ return {
 				severity_sort = true,
 			})
 
+			-- 添加类型推断
+			vim.lsp.inlay_hint.enable(true)
+
 			-- 应用所有已注册的 LSP 配置
 			require("config.lsp-configs").apply()
 		end,
