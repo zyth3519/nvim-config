@@ -38,6 +38,7 @@ if wk_ok then
 		{ "<leader>g", group = "版本控制 (Git)", icon = "󰊢" },
 		{ "<leader>s", group = "搜索 (Search)", icon = "󰍉" },
 		{ "<leader>w", group = "窗口 (Window)", icon = "󱂬" },
+		{ "<leader>r", group = "任务 (Overseer)", icon = "󰆍" },
 		{ "g", group = "导航/跳转 (Go)", icon = "󰜎" },
 		{ "<leader>e", desc = "打开Tree", icon = "󰙅" },
 	})
@@ -192,3 +193,10 @@ end, { desc = "切换断点" })
 map("n", "<leader>dt", function()
 	require("dapui").toggle()
 end, { desc = "显示/隐藏调试 UI" })
+
+-- 【任务运行 (Overseer)】
+map("n", "<leader>rr", "<cmd>OverseerRun<cr>", { desc = "运行任务" })
+map("n", "<leader>rt", "<cmd>OverseerToggle<cr>", { desc = "切换面板任务列表" })
+map("n", "<leader>ra", "<cmd>OverseerTaskAction<cr>", { desc = "任务操作" })
+map("n", "<leader>ro", "<cmd>OverseerOpen<cr>", { desc = "打开任务列表" })
+map("n", "<leader>rc", "<cmd>OverseerClose<cr>", { desc = "关闭任务列表" })

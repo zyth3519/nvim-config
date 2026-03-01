@@ -40,21 +40,9 @@ return {
 						or vim.fn.fnamemodify(node.absolute_path, ":h")
 					-- 切换回主窗口并打开 Oil
 					vim.cmd("wincmd p")
-					require("oil").open(path)
+					require("oil").open_float(path)
 				end, opts("Open Oil"))
 			end
-
-			vim.api.nvim_create_autocmd("VimEnter", {
-				callback = function()
-					vim.defer_fn(function()
-						local api = require("nvim-tree.api")
-						if not api.tree.is_visible() then
-							api.tree.open()
-							vim.cmd("wincmd p")
-						end
-					end, 50)
-				end,
-			})
 
 			require("nvim-tree").setup({
 				on_attach = my_on_attach,
