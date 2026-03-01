@@ -172,21 +172,6 @@ return {
 		lazy = false,
 	},
 
-	-- Git 集成客户端 (Lazygit)
-	{
-		"kdheepak/lazygit.nvim",
-		cmd = {
-			"LazyGit",
-			"LazyGitConfig",
-			"LazyGitCurrentFile",
-			"LazyGitFilter",
-			"LazyGitFilterCurrentFile",
-		},
-		dependencies = { "nvim-lua/plenary.nvim" },
-		config = function()
-			vim.g.lazygit_use_neovim_remote = 0
-		end,
-	},
 
 	-- Git 状态栏提示 (Gitsigns)
 	{
@@ -304,5 +289,16 @@ return {
 				end,
 			})
 		end,
+	},
+
+	-- 强大的纯文本 Git 客户端 (Magit for Neovim)
+	{
+		"NeogitOrg/neogit",
+		dependencies = {
+			"nvim-lua/plenary.nvim",         -- 必须
+			"sindrets/diffview.nvim",        -- 推荐: 用于解决合并冲突和强大的差异视图
+			"nvim-telescope/telescope.nvim", -- 推荐
+		},
+		config = true,
 	},
 }

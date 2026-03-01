@@ -35,6 +35,7 @@ if wk_ok then
 		{ "<leader>c", group = "代码 (Code)", icon = "󰅩" },
 		{ "<leader>d", group = "调试 (Debug)", icon = "󰃤" },
 		{ "<leader>f", group = "文件 (File)", icon = "󰉋" },
+		{ "<leader>g", group = "版本控制 (Git)", icon = "󰊢" },
 		{ "<leader>s", group = "搜索 (Search)", icon = "󰍉" },
 		{ "<leader>qs", desc = "会话管理 (Session)", icon = "󰆓" },
 		{ "<leader>w", group = "窗口 (Window)", icon = "󱂬" },
@@ -127,6 +128,19 @@ map("n", "<leader>sd", "<cmd>Telescope diagnostics<cr>", { desc = "查找诊断�
 map("n", "<leader>qss", function() require("resession").save() end, { desc = "保存会话 (Save)" })
 map("n", "<leader>qsl", function() require("resession").load() end, { desc = "加载会话 (Load)" })
 map("n", "<leader>qsd", function() require("resession").delete() end, { desc = "删除会话 (Delete)" })
+
+-- 【Git 操作 (Neogit & Gitsigns)】
+map("n", "<leader>gg", "<cmd>Neogit<cr>", { desc = "打开 Neogit" })
+map("n", "<leader>gc", "<cmd>Neogit commit<cr>", { desc = "Git 提交 (Commit)" })
+map("n", "<leader>gp", "<cmd>Neogit pull<cr>", { desc = "Git 拉取 (Pull)" })
+map("n", "<leader>gP", "<cmd>Neogit push<cr>", { desc = "Git 推送 (Push)" })
+map("n", "<leader>gd", "<cmd>DiffviewOpen<cr>", { desc = "打开差异视图 (Diffview)" })
+map("n", "<leader>gD", "<cmd>DiffviewClose<cr>", { desc = "关闭差异视图 (Diffview)" })
+map("n", "<leader>gb", "<cmd>Gitsigns blame_line<cr>", { desc = "单行责备 (Blame)" })
+map("n", "<leader>gB", "<cmd>Gitsigns toggle_current_line_blame<cr>", { desc = "开启单行责备" })
+map("n", "<leader>gr", "<cmd>Gitsigns reset_hunk<cr>", { desc = "回滚代码块 (Reset)" })
+map("n", "<leader>gR", "<cmd>Gitsigns reset_buffer<cr>", { desc = "回滚整个文件" })
+map("n", "<leader>gh", "<cmd>Gitsigns preview_hunk<cr>", { desc = "预览代码块差异" })
 
 -- 【LSP 代码操作 (Code)】
 map("n", "<leader>cr", vim.lsp.buf.rename, { desc = "重命名符号 (Rename)" })
