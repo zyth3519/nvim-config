@@ -42,6 +42,7 @@ if wk_ok then
 		{ "g", group = "导航/跳转 (Go)", icon = "󰜎" },
 		{ "<leader>e", desc = "打开Tree", icon = "󰙅" },
 		{ "<leader>r", group = "任务 (Overseer)", icon = "󰆍" },
+		{ "<leader>t", group = "终端 (Terminal)", icon = "" },
 	})
 end
 
@@ -196,6 +197,21 @@ end, { desc = "单步跳出 (Step Out)" })
 map("n", "<leader>dp", function()
 	require("dap").toggle_breakpoint()
 end, { desc = "切换断点" })
+
+-- 【终端管理 (Toggleterm)】
+-- 注: <C-\> 用于打开/隐藏悬浮终端 (在 plugins/editor.lua 中已配置)
+map("n", "<leader>th", "<cmd>ToggleTerm direction=horizontal<cr>", { desc = "水平终端" })
+map("n", "<leader>tv", "<cmd>ToggleTerm direction=vertical<cr>", { desc = "垂直终端" })
+map("n", "<leader>tf", "<cmd>ToggleTerm direction=float<cr>", { desc = "悬浮终端" })
+map("n", "<leader>ta", "<cmd>ToggleTermToggleAll<cr>", { desc = "显示/隐藏所有终端" })
+-- 在终端模式下使用 ESC / <C-q> 回到 Normal 模式
+map("t", "<Esc>", "<C-\\><C-n>", { desc = "退出终端模式" })
+map("t", "<C-q>", "<C-\\><C-n>", { desc = "退出终端模式" })
+-- 在终端模式下的窗口跳转
+map("t", "<C-h>", "<C-\\><C-n><C-w>h", { desc = "终端跳转到左侧窗口" })
+map("t", "<C-j>", "<C-\\><C-n><C-w>j", { desc = "终端跳转到下方窗口" })
+map("t", "<C-k>", "<C-\\><C-n><C-w>k", { desc = "终端跳转到上方窗口" })
+map("t", "<C-l>", "<C-\\><C-n><C-w>l", { desc = "终端跳转到右侧窗口" })
 map("n", "<leader>dt", function()
 	require("dapui").toggle()
 end, { desc = "显示/隐藏调试 UI" })

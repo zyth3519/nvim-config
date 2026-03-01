@@ -300,4 +300,37 @@ return {
 		},
 		config = true,
 	},
+
+	-- 终端管理 (Toggleterm)
+	{
+		"akinsho/toggleterm.nvim",
+		version = "*",
+		opts = {
+			size = function(term)
+				if term.direction == "horizontal" then
+					return 15
+				elseif term.direction == "vertical" then
+					return vim.o.columns * 0.4
+				end
+			end,
+			open_mapping = [[<c-\]], -- 全局快捷键 Ctrl+\ 打开/隐藏终端
+			hide_numbers = true, -- 隐藏终端里的行号
+			shade_terminals = true,
+			shading_factor = 2,
+			start_in_insert = true, -- 打开终端时自动进入插入模式
+			insert_mappings = true, -- 在插入模式下可以使用快捷键
+			persist_size = true,
+			direction = "float", -- 默认使用悬浮窗口，也可以改为 "horizontal" 或 "vertical"
+			close_on_exit = true, -- 运行 exit 时关闭终端窗口
+			shell = vim.o.shell,
+			float_opts = {
+				border = "curved", -- 圆角边框
+				winblend = 0,
+				highlights = {
+					border = "Normal",
+					background = "Normal",
+				},
+			},
+		},
+	},
 }
