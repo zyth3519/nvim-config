@@ -41,7 +41,6 @@ if wk_ok then
 		{ "<leader>f", group = "文件 (File)", icon = "󰉋" },
 		{ "<leader>g", group = "版本控制 (Git)", icon = "󰊢" },
 		{ "<leader>s", group = "搜索 (Search)", icon = "󰍉" },
-		{ "<leader>qs", desc = "会话管理 (Session)", icon = "󰆓" },
 		{ "<leader>w", group = "窗口 (Window)", icon = "󱂬" },
 		{ "g", group = "导航/跳转 (Go)", icon = "󰜎" },
 		{ "<leader>e", desc = "打开Tree", icon = "󰙅" },
@@ -112,24 +111,14 @@ for i = 1, 9 do
 end
 
 -- 【Telescope 搜索 (Search)】
+map("n", "<leader>ss", "<cmd>Telescope<cr>", { desc = "运行Telescope" })
 map("n", "<leader>sf", "<cmd>Telescope find_files<cr>", { desc = "查找文件 (find_files)" })
 map("n", "<leader>sg", "<cmd>Telescope live_grep<cr>", { desc = "全局搜索内容 (live_grep)" })
 map("n", "<leader>sb", "<cmd>Telescope buffers<cr>", { desc = "搜索缓冲区 (buffers)" })
 map("n", "<leader>sh", "<cmd>Telescope help_tags<cr>", { desc = "搜索帮助文档 (help_tags)" })
-map("n", "<leader>ss", "<cmd>Telescope lsp_document_symbols<cr>", { desc = "当前文档 LSP 符号" })
-map("n", "<leader>sS", "<cmd>Telescope lsp_workspace_symbols<cr>", { desc = "工作区 LSP 符号" })
+map("n", "<leader>sy", "<cmd>Telescope lsp_document_symbols<cr>", { desc = "当前文档 LSP 符号" })
+map("n", "<leader>sY", "<cmd>Telescope lsp_workspace_symbols<cr>", { desc = "工作区 LSP 符号" })
 map("n", "<leader>sd", "<cmd>Telescope diagnostics<cr>", { desc = "查找诊断信息" })
-
--- 【会话管理 (Session) - resession】
-map("n", "<leader>qss", function()
-	require("resession").save()
-end, { desc = "保存会话 (Save)" })
-map("n", "<leader>qsl", function()
-	require("resession").load()
-end, { desc = "加载会话 (Load)" })
-map("n", "<leader>qsd", function()
-	require("resession").delete()
-end, { desc = "删除会话 (Delete)" })
 
 -- 【Git 操作 (Neogit & Gitsigns)】
 map("n", "<leader>gg", "<cmd>Neogit<cr>", { desc = "打开 Neogit" })
