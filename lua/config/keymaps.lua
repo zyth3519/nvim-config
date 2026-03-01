@@ -191,5 +191,4 @@ end, { desc = "切换断点" })
 
 map("n", "<leader>dt", function()
 	require("dapui").toggle()
-	require("nvim-tree.api").tree.close()
 end, { desc = "显示/隐藏调试 UI" })

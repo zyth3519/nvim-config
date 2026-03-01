@@ -96,12 +96,49 @@ return {
 		"folke/edgy.nvim",
 		event = "VeryLazy",
 		opts = {
+			exit_when_last = true,
 			left = {
 				{
 					ft = "NvimTree",
 					title = "Nvim Tree",
 					size = { width = 30 },
 				},
+			},
+
+			right = {
+
+				{
+					ft = "dapui_scopes",
+					size = { width = 30 },
+				},
+				{
+					ft = "dapui_breakpoints",
+					size = { width = 30 },
+				},
+				{
+					ft = "dapui_stacks",
+					size = { width = 30 },
+				},
+				{
+					ft = "dapui_watches",
+					size = { width = 30 },
+				},
+			},
+			bottom = {
+				{
+					ft = "dap-repl",
+					size = { heigh = 10, width = 0.5 },
+
+					open = "vsplit",
+				},
+				{
+					ft = "apui_console",
+					size = { heigh = 10, width = 0.5 },
+				},
+			},
+			options = {
+				left = { size = 30 },
+				bottom = { size = 10 },
 			},
 		},
 	},
