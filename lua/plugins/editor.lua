@@ -64,38 +64,30 @@ return {
 					interval = 60,
 					notify = false,
 				},
-						extensions = {
-							dap = {}, -- 保存 dap 断点信息
-						},
+				extensions = {
+					dap = {}, -- 保存 dap 断点信息
+				},
 			})
 
-			-- 退出自动保存会话
-			vim.api.nvim_create_autocmd("VimLeavePre", {
-				callback = function()
-					-- Always save a special session named "last"
-					resession.save("last")
-				end,
-			})
-
-			-- 在进入 Neovim 时自动恢复当前目录的会话（不带参数时）
 			vim.api.nvim_create_autocmd("VimEnter", {
 				callback = function()
-					-- 如果带参数启动（比如 nvim file.txt），不要加载会话
-					if vim.fn.argc(-1) == 0 then
+					-- Only load the session if nvim was started with no args and without reading from stdin
+					if vim.fn.argc(-1) == 0 and not vim.g.using_stdin then
+						-- Save these to a different directory, so our manual sessions don't get polluted
 						resession.load(vim.fn.getcwd(), { dir = "dirsession", silence_errors = true })
-						-- 会话恢复后，重新触发文件类型检测和 BufReadPost 事件
-						-- 以激活懒加载的插件（gitsigns、ufo、indent-blankline 等）
-						vim.defer_fn(function()
-							for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-								if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].buflisted then
-									vim.api.nvim_buf_call(buf, function()
-										vim.cmd("filetype detect")
-									end)
-								end
-							end
-							vim.api.nvim_exec_autocmds("BufReadPost", { modeline = false })
-						end, 50)
 					end
+				end,
+				nested = true,
+			})
+			vim.api.nvim_create_autocmd("VimLeavePre", {
+				callback = function()
+					resession.save(vim.fn.getcwd(), { dir = "dirsession", notify = false })
+				end,
+			})
+			vim.api.nvim_create_autocmd("StdinReadPre", {
+				callback = function()
+					-- Store this for later
+					vim.g.using_stdin = true
 				end,
 			})
 		end,
