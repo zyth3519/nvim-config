@@ -149,12 +149,20 @@ return {
 		"folke/noice.nvim",
 		event = "VeryLazy",
 		opts = {
-			-- 在这里可以添加配置项
+			-- 将 :! 外部命令的输出路由回经典消息界面，避免被吞掉
+			routes = {
+				{
+					filter = { event = "msg_show", kind = "" },
+					opts = { skip = false },
+				},
+			},
+			-- 使用经典的弹出窗口显示长消息，而不是 mini 通知
+			messages = {
+				view_search = false,
+			},
 		},
 		dependencies = {
-			-- 如果懒加载，需要确保依赖的可用性
 			"MunifTanjim/nui.nvim",
-			-- 推荐的通知插件
 			"rcarriga/nvim-notify",
 		},
 	},
