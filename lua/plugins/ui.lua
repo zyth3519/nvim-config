@@ -149,16 +149,10 @@ return {
 		"folke/noice.nvim",
 		event = "VeryLazy",
 		opts = {
-			-- 将 :! 外部命令的输出路由回经典消息界面，避免被吞掉
-			routes = {
-				{
-					filter = { event = "msg_show", kind = "" },
-					opts = { skip = false },
-				},
-			},
-			-- 使用经典的弹出窗口显示长消息，而不是 mini 通知
-			messages = {
-				view_search = false,
+			presets = {
+				bottom_search = true, -- 搜索使用经典底部命令行
+				long_message_to_split = true, -- 长消息（包括 :! 命令输出）自动用 split 窗口显示
+				lsp_doc_border = true, -- LSP 文档加上边框
 			},
 		},
 		dependencies = {
