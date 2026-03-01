@@ -142,6 +142,16 @@ return {
 			default_file_explorer = true,
 			columns = { "icon", "permissions", "size", "mtime" },
 			win_options = { winbar = "%!v:lua.get_oil_winbar()" },
+			keymaps = {
+				-- 禁用会和窗口导航 (Ctrl + hjkl) 冲突的快捷键
+				["<C-h>"] = false,
+				["<C-l>"] = false,
+				["<C-j>"] = false,
+				["<C-k>"] = false,
+				-- 重新映射可能被覆盖的重要快捷键
+				["<C-x>"] = { "actions.select", opts = { horizontal = true }, desc = "水平分割打开" },
+				["<C-r>"] = { "actions.refresh", desc = "刷新目录" },
+			},
 		},
 		dependencies = { { "nvim-mini/mini.icons", opts = {} } },
 		lazy = false,
