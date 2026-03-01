@@ -141,10 +141,8 @@ return {
 						local api = require("nvim-tree.api")
 						if not api.tree.is_visible() then
 							api.tree.open()
-							-- 如果启动时带了文件参数，则把光标移回文件窗口
-							if vim.fn.argc(-1) > 0 then
-								vim.cmd("wincmd p")
-							end
+							-- 打开 tree 后，强制把光标移回之前的文件窗口
+							vim.cmd("wincmd p")
 						end
 					end, 50)
 				end,
