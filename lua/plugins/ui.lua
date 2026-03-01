@@ -144,7 +144,6 @@ return {
 			})
 		end,
 	},
-
 	-- UI 增强 (Noice)
 	{
 		"folke/noice.nvim",
