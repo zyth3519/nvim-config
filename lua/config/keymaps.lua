@@ -44,47 +44,10 @@ if wk_ok then
 	})
 end
 
--- 【文件管理 (File)】
-local function toggle_nvim_tree()
-	local api = require("nvim-tree.api")
-	if api.tree.is_visible() then
-		api.tree.close()
-		return
-	end
-
-	if vim.bo.filetype == "oil" then
-		local ok, oil = pcall(require, "oil")
-		if ok then
-			local dir = oil.get_current_dir()
-			local entry = oil.get_cursor_entry()
-			if dir and entry then
-				local path = dir .. (entry.parsed_name or entry.name)
-				api.tree.open()
-				-- 定位到当前 Oil 光标所在行对应的文件
-				api.tree.find_file({ buf = path, open = true, focus = true, update_root = true })
-				return
-			end
-		end
-	end
-
-	-- 非 Oil 缓冲区或未命中，按当前文件定位并打开
-	api.tree.toggle({ find_file = true, focus = true, update_root = true })
-end
-
-map("n", "<leader>e", toggle_nvim_tree, { desc = "打开Tree" })
-
--- 在使用 cmd 调用时如果带有 insert 等其他模式，前置 <Esc> 或者 <C-\><C-n> 可以退回到 normal
-map({ "n", "i", "v", "c" }, "<C-e>", function()
-	if vim.fn.mode() ~= "n" then
-		vim.cmd("stopinsert")
-	end
-	toggle_nvim_tree()
-end, { desc = "快速打开目录树" })
-
-map("n", "<leader>ft", toggle_nvim_tree, { desc = "打开Tree" })
-
-map("n", "<leader>ff", "<cmd>Oil --float<cr>", { desc = "打开 Oil 文件管理器" })
-map("n", "<leader>fF", "<cmd>Oil --float .<cr>", { desc = "打开 Oil (Root)" })
+map("n", "<leader>e", "<cmd>Oil --float<cr>", { desc = "打开 Oil" })
+map("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { desc = "搜索当前项目文件" })
+map("n", "<leader>fe", "<cmd>Oil --float<cr>", { desc = "打开 Oil" })
+map("n", "<leader>fr", "<cmd>Oil --float .<cr>", { desc = "打开 Oil (Root)" })
 
 -- 【窗口管理 (Window)】
 map("n", "<leader>wh", "<cmd>split<cr>", { desc = "水平分割当前窗口" })

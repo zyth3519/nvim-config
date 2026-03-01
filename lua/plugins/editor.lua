@@ -140,16 +140,12 @@ return {
 				},
 				{
 					ft = "OverseerList",
-					size = { height = 10 },
+					size = { height = 15 },
 				},
 				{
 					ft = "OverseerOutput",
-					size = { height = 10 },
+					size = { height = 15 },
 				},
-			},
-			options = {
-				left = { size = 30 },
-				bottom = { size = 10 },
 			},
 		},
 	},
