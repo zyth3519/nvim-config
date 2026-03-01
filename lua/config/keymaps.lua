@@ -83,7 +83,6 @@ map({ "n", "i", "v", "c" }, "<C-e>", function()
 	toggle_nvim_tree()
 end, { desc = "快速打开目录树" })
 
-
 map("n", "<leader>ft", toggle_nvim_tree, { desc = "打开Tree" })
 
 map("n", "<leader>ff", "<cmd>Oil --float<cr>", { desc = "打开 Oil 文件管理器" })
@@ -126,9 +125,15 @@ map("n", "<leader>sS", "<cmd>Telescope lsp_workspace_symbols<cr>", { desc = "工
 map("n", "<leader>sd", "<cmd>Telescope diagnostics<cr>", { desc = "查找诊断信息" })
 
 -- 【会话管理 (Session) - resession】
-map("n", "<leader>qss", function() require("resession").save() end, { desc = "保存会话 (Save)" })
-map("n", "<leader>qsl", function() require("resession").load() end, { desc = "加载会话 (Load)" })
-map("n", "<leader>qsd", function() require("resession").delete() end, { desc = "删除会话 (Delete)" })
+map("n", "<leader>qss", function()
+	require("resession").save()
+end, { desc = "保存会话 (Save)" })
+map("n", "<leader>qsl", function()
+	require("resession").load()
+end, { desc = "加载会话 (Load)" })
+map("n", "<leader>qsd", function()
+	require("resession").delete()
+end, { desc = "删除会话 (Delete)" })
 
 -- 【Git 操作 (Neogit & Gitsigns)】
 map("n", "<leader>gg", "<cmd>Neogit<cr>", { desc = "打开 Neogit" })
@@ -137,11 +142,11 @@ map("n", "<leader>gp", "<cmd>Neogit pull<cr>", { desc = "Git 拉取 (Pull)" })
 map("n", "<leader>gP", "<cmd>Neogit push<cr>", { desc = "Git 推送 (Push)" })
 map("n", "<leader>gd", "<cmd>DiffviewOpen<cr>", { desc = "打开差异视图 (Diffview)" })
 map("n", "<leader>gD", "<cmd>DiffviewClose<cr>", { desc = "关闭差异视图 (Diffview)" })
-map("n", "<leader>gb", "<cmd>Gitsigns blame_line<cr>", { desc = "单行责备 (Blame)" })
-map("n", "<leader>gB", "<cmd>Gitsigns toggle_current_line_blame<cr>", { desc = "开启单行责备" })
-map("n", "<leader>gr", "<cmd>Gitsigns reset_hunk<cr>", { desc = "回滚代码块 (Reset)" })
-map("n", "<leader>gR", "<cmd>Gitsigns reset_buffer<cr>", { desc = "回滚整个文件" })
-map("n", "<leader>gh", "<cmd>Gitsigns preview_hunk<cr>", { desc = "预览代码块差异" })
+-- map("n", "<leader>gb", "<cmd>Gitsigns blame_line<cr>", { desc = "单行责备 (Blame)" })
+-- map("n", "<leader>gB", "<cmd>Gitsigns toggle_current_line_blame<cr>", { desc = "开启单行责备" })
+-- map("n", "<leader>gr", "<cmd>Gitsigns reset_hunk<cr>", { desc = "回滚代码块 (Reset)" })
+-- map("n", "<leader>gR", "<cmd>Gitsigns reset_buffer<cr>", { desc = "回滚整个文件" })
+-- map("n", "<leader>gh", "<cmd>Gitsigns preview_hunk<cr>", { desc = "预览代码块差异" })
 
 -- 【LSP 代码操作 (Code)】
 map("n", "<leader>cr", vim.lsp.buf.rename, { desc = "重命名符号 (Rename)" })
@@ -198,20 +203,6 @@ map("n", "<leader>dp", function()
 	require("dap").toggle_breakpoint()
 end, { desc = "切换断点" })
 
--- 【终端管理 (Toggleterm)】
--- 注: <C-\> 用于打开/隐藏悬浮终端 (在 plugins/editor.lua 中已配置)
-map("n", "<leader>th", "<cmd>ToggleTerm direction=horizontal<cr>", { desc = "水平终端" })
-map("n", "<leader>tv", "<cmd>ToggleTerm direction=vertical<cr>", { desc = "垂直终端" })
-map("n", "<leader>tf", "<cmd>ToggleTerm direction=float<cr>", { desc = "悬浮终端" })
-map("n", "<leader>ta", "<cmd>ToggleTermToggleAll<cr>", { desc = "显示/隐藏所有终端" })
--- 在终端模式下使用 ESC / <C-q> 回到 Normal 模式
-map("t", "<Esc>", "<C-\\><C-n>", { desc = "退出终端模式" })
-map("t", "<C-q>", "<C-\\><C-n>", { desc = "退出终端模式" })
--- 在终端模式下的窗口跳转
-map("t", "<C-h>", "<C-\\><C-n><C-w>h", { desc = "终端跳转到左侧窗口" })
-map("t", "<C-j>", "<C-\\><C-n><C-w>j", { desc = "终端跳转到下方窗口" })
-map("t", "<C-k>", "<C-\\><C-n><C-w>k", { desc = "终端跳转到上方窗口" })
-map("t", "<C-l>", "<C-\\><C-n><C-w>l", { desc = "终端跳转到右侧窗口" })
 map("n", "<leader>dt", function()
 	require("dapui").toggle()
 end, { desc = "显示/隐藏调试 UI" })
