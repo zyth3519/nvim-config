@@ -112,7 +112,8 @@ end
 
 -- 【Telescope 搜索 (Search)】
 map("n", "<leader>ss", "<cmd>Telescope<cr>", { desc = "运行Telescope" })
-map("n", "<leader>sf", "<cmd>Telescope find_files<cr>", { desc = "查找文件 (find_files)" })
+map("n", "<leader>sf", "<cmd>Telescope frecency<cr>", { desc = "查找文件 (frecency 智能排序)" })
+map("n", "<leader>sF", "<cmd>Telescope find_files<cr>", { desc = "查找文件 (find_files)" })
 map("n", "<leader>sg", "<cmd>Telescope live_grep<cr>", { desc = "全局搜索内容 (live_grep)" })
 map("n", "<leader>sb", "<cmd>Telescope buffers<cr>", { desc = "搜索缓冲区 (buffers)" })
 map("n", "<leader>sh", "<cmd>Telescope help_tags<cr>", { desc = "搜索帮助文档 (help_tags)" })

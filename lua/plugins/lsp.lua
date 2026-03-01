@@ -1,16 +1,3 @@
-local function get_lua_ls_settings()
-	return {
-		runtime = {
-			version = "LuaJIT",
-			path = { "lua/?.lua", "lua/?/init.lua" },
-		},
-		workspace = {
-			checkThirdParty = false,
-			library = { vim.env.VIMRUNTIME },
-		},
-	}
-end
-
 return {
 	-- Zig 官方文件类型与高亮支持
 	{
@@ -39,33 +26,8 @@ return {
 				severity_sort = true,
 			})
 
-			-- 注入 Ufo 折叠能力
-			local capabilities = vim.lsp.protocol.make_client_capabilities()
-			capabilities.textDocument.foldingRange = {
-				dynamicRegistration = false,
-				lineFoldingOnly = true,
-			}
-
-			-- 依据 Neovim 0.11+ 标准使用 vim.lsp.config 配置并启用
-			vim.lsp.config("lua_ls", {
-				capabilities = capabilities,
-				settings = {
-					Lua = get_lua_ls_settings(),
-				},
-			})
-			vim.lsp.enable("lua_ls")
-
-			-- Rust
-			vim.lsp.config("rust_analyzer", { capabilities = capabilities })
-			vim.lsp.enable("rust_analyzer")
-
-			-- TypeScript
-			vim.lsp.config("ts_ls", { capabilities = capabilities })
-			vim.lsp.enable("ts_ls")
-
-			-- Zig (zls)
-			vim.lsp.config("zls", { capabilities = capabilities })
-			vim.lsp.enable("zls")
+			-- 应用所有已注册的 LSP 配置
+			require("config.lsp-configs").apply()
 		end,
 	},
 
@@ -89,13 +51,15 @@ return {
 	{
 		"williamboman/mason-lspconfig.nvim",
 		event = { "BufReadPre", "BufNewFile" },
-		opts = {
-			ensure_installed = { "lua_ls", "rust_analyzer", "ts_ls", "zls" },
-			automatic_installation = true,
-		},
+		opts = function()
+			return {
+				ensure_installed = require("config.lsp-configs").get_server_names(),
+				automatic_installation = true,
+			}
+		end,
 	},
 
-	-- 4. 格式化器及其他工具自动安装
+	-- 格式化器及其他工具自动安装
 	{
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
 		event = "VeryLazy",
