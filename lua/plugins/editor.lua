@@ -126,11 +126,11 @@ return {
 			},
 			bottom = {
 				{
-					ft = "dapui_console",
+					ft = "dap-repl",
 					size = { height = 10 },
 				},
 				{
-					ft = "dap-repl",
+					ft = "dapui_console",
 					size = { height = 10 },
 				},
 			},
