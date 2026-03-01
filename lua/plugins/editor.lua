@@ -38,7 +38,7 @@ local ufo_handler = function(virtText, lnum, endLnum, width, truncate)
 end
 
 return {
-	-- 1. 文件搜索 (Telescope)
+	-- 文件搜索 (Telescope)
 	{
 		"nvim-telescope/telescope.nvim",
 		dependencies = {
@@ -157,57 +157,7 @@ return {
 		lazy = false,
 	},
 
-	-- 3. 会话管理 (Auto-Session)
-	{
-		"rmagatti/auto-session",
-		lazy = false,
-		opts = {
-			suppressed_dirs = { "~/", "~/Projects", "~/Downloads", "/" },
-			log_level = "error",
-			bypass_save_filetypes = {
-				"terminal",
-				"oil",
-				"MyTree",
-				"qf",
-				"help",
-				"checkhealth",
-				"lazy",
-				"mason",
-				"TelescopePrompt",
-				"OverseerList",
-			},
-			pre_save_cmds = {
-				function()
-					-- 在保存会话前，强制关闭所有终端窗口和其他不需要的界面
-					local bufs = vim.api.nvim_list_bufs()
-					for _, bufnr in ipairs(bufs) do
-						if vim.api.nvim_buf_is_valid(bufnr) then
-							local bt = vim.bo[bufnr].buftype
-							local ft = vim.bo[bufnr].filetype
-							if bt == "terminal" or bt == "nofile" or bt == "prompt" or ft == "qf" then
-								-- 关闭所有包含这些 buffer 的窗口
-								for _, winid in ipairs(vim.fn.win_findbuf(bufnr)) do
-									vim.api.nvim_win_close(winid, true)
-								end
-								-- 删除 buffer
-								vim.api.nvim_buf_delete(bufnr, { force = true })
-							end
-						end
-					end
-				end,
-			},
-			post_restore_cmds = {
-				function()
-					vim.defer_fn(function()
-						vim.cmd("bufdo filetype detect")
-						vim.cmd("bufdo do FileType")
-					end, 300)
-				end,
-			},
-		},
-	},
-
-	-- 4. Git 集成客户端 (Lazygit)
+	-- Git 集成客户端 (Lazygit)
 	{
 		"kdheepak/lazygit.nvim",
 		cmd = {
@@ -223,7 +173,7 @@ return {
 		end,
 	},
 
-	-- 5. Git 状态栏提示 (Gitsigns)
+	-- Git 状态栏提示 (Gitsigns)
 	{
 		"lewis6991/gitsigns.nvim",
 		config = function()
@@ -245,7 +195,7 @@ return {
 		end,
 	},
 
-	-- 6. 优秀的折叠插件 (Ufo)
+	-- 优秀的折叠插件 (Ufo)
 	{
 		"kevinhwang91/nvim-ufo",
 		dependencies = { "kevinhwang91/promise-async" },
@@ -254,7 +204,7 @@ return {
 		end,
 	},
 
-	-- 7. 多光标支持 (Vim-Visual-Multi)
+	-- 多光标支持 (Vim-Visual-Multi)
 	{
 		"mg979/vim-visual-multi",
 		branch = "master",
@@ -269,7 +219,7 @@ return {
 		end,
 	},
 
-	-- 8. 任务运行器 (Overseer)
+	-- 任务运行器 (Overseer)
 	{
 		"stevearc/overseer.nvim",
 		cmd = { "OverseerRun", "OverseerToggle", "OverseerTaskAction", "OverseerOpen" },
