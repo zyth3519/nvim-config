@@ -18,3 +18,16 @@ vim.api.nvim_create_autocmd("TermOpen", {
 		vim.opt_local.bufhidden = "hide"
 	end,
 })
+
+vim.api.nvim_create_autocmd("CmdlineLeave", {
+	pattern = ":",
+	callback = function()
+		local cmdline = vim.fn.getcmdline()
+		-- 匹配以 ! (普通 shell 命令) 或 %! (针对当前文件的过滤命令) 开头的输入
+		if cmdline:match("^!") or cmdline:match("^%%!") then
+			-- 使用 pcall 包装，防止 noice 还没加载完成时报错而中断你的 ! 命令
+			pcall(vim.cmd, "Noice dismiss")
+		end
+	end,
+	desc = "Dismiss Noice messages before executing shell commands",
+})
