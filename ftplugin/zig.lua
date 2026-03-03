@@ -1,11 +1,8 @@
 -- Zig 文件 LSP 和 DAP 配置
 
-local capabilities = require("config.lsp-configs").get_capabilities()
-
 -- LSP 配置
 vim.lsp.config("zls", {
 	cmd = { "zls" },
-	capabilities = capabilities,
 })
 
 vim.lsp.enable("zls")

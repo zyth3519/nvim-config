@@ -1,10 +1,7 @@
 -- Lua 文件 LSP 配置
 
-local capabilities = require("config.lsp-configs").get_capabilities()
-
 vim.lsp.config("lua_ls", {
 	cmd = { "lua-language-server" },
-	capabilities = capabilities,
 	settings = {
 		Lua = {
 			runtime = {
