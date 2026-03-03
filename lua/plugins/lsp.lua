@@ -51,16 +51,20 @@ return {
 	},
 
 	-- LSP 服务器自动安装
+	-- 注意：LSP 配置已移至 ftplugin/ 目录，但在这里确保安装
 	{
 		"williamboman/mason-lspconfig.nvim",
 		event = { "BufReadPre", "BufNewFile" },
-		opts = function()
-			return {
-				ensure_installed = require("config.lsp-configs").get_server_names(),
-				-- 禁用自动安装，避免与 rustaceanvim 冲突
-				automatic_installation = false,
-			}
-		end,
+		opts = {
+			ensure_installed = {
+				"lua_ls",
+				"ts_ls",
+				"zls",
+				-- rust_analyzer 由 rustaceanvim 管理，不在这里安装
+			},
+			-- 禁用自动安装，避免与 rustaceanvim 冲突
+			automatic_installation = false,
+		},
 	},
 
 	-- 格式化器及其他工具自动安装

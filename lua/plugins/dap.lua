@@ -14,9 +14,7 @@ return {
 					args = { "--port", "${port}" },
 				},
 			}
-
-			-- 应用所有已注册的调试配置
-			require("config.dap-configs").apply()
+			-- DAP configurations 现在由 ftplugin 文件加载
 		end,
 	},
 	{
