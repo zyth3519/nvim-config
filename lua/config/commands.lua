@@ -24,7 +24,7 @@ vim.api.nvim_create_user_command("Tree", function(opts)
 			vim.bo[buf].bufhidden = "wipe"
 
 			-- 打开浮动窗口
-			local win = vim.api.nvim_open_win(buf, true, {
+			vim.api.nvim_open_win(buf, true, {
 				relative = "editor",
 				row = math.floor((vim.o.lines - height) / 2),
 				col = math.floor((vim.o.columns - width) / 2),
@@ -100,6 +100,7 @@ vim.api.nvim_create_user_command("Fd", function(opts)
 				vim.api.nvim_win_close(win, true)
 				require("oil").open(dir)
 			end, { buffer = buf, silent = true })
+
 			-- Enter: 直接打开文件
 			vim.keymap.set("n", "<CR>", function()
 				local path = get_path()

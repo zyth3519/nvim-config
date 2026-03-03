@@ -57,7 +57,8 @@ return {
 		opts = function()
 			return {
 				ensure_installed = require("config.lsp-configs").get_server_names(),
-				automatic_installation = true,
+				-- 禁用自动安装，避免与 rustaceanvim 冲突
+				automatic_installation = false,
 			}
 		end,
 	},
