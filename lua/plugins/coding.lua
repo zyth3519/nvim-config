@@ -91,22 +91,15 @@ return {
 		version = "^8", -- Recommended
 		lazy = false, -- This plugin is already lazy
 		init = function()
-			-- 启用 Clippy
 			vim.g.rustaceanvim = {
-				tools = {},
+				-- LSP 配置
 				server = {
-					on_attach = function(client, bufnr)
-						-- 你可以在这里添加其他 on_attach 逻辑
-					end,
 					default_settings = {
+						-- rust-analyzer 专属设置
 						["rust-analyzer"] = {
-							cargo = {
-								features = "all",
-							},
 							checkOnSave = {
-								enabled = true,
-								command = "clippy",
-								extraArgs = { "--all-targets", "--all-features" },
+								command = "clippy", -- 将默认的 check 改为 clippy
+								extraArgs = { "--", "-D", "clippy::all", "-D", "clippy::pedantic" },
 							},
 						},
 					},
