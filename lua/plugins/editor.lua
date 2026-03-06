@@ -80,61 +80,6 @@ return {
 		end,
 	},
 	{
-		"folke/edgy.nvim",
-		event = "VeryLazy",
-		opts = {
-			exit_when_last = true,
-			left = {
-				{
-					ft = "NvimTree",
-					title = "Nvim Tree",
-					size = { width = 30 },
-				},
-			},
-
-			right = {
-				{
-					ft = "dapui_scopes",
-					size = { width = 30 },
-				},
-				{
-					ft = "dapui_breakpoints",
-					size = { width = 30 },
-				},
-				{
-					ft = "dapui_stacks",
-					size = { width = 30 },
-				},
-				{
-					ft = "dapui_watches",
-					size = { width = 30 },
-				},
-			},
-			bottom = {
-				ft = "qf",
-				size = { height = 10 },
-			},
-			{
-				{
-					ft = "dap-repl",
-					size = { height = 10 },
-				},
-				{
-					ft = "dapui_console",
-					size = { height = 10 },
-				},
-				{
-					ft = "OverseerList",
-					size = { height = 15 },
-				},
-				{
-					ft = "OverseerOutput",
-					size = { height = 15 },
-				},
-			},
-		},
-	},
-	{
 		"stevearc/overseer.nvim",
 		opts = {
 			component_aliases = {
