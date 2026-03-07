@@ -1,4 +1,11 @@
 return {
+	{
+		"HiPhish/rainbow-delimiters.nvim",
+		dependencies = {
+			"nvim-treesitter/nvim-treesitter", -- 必须依赖 treesitter
+		},
+	},
+
 	-- 主题 (Colorscheme)
 	{
 		"catppuccin/nvim",
@@ -99,17 +106,17 @@ return {
 		"lukas-reineke/indent-blankline.nvim",
 		main = "ibl",
 		event = { "BufReadPost", "BufNewFile" },
+		dependencies = {
+			"nvim-treesitter/nvim-treesitter", -- 必须依赖 treesitter
+		},
 		config = function()
-			local hooks = require("ibl.hooks")
-			hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
-				vim.api.nvim_set_hl(0, "IblScope", { fg = "#585b70" })
-			end)
-
 			require("ibl").setup({
-				indent = { char = "┊" },
+				indent = {
+					char = "▏", -- 另一种比较细的字符
+				},
 				scope = {
-					show_start = false,
-					show_end = false,
+					show_start = true,
+					show_end = true,
 					include = {
 						node_type = {
 							["*"] = {

@@ -10,8 +10,8 @@ vim.opt.softtabstop = 4 -- backspace 键删除的空格数
 vim.opt.expandtab = true -- tab 键转换为空格
 
 -- 自动缩进配置
-vim.opt.autoindent = true -- 继承上一行缩进
-vim.opt.smartindent = true -- 智能代码缩进
+-- vim.opt.autoindent = true -- 继承上一行缩进
+-- vim.opt.smartindent = true -- 智能代码缩进
 
 -- netrw配置
 vim.g.netrw_banner = 0 -- 关闭顶部横幅
