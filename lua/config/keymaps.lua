@@ -6,21 +6,18 @@ vim.g.maplocalleader = "\\"
 -- =========================================================================
 -- 1. 核心基础快捷键 (Core)
 -- =========================================================================
-vim.keymap.set("n", "<A-h>", require("smart-splits").resize_left)
-vim.keymap.set("n", "<A-j>", require("smart-splits").resize_down)
-vim.keymap.set("n", "<A-k>", require("smart-splits").resize_up)
-vim.keymap.set("n", "<A-l>", require("smart-splits").resize_right)
--- moving between splits
-vim.keymap.set("n", "<C-h>", require("smart-splits").move_cursor_left)
-vim.keymap.set("n", "<C-j>", require("smart-splits").move_cursor_down)
-vim.keymap.set("n", "<C-k>", require("smart-splits").move_cursor_up)
-vim.keymap.set("n", "<C-l>", require("smart-splits").move_cursor_right)
-vim.keymap.set("n", "<C-\\>", require("smart-splits").move_cursor_previous)
--- swapping buffers between windows
-vim.keymap.set("n", "<leader><leader>h", require("smart-splits").swap_buf_left)
-vim.keymap.set("n", "<leader><leader>j", require("smart-splits").swap_buf_down)
-vim.keymap.set("n", "<leader><leader>k", require("smart-splits").swap_buf_up)
-vim.keymap.set("n", "<leader><leader>l", require("smart-splits").swap_buf_right)
+
+-- 窗口导航 (Ctrl + hjkl)
+map("n", "<C-h>", "<C-w>h", { desc = "跳转到左侧窗口" })
+map("n", "<C-j>", "<C-w>j", { desc = "跳转到下方窗口" })
+map("n", "<C-k>", "<C-w>k", { desc = "跳转到上方窗口" })
+map("n", "<C-l>", "<C-w>l", { desc = "跳转到右侧窗口" })
+
+-- 窗口大小调整 (Alt + hjkl)
+map("n", "<A-j>", "5<C-w>-", { desc = "窗口高度减少" })
+map("n", "<A-k>", "5<C-w>+", { desc = "窗口高度增加" })
+map("n", "<A-h>", "5<C-w><", { desc = "窗口宽度减少" })
+map("n", "<A-l>", "5<C-w>>", { desc = "窗口宽度增加" })
 
 -- 缓冲区切换 (Shift + hl)
 map("n", "<S-h>", "<cmd>bp<cr>", { desc = "上一个缓冲区" })
