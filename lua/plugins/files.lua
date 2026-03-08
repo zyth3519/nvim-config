@@ -68,15 +68,15 @@ return {
 			})
 		end,
 		init = function()
-			vim.api.nvim_create_autocmd({ "VimEnter" }, {
-				callback = function(data)
-					local is_dir = vim.fn.isdirectory(data.file) == 1
-					-- 如果是目录，让 oil 接管，不打开 nvim-tree
-					if not is_dir then
-						require("nvim-tree.api").tree.open()
-					end
-				end,
-			})
+			-- vim.api.nvim_create_autocmd({ "VimEnter" }, {
+			-- 	callback = function(data)
+			-- 		local is_dir = vim.fn.isdirectory(data.file) == 1
+			-- 		-- 如果是目录，让 oil 接管，不打开 nvim-tree
+			-- 		if not is_dir then
+			-- 			require("nvim-tree.api").tree.open()
+			-- 		end
+			-- 	end,
+			-- })
 		end,
 	},
 }
