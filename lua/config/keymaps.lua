@@ -40,12 +40,38 @@ if wk_ok then
 		{ "<leader>w", group = "窗口 (Window)", icon = "󱂬" },
 		{ "<leader>r", group = "任务 (Overseer)", icon = "󰆍" },
 		{ "g", group = "导航/跳转 (Go)", icon = "󰜎" },
-		{ "<leader>e", desc = "打开Tree", icon = "󰙅" },
+		{ "<leader>e", desc = "打开Oil", icon = "󰉋" },
+		{ "<leader>E", desc = "打开Oil（Root）", icon = "󰉋" },
 	})
 end
 
-map("n", "<leader>e", "<cmd>Oil --float<cr>", { desc = "打开 Oil" })
+-- 智能打开 Oil：如果在 nvim-tree 中，根据当前节点路径打开
+local function open_oil_smart()
+	local buf_name = vim.api.nvim_buf_get_name(0)
+	-- 检查是否在 nvim-tree 窗口
+	if buf_name:match("NvimTree_") then
+		local ok, api = pcall(require, "nvim-tree.api")
+		if ok then
+			local node = api.tree.get_node_under_cursor()
+			if node then
+				local path = node.absolute_path
+				-- 如果是文件，获取其父目录
+				if node.type == "file" then
+					path = vim.fn.fnamemodify(path, ":h")
+				end
+				require("oil").open_float(path)
+				return
+			end
+		end
+	end
+	-- 默认打开当前目录
+	require("oil").open_float()
+end
+
+map("n", "<leader>e", open_oil_smart, { desc = "打开 Oil" })
+map("n", "<leader>E", "<cmd>Oil --float .<cr>", { desc = "打开 Oil (Root)" })
 map("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { desc = "搜索当前项目文件" })
+map("n", "<leader>ft", "<cmd>Telescope find_files<cr>", { desc = "打开Nvim Tree" })
 map("n", "<leader>fe", "<cmd>Oil --float<cr>", { desc = "打开 Oil" })
 map("n", "<leader>fr", "<cmd>Oil --float .<cr>", { desc = "打开 Oil (Root)" })
 
@@ -58,10 +84,11 @@ map("n", "<leader>wo", "<cmd>only<cr>", { desc = "关闭其他所有窗口" })
 
 -- 【缓冲区管理 (Buffer)】
 map("n", "<leader>q", "<cmd>bd<cr>", { desc = "关闭当前文件(Buffer)" })
-map("n", "<leader>Q", "<cmd>bw<cr>", { desc = "彻底销毁当前 Buffer" })
-map("n", "<leader>bl", "<cmd>ls<cr>", { desc = "显示 Buffer 列表" })
-map("n", "<leader>ba", "<cmd>ball<cr>", { desc = "为每个 Buffer 打开窗口" })
-map("n", "<leader>bo", "<cmd>BufferLineCloseOthers<cr>", { desc = "只保留当前编辑的文件" })
+map("n", "<leader>Q", "<cmd>BufferLineCloseOthers<cr>", { desc = "只保留当前编辑的文件" })
+map("n", "<leader>bl", "<cmd>BufferLineCloseLeft<cr>", { desc = "关闭左边所有缓冲区" })
+map("n", "<leader>br", "<cmd>BufferLineCloseRight<cr>", { desc = "关闭右边所有缓冲区" })
+map("n", "<leader>b<", "<cmd>BufferLineMovePrev<cr>", { desc = "向左移动 Buffer" })
+map("n", "<leader>b>", "<cmd>BufferLineMoveNext<cr>", { desc = "向右移动 Buffer" })
 map("n", "<leader>bf", "<cmd>bf<cr>", { desc = "跳转到第一个 Buffer" })
 map("n", "<leader>bF", "<cmd>bl<cr>", { desc = "跳转到最后一个 Buffer" })
 
