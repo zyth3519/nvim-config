@@ -107,7 +107,6 @@ map("n", "<leader>sh", "<cmd>Telescope help_tags<cr>", { desc = "搜索帮助文
 map("n", "<leader>sy", "<cmd>Telescope lsp_document_symbols<cr>", { desc = "当前文档 LSP 符号" })
 map("n", "<leader>sY", "<cmd>Telescope lsp_workspace_symbols<cr>", { desc = "工作区 LSP 符号" })
 map("n", "<leader>sd", "<cmd>Telescope diagnostics<cr>", { desc = "查找诊断信息" })
-
 -- 【Git 操作 (Neogit & Gitsigns)】
 map("n", "<leader>gg", "<cmd>Neogit<cr>", { desc = "打开 Neogit" })
 map("n", "<leader>gc", "<cmd>Neogit commit<cr>", { desc = "Git 提交 (Commit)" })
@@ -139,6 +138,45 @@ map("n", "gO", vim.lsp.buf.document_symbol, { desc = "查看文档符号" })
 map("n", "K", vim.lsp.buf.hover, { desc = "悬浮显示文档/注释" })
 map("n", "gra", vim.lsp.buf.code_action, { desc = "代码操作" })
 map("n", "grn", vim.lsp.buf.rename, { desc = "重命名" })
+
+vim.keymap.set({ "n", "x" }, "<A-up>", function()
+	require("multicursor-nvim").lineAddCursor(-1)
+end, { desc = "在上方添加光标" })
+vim.keymap.set({ "n", "x" }, "<A-down>", function()
+	require("multicursor-nvim").lineAddCursor(1)
+end, { desc = "在下方添加光标" })
+vim.keymap.set({ "n", "x" }, "<A-S-up>", function()
+	require("multicursor-nvim").lineSkipCursor(-1)
+end, { desc = "跳过上方行" })
+vim.keymap.set({ "n", "x" }, "<A-S-down>", function()
+	require("multicursor-nvim").lineSkipCursor(1)
+end, { desc = "跳过下方行" })
+
+vim.keymap.set({ "n", "x" }, "<A-n>", function()
+	require("multicursor-nvim").matchAddCursor(1)
+end, { desc = "匹配添加光标（下一个）" })
+
+vim.keymap.set({ "n", "x" }, "<A-s>", function()
+	require("multicursor-nvim").matchSkipCursor(1)
+end, { desc = "跳过匹配（下一个）" })
+
+vim.keymap.set({ "n", "x" }, "<A-N>", function()
+	require("multicursor-nvim").matchAddCursor(-1)
+end, { desc = "匹配添加光标（上一个）" })
+
+vim.keymap.set({ "n", "x" }, "<A-S>", function()
+	require("multicursor-nvim").matchSkipCursor(-1)
+end, { desc = "跳过匹配（上一个）" })
+
+vim.keymap.set("n", "<C-leftmouse>", function(...)
+	require("multicursor-nvim").handleMouse(...)
+end, { desc = "鼠标添加光标" })
+vim.keymap.set("n", "<C-leftdrag>", function(...)
+	require("multicursor-nvim").handleMouseDrag(...)
+end, { desc = "鼠标拖动" })
+vim.keymap.set("n", "<C-leftrelease>", function(...)
+	require("multicursor-nvim").handleMouseRelease(...)
+end, { desc = "鼠标释放" })
 
 -- 【DAP 调试 (Debug)】
 map("n", "<F5>", function()

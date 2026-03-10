@@ -5,22 +5,6 @@ return {
 		event = { "BufReadPost", "BufNewFile" },
 		dependencies = { "kevinhwang91/promise-async" },
 		config = function()
-			-- lsp
-			-- vim.o.foldcolumn = "1"
-			-- local capabilities = vim.lsp.protocol.make_client_capabilities()
-			-- capabilities.textDocument.foldingRange = {
-			-- 	dynamicRegistration = false,
-			-- 	lineFoldingOnly = true,
-			-- }
-			-- local language_servers = vim.lsp.get_clients() -- or list servers manually like {'gopls', 'clangd'}
-			-- for _, ls in ipairs(language_servers) do
-			-- 	require("lspconfig")[ls].setup({
-			-- 		capabilities = capabilities,
-			-- 	})
-			-- end
-
-			-- require("ufo").setup()
-
 			-- treesitter
 			require("ufo").setup({
 				provider_selector = function()
@@ -30,18 +14,37 @@ return {
 		end,
 	},
 
-	-- 多光标支持 (Vim-Visual-Multi)
+	-- 多光标支持 (Multicursor.nvim)
 	{
-		"mg979/vim-visual-multi",
-		branch = "master",
+		"jake-stewart/multicursor.nvim",
+		branch = "1.0",
 		event = { "BufReadPost", "BufNewFile" },
-		init = function()
-			vim.g.VM_maps = {
-				["Find Under"] = "<C-n>", -- Ctrl-N 选中当前单词并进入多光标模式
-				["Find Subword Under"] = "<C-n>", -- 在选中部分词时也使用 Ctrl-N
-			}
-			-- 修复多光标模式下的退出问题 (ESC)
-			vim.g.VM_quit_after_leaving_insert_mode = 1
+		config = function()
+			local mc = require("multicursor-nvim")
+			mc.setup()
+
+			mc.addKeymapLayer(function(layerSet)
+				layerSet({ "n", "x" }, "<left>", mc.prevCursor, { desc = "上一个光标" })
+				layerSet({ "n", "x" }, "<right>", mc.nextCursor, { desc = "下一个光标" })
+				layerSet({ "n", "x" }, "<leader>x", mc.deleteCursor, { desc = "删除当前光标" })
+
+				layerSet("n", "<esc>", function()
+					if not mc.cursorsEnabled() then
+						mc.enableCursors()
+					else
+						mc.clearCursors()
+					end
+				end, { desc = "启用/清除光标" })
+			end)
+
+			local hl = vim.api.nvim_set_hl
+			hl(0, "MultiCursorCursor", { reverse = true })
+			hl(0, "MultiCursorVisual", { link = "Visual" })
+			hl(0, "MultiCursorSign", { link = "SignColumn" })
+			hl(0, "MultiCursorMatchPreview", { link = "Search" })
+			hl(0, "MultiCursorDisabledCursor", { reverse = true })
+			hl(0, "MultiCursorDisabledVisual", { link = "Visual" })
+			hl(0, "MultiCursorDisabledSign", { link = "SignColumn" })
 		end,
 	},
 
