@@ -1,0 +1,12 @@
+-- 【Git 操作 (Neogit & Gitsigns)】
+vim.keymap.set("n", "<leader>gg", "<cmd>Neogit<cr>", { desc = "打开 Neogit" })
+vim.keymap.set("n", "<leader>gc", "<cmd>Neogit commit<cr>", { desc = "Git 提交 (Commit)" })
+vim.keymap.set("n", "<leader>gp", "<cmd>Neogit pull<cr>", { desc = "Git 拉取 (Pull)" })
+vim.keymap.set("n", "<leader>gP", "<cmd>Neogit push<cr>", { desc = "Git 推送 (Push)" })
+vim.keymap.set("n", "<leader>gd", "<cmd>DiffviewOpen<cr>", { desc = "打开差异视图 (Diffview)" })
+vim.keymap.set("n", "<leader>gD", "<cmd>DiffviewClose<cr>", { desc = "关闭差异视图 (Diffview)" })
+vim.keymap.set("n", "<leader>gb", "<cmd>Gitsigns blame_line<cr>", { desc = "单行责备 (Blame)" })
+vim.keymap.set("n", "<leader>gB", "<cmd>Gitsigns toggle_current_line_blame<cr>", { desc = "开启单行责备" })
+vim.keymap.set("n", "<leader>gr", "<cmd>Gitsigns reset_hunk<cr>", { desc = "回滚代码块 (Reset)" })
+vim.keymap.set("n", "<leader>gR", "<cmd>Gitsigns reset_buffer<cr>", { desc = "回滚整个文件" })
+vim.keymap.set("n", "<leader>gh", "<cmd>Gitsigns preview_hunk<cr>", { desc = "预览代码块差异" })

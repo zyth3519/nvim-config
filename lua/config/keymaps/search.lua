@@ -1,0 +1,10 @@
+-- 【Telescope 搜索 (Search)】
+vim.keymap.set("n", "<leader>ss", "<cmd>Telescope<cr>", { desc = "运行Telescope" })
+vim.keymap.set("n", "<leader>sf", "<cmd>Telescope find_files<cr>", { desc = "查找文件 (find_files)" })
+vim.keymap.set("n", "<leader>sF", "<cmd>Telescope frecency<cr>", { desc = "查找文件 (frecency 智能排序)" })
+vim.keymap.set("n", "<leader>sg", "<cmd>Telescope live_grep<cr>", { desc = "全局搜索内容 (live_grep)" })
+vim.keymap.set("n", "<leader>sb", "<cmd>Telescope buffers<cr>", { desc = "搜索缓冲区 (buffers)" })
+vim.keymap.set("n", "<leader>sh", "<cmd>Telescope help_tags<cr>", { desc = "搜索帮助文档 (help_tags)" })
+vim.keymap.set("n", "<leader>sy", "<cmd>Telescope lsp_document_symbols<cr>", { desc = "当前文档 LSP 符号" })
+vim.keymap.set("n", "<leader>sY", "<cmd>Telescope lsp_workspace_symbols<cr>", { desc = "工作区 LSP 符号" })
+vim.keymap.set("n", "<leader>sd", "<cmd>Telescope diagnostics<cr>", { desc = "查找诊断信息" })

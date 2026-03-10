@@ -1,4 +1,3 @@
-local map = vim.keymap.set
 -- 将所有 leader 键配置在这里
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
@@ -6,22 +5,20 @@ vim.g.maplocalleader = "\\"
 -- =========================================================================
 -- 1. 核心基础快捷键 (Core)
 -- =========================================================================
-
 -- 窗口导航 (Ctrl + hjkl)
-map("n", "<C-h>", "<C-w>h", { desc = "跳转到左侧窗口" })
-map("n", "<C-j>", "<C-w>j", { desc = "跳转到下方窗口" })
-map("n", "<C-k>", "<C-w>k", { desc = "跳转到上方窗口" })
-map("n", "<C-l>", "<C-w>l", { desc = "跳转到右侧窗口" })
-
+vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "跳转到左侧窗口" })
+vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "跳转到下方窗口" })
+vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "跳转到上方窗口" })
+vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "跳转到右侧窗口" })
 -- 窗口大小调整 (Alt + hjkl)
-map("n", "<A-j>", "5<C-w>-", { desc = "窗口高度减少" })
-map("n", "<A-k>", "5<C-w>+", { desc = "窗口高度增加" })
-map("n", "<A-h>", "5<C-w><", { desc = "窗口宽度减少" })
-map("n", "<A-l>", "5<C-w>>", { desc = "窗口宽度增加" })
+vim.keymap.set("n", "<A-j>", "5<C-w>-", { desc = "窗口高度减少" })
+vim.keymap.set("n", "<A-k>", "5<C-w>+", { desc = "窗口高度增加" })
+vim.keymap.set("n", "<A-h>", "5<C-w><", { desc = "窗口宽度减少" })
+vim.keymap.set("n", "<A-l>", "5<C-w>>", { desc = "窗口宽度增加" })
 
 -- 缓冲区切换 (Shift + hl)
-map("n", "<S-h>", "<cmd>bp<cr>", { desc = "上一个缓冲区" })
-map("n", "<S-l>", "<cmd>bn<cr>", { desc = "下一个缓冲区" })
+vim.keymap.set("n", "<S-h>", "<cmd>bp<cr>", { desc = "上一个缓冲区" })
+vim.keymap.set("n", "<S-l>", "<cmd>bn<cr>", { desc = "下一个缓冲区" })
 
 -- =========================================================================
 -- 2. 插件快捷键注册 (统合至此以实现统一管理)
@@ -45,186 +42,12 @@ if wk_ok then
 	})
 end
 
--- 智能打开 Oil：如果在 nvim-tree 中，根据当前节点路径打开
-local function open_oil_smart()
-	local buf_name = vim.api.nvim_buf_get_name(0)
-	-- 检查是否在 nvim-tree 窗口
-	if buf_name:match("NvimTree_") then
-		local ok, api = pcall(require, "nvim-tree.api")
-		if ok then
-			local node = api.tree.get_node_under_cursor()
-			if node then
-				local path = node.absolute_path
-				-- 如果是文件，获取其父目录
-				if node.type == "file" then
-					path = vim.fn.fnamemodify(path, ":h")
-				end
-				require("oil").open_float(path)
-				return
-			end
-		end
-	end
-	-- 默认打开当前目录
-	require("oil").open_float()
-end
-
-map("n", "<leader>e", open_oil_smart, { desc = "打开 Oil" })
-map("n", "<leader>E", "<cmd>NvimTreeToggle<cr>", { desc = "打开Nvim Tree" })
-map("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { desc = "搜索当前项目文件" })
-map("n", "<leader>ft", "<cmd>NvimTreeToggle<cr>", { desc = "打开Nvim Tree" })
-map("n", "<leader>fe", "<cmd>Oil --float<cr>", { desc = "打开 Oil" })
-map("n", "<leader>fr", "<cmd>Oil --float .<cr>", { desc = "打开 Oil (Root)" })
-
--- 【窗口管理 (Window)】
-map("n", "<leader>wh", "<cmd>split<cr>", { desc = "水平分割当前窗口" })
-map("n", "<leader>wv", "<cmd>vsplit<cr>", { desc = "垂直分割当前窗口" })
-map("n", "<leader>wx", "<C-w>x", { desc = "窗口互换" })
-map("n", "<leader>wq", "<C-w>q", { desc = "关闭当前窗口" })
-map("n", "<leader>wo", "<cmd>only<cr>", { desc = "关闭其他所有窗口" })
-
--- 【缓冲区管理 (Buffer)】
-map("n", "<leader>q", "<cmd>bd<cr>", { desc = "关闭当前文件(Buffer)" })
-map("n", "<leader>Q", "<cmd>BufferLineCloseOthers<cr>", { desc = "只保留当前编辑的文件" })
-map("n", "<leader>bl", "<cmd>BufferLineCloseLeft<cr>", { desc = "关闭左边所有缓冲区" })
-map("n", "<leader>br", "<cmd>BufferLineCloseRight<cr>", { desc = "关闭右边所有缓冲区" })
-map("n", "<leader>b<", "<cmd>BufferLineMovePrev<cr>", { desc = "向左移动 Buffer" })
-map("n", "<leader>b>", "<cmd>BufferLineMoveNext<cr>", { desc = "向右移动 Buffer" })
-map("n", "<leader>bf", "<cmd>bf<cr>", { desc = "跳转到第一个 Buffer" })
-map("n", "<leader>bF", "<cmd>bl<cr>", { desc = "跳转到最后一个 Buffer" })
-
--- Bufferline 数字切换 (1-9)
-for i = 1, 9 do
-	map("n", "<leader>" .. i, "<cmd>BufferLineGoToBuffer " .. i .. "<cr>", { desc = "跳转到 Buffer " .. i })
-end
-
--- 【Telescope 搜索 (Search)】
-map("n", "<leader>ss", "<cmd>Telescope<cr>", { desc = "运行Telescope" })
-map("n", "<leader>sf", "<cmd>Telescope find_files<cr>", { desc = "查找文件 (find_files)" })
-map("n", "<leader>sF", "<cmd>Telescope frecency<cr>", { desc = "查找文件 (frecency 智能排序)" })
-map("n", "<leader>sg", "<cmd>Telescope live_grep<cr>", { desc = "全局搜索内容 (live_grep)" })
-map("n", "<leader>sb", "<cmd>Telescope buffers<cr>", { desc = "搜索缓冲区 (buffers)" })
-map("n", "<leader>sh", "<cmd>Telescope help_tags<cr>", { desc = "搜索帮助文档 (help_tags)" })
-map("n", "<leader>sy", "<cmd>Telescope lsp_document_symbols<cr>", { desc = "当前文档 LSP 符号" })
-map("n", "<leader>sY", "<cmd>Telescope lsp_workspace_symbols<cr>", { desc = "工作区 LSP 符号" })
-map("n", "<leader>sd", "<cmd>Telescope diagnostics<cr>", { desc = "查找诊断信息" })
--- 【Git 操作 (Neogit & Gitsigns)】
-map("n", "<leader>gg", "<cmd>Neogit<cr>", { desc = "打开 Neogit" })
-map("n", "<leader>gc", "<cmd>Neogit commit<cr>", { desc = "Git 提交 (Commit)" })
-map("n", "<leader>gp", "<cmd>Neogit pull<cr>", { desc = "Git 拉取 (Pull)" })
-map("n", "<leader>gP", "<cmd>Neogit push<cr>", { desc = "Git 推送 (Push)" })
-map("n", "<leader>gd", "<cmd>DiffviewOpen<cr>", { desc = "打开差异视图 (Diffview)" })
-map("n", "<leader>gD", "<cmd>DiffviewClose<cr>", { desc = "关闭差异视图 (Diffview)" })
-map("n", "<leader>gb", "<cmd>Gitsigns blame_line<cr>", { desc = "单行责备 (Blame)" })
-map("n", "<leader>gB", "<cmd>Gitsigns toggle_current_line_blame<cr>", { desc = "开启单行责备" })
-map("n", "<leader>gr", "<cmd>Gitsigns reset_hunk<cr>", { desc = "回滚代码块 (Reset)" })
-map("n", "<leader>gR", "<cmd>Gitsigns reset_buffer<cr>", { desc = "回滚整个文件" })
-map("n", "<leader>gh", "<cmd>Gitsigns preview_hunk<cr>", { desc = "预览代码块差异" })
-
--- 【LSP 代码操作 (Code)】
-map("n", "<leader>cr", vim.lsp.buf.rename, { desc = "重命名符号 (Rename)" })
-map("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "代码操作 (Code Action)" })
-map("n", "<leader>cd", vim.diagnostic.open_float, { desc = "显示悬浮诊断 (Diagnostic)" })
-map("n", "<leader>cf", function()
-	require("conform").format({ async = true, lsp_fallback = true })
-end, { desc = "格式化缓冲区 (Format)" })
-
--- 【LSP 导航与查看 (Go)】
-map("n", "gd", "<cmd>Telescope lsp_definitions<cr>", { desc = "跳转到定义" })
-map("n", "gD", vim.lsp.buf.declaration, { desc = "跳转到声明" })
-map("n", "gri", "<cmd>Telescope lsp_implementations<cr>", { desc = "跳转到实现" })
-map("n", "grr", "<cmd>Telescope lsp_references<cr>", { desc = "查看所有引用" })
-map("n", "grt", "<cmd>Telescope lsp_type_definitions<cr>", { desc = "查看类型定义" })
-map("n", "gO", vim.lsp.buf.document_symbol, { desc = "查看文档符号" })
-map("n", "K", vim.lsp.buf.hover, { desc = "悬浮显示文档/注释" })
-map("n", "gra", vim.lsp.buf.code_action, { desc = "代码操作" })
-map("n", "grn", vim.lsp.buf.rename, { desc = "重命名" })
-
-vim.keymap.set({ "n", "x" }, "<A-up>", function()
-	require("multicursor-nvim").lineAddCursor(-1)
-end, { desc = "在上方添加光标" })
-vim.keymap.set({ "n", "x" }, "<A-down>", function()
-	require("multicursor-nvim").lineAddCursor(1)
-end, { desc = "在下方添加光标" })
-vim.keymap.set({ "n", "x" }, "<A-S-up>", function()
-	require("multicursor-nvim").lineSkipCursor(-1)
-end, { desc = "跳过上方行" })
-vim.keymap.set({ "n", "x" }, "<A-S-down>", function()
-	require("multicursor-nvim").lineSkipCursor(1)
-end, { desc = "跳过下方行" })
-
-vim.keymap.set({ "n", "x" }, "<A-n>", function()
-	require("multicursor-nvim").matchAddCursor(1)
-end, { desc = "匹配添加光标（下一个）" })
-
-vim.keymap.set({ "n", "x" }, "<A-s>", function()
-	require("multicursor-nvim").matchSkipCursor(1)
-end, { desc = "跳过匹配（下一个）" })
-
-vim.keymap.set({ "n", "x" }, "<A-N>", function()
-	require("multicursor-nvim").matchAddCursor(-1)
-end, { desc = "匹配添加光标（上一个）" })
-
-vim.keymap.set({ "n", "x" }, "<A-S>", function()
-	require("multicursor-nvim").matchSkipCursor(-1)
-end, { desc = "跳过匹配（上一个）" })
-
-vim.keymap.set("n", "<C-leftmouse>", function(...)
-	require("multicursor-nvim").handleMouse(...)
-end, { desc = "鼠标添加光标" })
-vim.keymap.set("n", "<C-leftdrag>", function(...)
-	require("multicursor-nvim").handleMouseDrag(...)
-end, { desc = "鼠标拖动" })
-vim.keymap.set("n", "<C-leftrelease>", function(...)
-	require("multicursor-nvim").handleMouseRelease(...)
-end, { desc = "鼠标释放" })
-
--- 【DAP 调试 (Debug)】
-map("n", "<F5>", function()
-	require("dap").continue()
-end, { desc = "启动/继续调试" })
-map("n", "<F6>", function()
-	require("dap").disconnect({ terminateDebuggee = true })
-end, { desc = "断开调试" })
-map("n", "<F10>", function()
-	require("dap").step_over()
-end, { desc = "逐过程 (Step Over)" })
-map("n", "<F11>", function()
-	require("dap").step_into()
-end, { desc = "单步调试 (Step Into)" })
-map("n", "<F12>", function()
-	require("dap").step_out()
-end, { desc = "单步跳出 (Step Out)" })
-map("n", "<leader>dc", function()
-	require("dap").continue()
-end, { desc = "启动/继续调试" })
-map("n", "<leader>ds", function()
-	require("dap").disconnect({ terminateDebuggee = true })
-end, { desc = "断开调试" })
-map("n", "<leader>dv", function()
-	require("dap").step_over()
-end, { desc = "逐过程 (Step Over)" })
-map("n", "<leader>di", function()
-	require("dap").step_into()
-end, { desc = "单步调试 (Step Into)" })
-map("n", "<leader>do", function()
-	require("dap").step_out()
-end, { desc = "单步跳出 (Step Out)" })
-
-map("n", "<leader>dp", function()
-	require("dap").toggle_breakpoint()
-end, { desc = "切换断点" })
-
-map("n", "<F9>", function()
-	require("dap").toggle_breakpoint()
-end, { desc = "切换断点" })
-
-map("n", "<leader>dt", function()
-	require("dapui").toggle()
-end, { desc = "显示/隐藏调试 UI" })
-
--- 【任务运行 (Overseer)】
-map("n", "<leader>rr", "<cmd>OverseerRun<cr>", { desc = "运行任务" })
-map("n", "<leader>rt", "<cmd>OverseerToggle<cr>", { desc = "切换面板任务列表" })
-map("n", "<leader>ra", "<cmd>OverseerTaskAction<cr>", { desc = "任务操作" })
-map("n", "<leader>ro", "<cmd>OverseerOpen<cr>", { desc = "打开任务列表" })
-map("n", "<leader>rc", "<cmd>OverseerClose<cr>", { desc = "关闭任务列表" })
+require("config.keymaps.buffer")
+require("config.keymaps.window")
+require("config.keymaps.search")
+require("config.keymaps.file")
+require("config.keymaps.git")
+require("config.keymaps.cursor")
+require("config.keymaps.coding")
+require("config.keymaps.debug")
+require("config.keymaps.task")
