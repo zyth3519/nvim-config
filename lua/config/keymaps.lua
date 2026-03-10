@@ -68,8 +68,8 @@ local function open_oil_smart()
 	require("oil").open_float()
 end
 
-map("n", "<leader>e", open_oil_smart, { desc = "打开 Oil" })
-map("n", "<leader>E", "<cmd>Oil --float .<cr>", { desc = "打开 Oil (Root)" })
+map("n", "<leader>E", open_oil_smart, { desc = "打开 Oil" })
+map("n", "<leader>e", "<cmd>NvimTreeToggle<cr>", { desc = "打开Nvim Tree" })
 map("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { desc = "搜索当前项目文件" })
 map("n", "<leader>ft", "<cmd>NvimTreeToggle<cr>", { desc = "打开Nvim Tree" })
 map("n", "<leader>fe", "<cmd>Oil --float<cr>", { desc = "打开 Oil" })
