@@ -99,7 +99,7 @@ return {
 						["rust-analyzer"] = {
 							checkOnSave = {
 								command = "clippy", -- 将默认的 check 改为 clippy
-								extraArgs = { "--", "-D", "clippy::all", "-D", "clippy::pedantic" },
+								-- extraArgs = { "--", "-D", "clippy::all", "-D", "clippy::pedantic" },
 							},
 						},
 					},
