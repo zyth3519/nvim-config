@@ -1,6 +1,6 @@
 -- 【缓冲区管理 (Buffer)】
 vim.keymap.set("n", "<leader>q", "<cmd>bd<cr>", { desc = "关闭当前文件(Buffer)" })
-vim.keymap.set("n", "<leader>Q", "<cmd>BufferLineCloseOthers<cr>", { desc = "只保留当前编辑的文件" })
+vim.keymap.set("n", "<leader>bo", "<cmd>BufferLineCloseOthers<cr>", { desc = "只保留当前编辑的文件" })
 vim.keymap.set("n", "<leader>bl", "<cmd>BufferLineCloseLeft<cr>", { desc = "关闭左边所有缓冲区" })
 vim.keymap.set("n", "<leader>br", "<cmd>BufferLineCloseRight<cr>", { desc = "关闭右边所有缓冲区" })
 vim.keymap.set("n", "<leader>b<", "<cmd>BufferLineMovePrev<cr>", { desc = "向左移动 Buffer" })
