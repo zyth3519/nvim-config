@@ -22,8 +22,6 @@ local function open_oil_smart()
 end
 
 vim.keymap.set("n", "<leader>e", open_oil_smart, { desc = "打开 Oil" })
-vim.keymap.set("n", "<leader>E", "<cmd>NvimTreeToggle<cr>", { desc = "打开Nvim Tree" })
 vim.keymap.set("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { desc = "搜索当前项目文件" })
-vim.keymap.set("n", "<leader>ft", "<cmd>NvimTreeToggle<cr>", { desc = "打开Nvim Tree" })
 vim.keymap.set("n", "<leader>fe", "<cmd>Oil --float<cr>", { desc = "打开 Oil" })
 vim.keymap.set("n", "<leader>fr", "<cmd>Oil --float .<cr>", { desc = "打开 Oil (Root)" })

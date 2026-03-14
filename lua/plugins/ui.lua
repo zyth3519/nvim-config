@@ -1,4 +1,5 @@
 return {
+	-- 彩虹括号
 	{
 		"HiPhish/rainbow-delimiters.nvim",
 		dependencies = {
@@ -20,6 +21,10 @@ return {
 				},
 			},
 		},
+		config = function()
+			-- 设置主题
+			vim.cmd("colorscheme catppuccin")
+		end,
 	},
 
 	-- 状态栏 (Statusline)
@@ -176,6 +181,7 @@ return {
 			"rcarriga/nvim-notify",
 		},
 	},
+	-- 窗口管理
 	{
 		"folke/edgy.nvim",
 		event = "VeryLazy",
@@ -208,12 +214,6 @@ return {
 				bottom = { size = 10 },
 				right = { size = 30 },
 				top = { size = 10 },
-			},
-			left = {
-				{
-					ft = "NvimTree",
-					title = "Nvim Tree",
-				},
 			},
 
 			right = {
