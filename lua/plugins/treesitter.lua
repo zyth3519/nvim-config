@@ -13,6 +13,12 @@ return {
 			})
 
 			vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = { "lua", "rust", "zig" },
+				callback = function()
+					vim.treesitter.start()
+				end,
+			})
 		end,
 	},
 

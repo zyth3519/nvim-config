@@ -98,8 +98,8 @@ return {
 						-- rust-analyzer 专属设置
 						["rust-analyzer"] = {
 							checkOnSave = {
+								enable = true,
 								command = "clippy", -- 将默认的 check 改为 clippy
-								-- extraArgs = { "--", "-D", "clippy::all", "-D", "clippy::pedantic" },
 							},
 						},
 					},
