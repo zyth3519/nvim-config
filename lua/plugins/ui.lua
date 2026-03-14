@@ -159,7 +159,18 @@ return {
 	{
 		"folke/noice.nvim",
 		event = "VeryLazy",
+		dependencies = {
+			"MunifTanjim/nui.nvim",
+			"rcarriga/nvim-notify",
+		},
 		opts = {
+			views = {
+				split = {
+					size = {
+						height = 15,
+					},
+				},
+			},
 			routes = {
 				{
 					view = "split",
@@ -175,10 +186,6 @@ return {
 					},
 				},
 			},
-		},
-		dependencies = {
-			"MunifTanjim/nui.nvim",
-			"rcarriga/nvim-notify",
 		},
 	},
 	-- 窗口管理
