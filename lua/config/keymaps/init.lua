@@ -58,7 +58,7 @@ if wk_ok then
 	})
 end
 
-vim.keymap.set({ "n" }, "<M-x>", ":!", { desc = "执行系统命令" })
+vim.keymap.set({ "n" }, "<M-x>", ":Run ", { desc = "执行系统命令" })
 
 require("config.keymaps.buffer")
 require("config.keymaps.window")
