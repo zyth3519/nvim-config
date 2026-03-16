@@ -86,29 +86,6 @@ return {
 		},
 	},
 
-	-- rustaceanvim
-	{
-		"mrcjkb/rustaceanvim",
-		version = "^8", -- Recommended
-		lazy = false, -- This plugin is already lazy
-		init = function()
-			vim.g.rustaceanvim = {
-				-- LSP 配置
-				server = {
-					default_settings = {
-						-- rust-analyzer 专属设置
-						["rust-analyzer"] = {
-							checkOnSave = {
-								enable = true,
-								command = "clippy", -- 将默认的 check 改为 clippy
-							},
-						},
-					},
-				},
-			}
-		end,
-	},
-
 	-- 优秀的折叠插件 (Ufo)
 	{
 		"kevinhwang91/nvim-ufo",
@@ -158,7 +135,7 @@ return {
 		end,
 	},
 
-	-- flash
+	-- 快速跳转 (Flash)
 	{
 		"folke/flash.nvim",
 		event = "VeryLazy",

@@ -1,14 +1,4 @@
 return {
-	-- Zig 官方文件类型与高亮支持
-	{
-		"ziglang/zig.vim",
-		ft = { "zig" },
-		init = function()
-			-- 我们使用 conform 来控制格式化，这里关掉 zig.vim 自带的保存时格式化
-			vim.g.zig_fmt_autosave = 0
-		end,
-	},
-
 	-- 核心 LSP 配置
 	{
 		"neovim/nvim-lspconfig",
@@ -48,7 +38,6 @@ return {
 	},
 
 	-- LSP 服务器自动安装
-	-- 注意：LSP 配置已移至 ftplugin/ 目录，但在这里确保安装
 	{
 		"williamboman/mason-lspconfig.nvim",
 		event = { "BufReadPre", "BufNewFile" },
@@ -57,9 +46,7 @@ return {
 				"lua_ls",
 				"ts_ls",
 				"zls",
-				-- rust_analyzer 由 rustaceanvim 管理，不在这里安装
 			},
-			-- 禁用自动安装，避免与 rustaceanvim 冲突
 			automatic_installation = false,
 		},
 	},
