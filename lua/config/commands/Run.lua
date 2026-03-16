@@ -298,6 +298,8 @@ function M.setup(opts)
 			end
 		end,
 	})
+
+	vim.cmd([[cnoreabbrev <expr> sh ((getcmdtype() == ':' && getcmdline() == 'sh') ? 'Run' : 'sh')]])
 end
 
 return M
