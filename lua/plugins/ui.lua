@@ -192,29 +192,21 @@ return {
 	{
 		"folke/edgy.nvim",
 		event = "VeryLazy",
-		keys = {
-			-- increase width
-			["<c-w>>"] = function(win)
-				win:resize("width", 5)
-			end,
-			-- decrease width
-			["<c-w><"] = function(win)
-				win:resize("width", -5)
-			end,
-			-- increase height
-			["<c-w>+"] = function(win)
-				win:resize("height", 5)
-			end,
-			-- decrease height
-			["<c-w>-"] = function(win)
-				win:resize("height", -5)
-			end,
-			-- reset all custom sizing
-			["<c-w>="] = function(win)
-				win.view.edgebar:equalize()
-			end,
-		},
 		opts = {
+			keys = {
+				["<A-h>"] = function(win)
+					win:resize("width", -2)
+				end,
+				["<A-l>"] = function(win)
+					win:resize("width", 2)
+				end,
+				["<A-j>"] = function(win)
+					win:resize("height", 2)
+				end,
+				["<A-k>"] = function(win)
+					win:resize("height", -2)
+				end,
+			},
 			exit_when_last = true,
 			options = {
 				left = { size = 25 },
@@ -242,6 +234,11 @@ return {
 				},
 			},
 			bottom = {
+				{
+					ft = "runner",
+					title = "Run",
+					size = { height = 0.25 },
+				},
 				{
 					ft = "qf",
 					title = "QuickFix",
