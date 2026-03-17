@@ -77,6 +77,7 @@ return {
 				html = { "prettier" },
 				css = { "prettier" },
 				markdown = { "prettier" },
+				toml = { "taplo" },
 			},
 			format_on_save = {
 				-- These options will be passed to conform.format()
