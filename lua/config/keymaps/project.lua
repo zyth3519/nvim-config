@@ -54,6 +54,10 @@ local function load_projects()
 			end
 		end
 	end
+
+	table.sort(projects, function(a, b)
+		return (a.priority or 0) > (b.priority or 0)
+	end)
 end
 
 local function get_start_dir()
