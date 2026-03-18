@@ -62,6 +62,7 @@ return {
 				"prettier", -- 前端 & Markdown 格式化
 				-- DAP 调试适配器
 				"codelldb", -- C/C++/Rust/Zig 调试器
+				"js-debug-adapter", -- JavaScript / TypeScript 调试器
 			},
 			auto_update = false,
 			run_on_start = true,

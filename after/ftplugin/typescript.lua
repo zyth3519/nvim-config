@@ -4,6 +4,29 @@ vim.lsp.config("ts_ls", {
 })
 vim.lsp.enable("ts_ls")
 
+local dap = require("dap")
+local dap_utils = require("dap.utils")
+
+dap.configurations[vim.bo.filetype] = {
+	{
+		type = "pwa-node",
+		request = "launch",
+		name = "Launch current file",
+		program = "${file}",
+		cwd = "${workspaceFolder}",
+		sourceMaps = true,
+		console = "integratedTerminal",
+	},
+	{
+		type = "pwa-node",
+		request = "attach",
+		name = "Attach to process",
+		processId = dap_utils.pick_process,
+		cwd = "${workspaceFolder}",
+		sourceMaps = true,
+	},
+}
+
 -- 仅对当前缓冲区生效，避免污染其他文件类型
 vim.opt_local.tabstop = 2 -- 一个 Tab 显示为 2 个空格宽度
 vim.opt_local.shiftwidth = 2 -- 自动缩进时使用 2 个空格

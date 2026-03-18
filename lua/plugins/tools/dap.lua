@@ -14,7 +14,16 @@ return {
 					args = { "--port", "${port}" },
 				},
 			}
-			-- DAP configurations 现在由 ftplugin 文件加载
+
+			dap.adapters["pwa-node"] = {
+				type = "server",
+				host = "localhost",
+				port = "${port}",
+				executable = {
+					command = vim.fn.stdpath("data") .. "/mason/bin/js-debug-adapter",
+					args = { "${port}" },
+				},
+			}
 		end,
 	},
 	{
