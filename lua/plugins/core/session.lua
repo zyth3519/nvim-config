@@ -1,5 +1,4 @@
 return {
-
 	-- 强大且安全的会话管理 (Resession)
 	{
 		"stevearc/resession.nvim",
@@ -42,6 +41,4 @@ return {
 			})
 		end,
 	},
-
-	{ "mrjones2014/smart-splits.nvim" },
 }

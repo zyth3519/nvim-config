@@ -24,7 +24,12 @@
 │   │   ├── autocmds.lua
 │   │   ├── keymaps/
 │   │   └── commands/
-│   └── plugins/
+│   └── plugins
+│       ├── core/
+│       ├── editor/
+│       ├── lang/
+│       ├── tools/
+│       └── ui/
 ├── after/ftplugin/
 ├── lazy-lock.json
 └── .luacheckrc
@@ -32,7 +37,12 @@
 
 - `init.lua`：配置入口
 - `lua/config`：核心配置，包括选项、快捷键、自动命令和自定义命令
-- `lua/plugins`：插件定义，按领域拆分，例如 `lsp.lua`、`editor.lua`、`ui.lua`
+- `lua/plugins`：插件定义，按职责分组
+- `lua/plugins/core`：核心运行能力，例如会话管理
+- `lua/plugins/editor`：编辑体验相关，例如补全、搜索、Treesitter、文件管理、窗口导航
+- `lua/plugins/lang`：语言支持相关，例如 LSP、语言插件、Markdown
+- `lua/plugins/tools`：开发工具相关，例如 Git、DAP
+- `lua/plugins/ui`：界面与交互层，例如主题、状态栏、消息系统、布局管理
 - `after/ftplugin`：文件类型专属配置
 - `lazy-lock.json`：插件版本锁定
 

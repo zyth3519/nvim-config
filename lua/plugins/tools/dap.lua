@@ -49,5 +49,5 @@ return {
 				dapui.close()
 			end
 		end,
-		},
+	},
 	}
