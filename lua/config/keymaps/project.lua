@@ -109,6 +109,26 @@ local function resolve_project()
 end
 
 local function build_context(root)
+	local function open_run_cmdline(cmd, opts)
+		opts = opts or {}
+		local cwd = opts.cwd or root
+		local parts = { "Run" }
+		local current_cwd = vim.fs.normalize(vim.fn.getcwd())
+		local normalized_cwd = cwd and vim.fs.normalize(cwd) or nil
+
+		if normalized_cwd and normalized_cwd ~= "" and normalized_cwd ~= current_cwd then
+			table.insert(parts, "cwd=" .. vim.fn.fnameescape(cwd))
+		end
+
+		if cmd and cmd ~= "" then
+			table.insert(parts, cmd)
+		end
+
+		local line = table.concat(parts, " ")
+		local keys = vim.keycode(":" .. line)
+		vim.api.nvim_feedkeys(keys, "n", false)
+	end
+
 	return {
 		root = root,
 		file = vim.api.nvim_buf_get_name(0),
@@ -118,7 +138,56 @@ local function build_context(root)
 			opts.cwd = opts.cwd or root
 			require("config.commands.run").run(cmd, opts)
 		end,
+		open = function(cmd, opts)
+			open_run_cmdline(cmd, opts)
+		end,
 	}
+end
+
+local function derive_prompt_lhs(lhs)
+	local suffix = lhs:match("^<leader>r(.+)$")
+	if not suffix then
+		return nil
+	end
+	return "<leader>rr" .. suffix
+end
+
+local function expand_keymaps(ctx, keymaps)
+	local expanded = {}
+
+	for _, map in ipairs(keymaps) do
+		if type(map) == "table" and type(map.lhs) == "string" then
+			local command = map.cmd
+			local run_opts = map.run_opts or {}
+			local rhs = map.rhs
+
+			if rhs == nil and type(command) == "string" then
+				rhs = function()
+					ctx.run(command, run_opts)
+				end
+			end
+
+			if type(rhs) == "function" then
+				table.insert(expanded, vim.tbl_extend("force", map, {
+					rhs = rhs,
+				}))
+
+				local prompt_lhs = derive_prompt_lhs(map.lhs)
+				if prompt_lhs and type(command) == "string" then
+					table.insert(expanded, {
+						lhs = prompt_lhs,
+						mode = map.mode or "n",
+						desc = "编辑 " .. (map.desc or command),
+						rhs = function()
+							ctx.open(command, run_opts)
+						end,
+					})
+				end
+			end
+		end
+	end
+
+	return expanded
 end
 
 local function clear_active_keymaps()
@@ -185,6 +254,12 @@ local function initialize()
 	end
 
 	if type(keymaps) ~= "table" or #keymaps == 0 then
+		return
+	end
+
+	local ctx = build_context(root)
+	keymaps = expand_keymaps(ctx, keymaps)
+	if #keymaps == 0 then
 		return
 	end
 
