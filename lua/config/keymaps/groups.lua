@@ -11,7 +11,6 @@ wk.add({
 	{ "<leader>g", group = "版本控制 (Git)", icon = "󰊢" },
 	{ "<leader>s", group = "搜索 (Search)", icon = "󰍉" },
 	{ "<leader>w", group = "窗口 (Window)", icon = "󱂬" },
-	{ "<leader>r", group = "运行 (Run)", icon = "󰆍" },
 	{ "g", group = "导航/跳转 (Go)", icon = "󰜎" },
 	{ "<leader>e", desc = "打开Oil", icon = "󰉋" },
 	{ "<leader>E", desc = "打开Oil（Root）", icon = "󰉋" },
