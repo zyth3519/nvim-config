@@ -343,8 +343,3 @@ luacheck .
 - `Lazy! sync`：同步插件并检查插件定义是否正常
 - `checkhealth`：检查运行环境和外部依赖
 - `luacheck .`：检查 Lua 代码质量
-
-## 适合继续完善的方向
-
-- 为 `lua/config/projects` 增加更多项目模板，例如 Go、Python、Java
-- 增加截图，展示 Oil、Telescope、Git 和 DAP 的实际界面
