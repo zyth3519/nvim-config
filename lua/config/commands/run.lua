@@ -6,6 +6,11 @@ local state = {
 	job_id = nil,
 }
 
+local history_state = {
+	index = nil,
+	last_cmdline = nil,
+}
+
 local config = {
 	height = 12,
 	ft = "runner",
@@ -60,6 +65,83 @@ local function normalize_env(env)
 		return nil
 	end
 	return env
+end
+
+local function reset_history_state()
+	history_state.index = nil
+	history_state.last_cmdline = nil
+end
+
+local function is_run_cmdline(cmdline)
+	return cmdline == "Run" or cmdline:match("^Run%s")
+end
+
+function M.cmdline_prev_run()
+	if vim.fn.getcmdtype() ~= ":" then
+		return vim.keycode("<C-p>")
+	end
+
+	local cmdline = vim.fn.getcmdline()
+	if not is_run_cmdline(cmdline) then
+		reset_history_state()
+		return vim.keycode("<C-p>")
+	end
+
+	local max_hist = vim.fn.histnr(":")
+	if max_hist <= 0 then
+		return ""
+	end
+
+	local start = max_hist
+	if history_state.last_cmdline == cmdline and history_state.index ~= nil then
+		start = history_state.index - 1
+	else
+		reset_history_state()
+	end
+
+	for i = start, 1, -1 do
+		local entry = vim.fn.histget(":", i)
+		if type(entry) == "string" and is_run_cmdline(entry) then
+			history_state.index = i
+			history_state.last_cmdline = entry
+			return vim.keycode("<C-u>") .. entry
+		end
+	end
+
+	return ""
+end
+
+function M.cmdline_next_run()
+	if vim.fn.getcmdtype() ~= ":" then
+		return vim.keycode("<C-n>")
+	end
+
+	local cmdline = vim.fn.getcmdline()
+	if not is_run_cmdline(cmdline) then
+		reset_history_state()
+		return vim.keycode("<C-n>")
+	end
+
+	local max_hist = vim.fn.histnr(":")
+	if max_hist <= 0 then
+		return ""
+	end
+
+	if history_state.index == nil then
+		return ""
+	end
+
+	for i = history_state.index + 1, max_hist do
+		local entry = vim.fn.histget(":", i)
+		if type(entry) == "string" and is_run_cmdline(entry) then
+			history_state.index = i
+			history_state.last_cmdline = entry
+			return vim.keycode("<C-u>") .. entry
+		end
+	end
+
+	reset_history_state()
+	return vim.keycode("<C-u>") .. cmdline
 end
 
 local function ensure_runner_win(height)
@@ -299,7 +381,18 @@ function M.setup(opts)
 		end,
 	})
 
+	vim.api.nvim_create_autocmd("CmdlineLeave", {
+		pattern = ":",
+		callback = reset_history_state,
+	})
+
 	vim.cmd([[cnoreabbrev <expr> sh ((getcmdtype() == ':' && getcmdline() == 'sh') ? 'Run' : 'sh')]])
+	vim.keymap.set("c", "<C-p>", function()
+		return require("config.commands.run").cmdline_prev_run()
+	end, { expr = true, desc = "Run 命令历史向前搜索" })
+	vim.keymap.set("c", "<C-n>", function()
+		return require("config.commands.run").cmdline_next_run()
+	end, { expr = true, desc = "Run 命令历史向后搜索" })
 end
 
 return M
