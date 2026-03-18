@@ -4,6 +4,9 @@ local keymaps = require("project_run.keymaps")
 
 local M = {}
 
+-- 插件级状态。
+-- 这套运行/项目键位默认只在一个 Neovim 会话里初始化一次，
+-- 手动执行 `:ProjectRunRedetect` 时会复用这里保存的状态和配置。
 local state = {
 	initialized = false,
 	initializing = false,
@@ -12,6 +15,7 @@ local state = {
 }
 
 local function initialize(opts)
+	-- 每次重建时都先清掉旧键位，再重新按当前项目生成。
 	keymaps.clear_active_keymaps(state)
 
 	local loaded_projects = projects.load(opts.project_glob)
@@ -42,6 +46,9 @@ local function initialize(opts)
 end
 
 function M.setup(opts)
+	-- 公开入口。
+	-- 配置层只需要传 runner 选项和项目规则的 glob，
+	-- 不需要关心内部是如何解析项目或生成键位的。
 	opts = opts or {}
 	if state.initialized or state.initializing then
 		return
@@ -66,6 +73,7 @@ function M.setup(opts)
 end
 
 function M.redetect()
+	-- 手动重检当前项目，并重新注册这套插件生成的键位。
 	if state.initializing then
 		return
 	end
@@ -80,10 +88,12 @@ function M.redetect()
 end
 
 function M.run(cmd, opts)
+	-- 暴露统一的执行入口，方便外部代码直接调用。
 	runner.run(cmd, opts)
 end
 
 function M.cmdline_prev_run()
+	-- 公开命令行历史搜索能力，供命令行模式映射复用。
 	return runner.cmdline_prev_run()
 end
 

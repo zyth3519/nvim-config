@@ -1,17 +1,16 @@
 # project-run.nvim
 
-Local plugin for this config's `:Run` command and project-aware run keymaps.
+用于当前配置的本地插件，负责提供 `:Run` 命令和按项目生成的运行键位。
 
-## Features
+## 功能
 
-- Provides `:Run`
-- Redirects `:sh` to `:Run`
-- Adds command-line history filtering for `Run`
-- Loads project presets from a configurable glob
-- Generates `<leader>rN` and `<leader>rrN`
-- Exposes `:ProjectRunRedetect`
+- 提供 `:Run`
+- 提供 `Run` 命令历史搜索
+- 从可配置的 glob 加载项目规则
+- 自动生成 `<leader>rN` 和 `<leader>rrN`
+- 提供 `:ProjectRunRedetect`
 
-## Setup
+## 配置示例
 
 ```lua
 require("project_run").setup({

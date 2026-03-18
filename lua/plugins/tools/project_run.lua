@@ -14,6 +14,8 @@ return {
 				},
 				project_glob = "lua/config/projects/*.lua",
 			})
+
+			vim.cmd([[cnoreabbrev <expr> sh ((getcmdtype() == ':' && getcmdline() == 'sh') ? 'Run' : 'sh')]])
 		end,
 	},
 }

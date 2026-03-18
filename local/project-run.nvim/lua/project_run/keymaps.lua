@@ -1,6 +1,10 @@
 local M = {}
 
 function M.build_context(root, runner)
+	-- 规则文件只需要关心这里暴露出去的上下文：
+	--   - root/file/bufnr：当前项目与缓冲区信息
+	--   - run(cmd, opts)：立即执行
+	--   - open(cmd, opts)：填入命令行但不执行
 	local function open_run_cmdline(cmd, opts)
 		opts = opts or {}
 		local cwd = opts.cwd or root
@@ -8,6 +12,8 @@ function M.build_context(root, runner)
 		local current_cwd = vim.fs.normalize(vim.fn.getcwd())
 		local normalized_cwd = cwd and vim.fs.normalize(cwd) or nil
 
+		-- 只有目标目录和当前 cwd 不同时，才补 `cwd=...`，
+		-- 避免命令行里出现多余参数。
 		if normalized_cwd and normalized_cwd ~= "" and normalized_cwd ~= current_cwd then
 			table.insert(parts, "cwd=" .. vim.fn.fnameescape(cwd))
 		end
@@ -37,14 +43,19 @@ function M.build_context(root, runner)
 end
 
 local function build_lhs(index)
+	-- 第 N 个项目命令对应 `<leader>rN`
 	return "<leader>r" .. index
 end
 
 local function build_prompt_lhs(index)
+	-- 第 N 个“填入命令行”键位对应 `<leader>rrN`
 	return "<leader>rr" .. index
 end
 
 function M.expand(ctx, entries)
+	-- 把规则文件返回的有序条目扩展成真正可注册的键位：
+	--   - rN：直接执行
+	--   - rrN：填入命令行
 	local expanded = {}
 
 	for index, entry in ipairs(entries) do
@@ -53,6 +64,7 @@ function M.expand(ctx, entries)
 			local run_opts = entry.run_opts or {}
 			local rhs = entry.rhs
 
+			-- 大多数规则只提供 `cmd`，这里补默认执行逻辑。
 			if rhs == nil and type(command) == "string" then
 				rhs = function()
 					ctx.run(command, run_opts)
@@ -65,6 +77,7 @@ function M.expand(ctx, entries)
 					rhs = rhs,
 				}))
 
+				-- 只有存在稳定命令字符串时，才生成 `rrN` 这组预填命令行键位。
 				if type(command) == "string" then
 					table.insert(expanded, {
 						lhs = build_prompt_lhs(index),
@@ -83,6 +96,7 @@ function M.expand(ctx, entries)
 end
 
 function M.clear_active_keymaps(state)
+	-- 只删除这套插件自己注册过的键位，避免影响别的映射。
 	for _, map in ipairs(state.active_keymaps) do
 		pcall(vim.keymap.del, map.mode, map.lhs)
 	end
@@ -90,6 +104,7 @@ function M.clear_active_keymaps(state)
 end
 
 function M.register(state, keymaps)
+	-- 注册键位，同时记录下来，供下次手动重检时清理。
 	for _, map in ipairs(keymaps) do
 		if type(map) == "table" and type(map.lhs) == "string" and type(map.rhs) == "function" then
 			local mode = map.mode or "n"
@@ -105,6 +120,7 @@ function M.register(state, keymaps)
 end
 
 function M.register_which_key(keymaps)
+	-- which-key 是可选增强；没有它时，运行逻辑仍然可用。
 	local wk_ok, wk = pcall(require, "which-key")
 	if not wk_ok then
 		return

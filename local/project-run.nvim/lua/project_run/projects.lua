@@ -1,11 +1,13 @@
 local M = {}
 
+-- 规则文件加载失败时不直接打断启动，而是异步给出提示。
 local function notify_invalid(path, message)
 	vim.schedule(function()
 		vim.notify(("Project preset %s: %s"):format(path, message), vim.log.levels.WARN)
 	end)
 end
 
+-- 把 `/.../lua/foo/bar.lua` 转成 `foo.bar` 这种 require 可用的模块名。
 local function path_to_module(path)
 	local module = path:match("/lua/(.+)%.lua$")
 	if not module then
@@ -15,6 +17,10 @@ local function path_to_module(path)
 end
 
 function M.load(glob)
+	-- 加载项目规则并做最小约定校验：
+	--   1. 规则文件必须返回 table
+	--   2. 必须提供 `matches(dir)`
+	--   3. 必须提供 `keymaps(ctx)`
 	local projects = {}
 	local paths = vim.api.nvim_get_runtime_file(glob, true)
 	table.sort(paths)
@@ -42,6 +48,8 @@ function M.load(glob)
 end
 
 local function get_start_dir()
+	-- 优先从当前缓冲区所在目录开始判断项目类型。
+	-- 对无名缓冲区则退回当前工作目录。
 	local name = vim.api.nvim_buf_get_name(0)
 	if name == "" then
 		return vim.fs.normalize(vim.fn.getcwd())
@@ -56,6 +64,7 @@ local function get_start_dir()
 end
 
 local function iter_parents(start_dir)
+	-- 从当前目录逐级向上遍历，确保“离当前文件最近的项目根目录”优先命中。
 	local dir = vim.fs.normalize(start_dir)
 	return function()
 		if not dir then
@@ -74,6 +83,7 @@ local function iter_parents(start_dir)
 end
 
 function M.resolve(projects)
+	-- 遍历所有父目录，找到第一个成功命中的项目规则。
 	local start_dir = get_start_dir()
 	if not start_dir then
 		return nil

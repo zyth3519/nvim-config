@@ -363,7 +363,6 @@ function M.setup(opts)
 		callback = reset_history_state,
 	})
 
-	vim.cmd([[cnoreabbrev <expr> sh ((getcmdtype() == ':' && getcmdline() == 'sh') ? 'Run' : 'sh')]])
 	vim.keymap.set("c", "<C-p>", function()
 		return require("project_run").cmdline_prev_run()
 	end, { expr = true, desc = "Run 命令历史向前搜索" })
