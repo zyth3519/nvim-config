@@ -39,7 +39,8 @@
 
 - `init.lua`：配置入口
 - `lua/config`：核心配置，包括选项、快捷键、自动命令和自定义命令
-- `lua/config/projects`：项目运行规则目录，每个文件返回统一接口，用于识别项目类型并生成运行键位
+- `lua/config/projects`：项目运行规则目录，负责提供项目识别逻辑和按顺序排列的运行条目
+- `lua/config/keymaps/project.lua`：项目运行键位加载器，统一生成 `<leader>rN` / `<leader>rrN`
 - `lua/plugins`：插件定义，按职责分组
 - `lua/plugins/core`：核心运行能力，例如会话管理
 - `lua/plugins/editor`：编辑体验相关，例如补全、搜索、Treesitter、文件管理、窗口导航
@@ -213,7 +214,8 @@ Leader 键为 `<Space>`。
 ### 命令与终端
 
 - `<M-x>`：快速输入 `:Run`
-- `<leader>r1` / `<leader>r2` / `<leader>r3`：按当前项目类型执行预设命令
+- `<leader>r1` / `<leader>r2` / ...：按当前项目类型直接执行预设命令
+- `<leader>rr1` / `<leader>rr2` / ...：把对应项目命令填入命令行
 - `:sh`：已重定向到 `:Run`
 - 终端模式 `<Esc>` / `jk`：退出终端插入模式
 - 终端模式 `<C-h>` / `<C-j>` / `<C-k>` / `<C-l>`：在窗口间跳转
@@ -247,9 +249,23 @@ Leader 键为 `<Space>`。
 启动时会扫描 `lua/config/projects/*.lua`。每个规则文件都需要返回一个 table，并统一实现：
 
 - `matches(dir)`：判断某个目录是否属于该项目类型
-- `keymaps(ctx)`：返回当前项目的键位定义列表
+- `keymaps(ctx)`：返回当前项目的运行条目列表
 
-`ctx` 会提供 `root`、`file`、`bufnr` 和 `run(cmd, opts)`，规则文件只需要关注项目识别和命令定义，不需要直接改 `run.lua`。
+`ctx` 会提供 `root`、`file`、`bufnr`、`run(cmd, opts)` 和 `open(cmd, opts)`。规则文件本身不需要返回 `lhs`，只需要按顺序提供条目，例如：
+
+```lua
+{
+  { desc = "Cargo Run", cmd = "cargo run" },
+  { desc = "Cargo Build", cmd = "cargo build" },
+}
+```
+
+`lua/config/keymaps/project.lua` 会统一把这些条目扩展成两套键位：
+
+- `<leader>rN`：直接执行
+- `<leader>rrN`：把命令填入命令行但不执行
+
+如果项目根目录和当前工作目录不同，预填命令会自动带上 `cwd=...`；相同时不会添加。
 
 目前已经内置：
 
@@ -257,13 +273,21 @@ Leader 键为 `<Space>`。
 - Node 项目：检测 `package.json`
 - Zig 项目：检测 `build.zig`
 
-进入项目内文件后，会按当前目录向上查找项目根目录，并把对应项目的 `<leader>r1`、`<leader>r2`、`<leader>r3` 作为 buffer-local 键位注入。
+当前实现只在 Neovim 会话启动时识别一次项目类型。后续不会自动重跑；如果你修改了配置或切到了别的项目，需要手动执行：
+
+```vim
+:ProjectRunRedetect
+```
 
 示例：
 
-- Rust：`<leader>r1` -> `cargo run`，`<leader>r2` -> `cargo build`，`<leader>r3` -> `cargo test`
-- Node：`<leader>r1` -> `npm run dev`，`<leader>r2` -> `npm run build`，`<leader>r3` -> `npm test`
-- Zig：`<leader>r1` -> `zig build`，`<leader>r2` -> `zig build test`，`<leader>r3` -> `zig fmt .`
+- Rust：`<leader>r1` -> `cargo run`，`<leader>rr1` -> 预填 `:Run cargo run`
+- Node：`<leader>r1` -> 直接执行首个脚本，`<leader>rr1` -> 预填同一条命令
+- Zig：`<leader>r1` -> `zig build`，`<leader>rr2` -> 预填 `:Run zig build test`
+
+详细实现说明见：
+
+- [README.md](/home/zyth/.config/nvim/lua/config/keymaps/README.md)
 
 ### `:Session`
 
