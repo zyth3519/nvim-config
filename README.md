@@ -21,7 +21,8 @@
 ├── lua
 │   ├── config
 │   │   ├── options.lua
-│   │   ├── autocmds.lua
+│   │   ├── lazy.lua
+│   │   ├── autocmds/
 │   │   ├── keymaps/
 │   │   └── commands/
 │   └── plugins
@@ -91,7 +92,7 @@ nvim
 当前仓库已经配置：
 
 - LSP：`lua_ls`、`ts_ls`、`zls`
-- 自动安装工具：`stylua`、`prettier`、`codelldb`
+- 自动安装工具：`stylua`、`prettier`、`codelldb`、`js-debug-adapter`
 - 保存时格式化：Lua、Rust、Zig、JavaScript、TypeScript、JSON、HTML、CSS、Markdown、TOML 等
 
 手动格式化当前缓冲区：
@@ -100,48 +101,124 @@ nvim
 <leader>cf
 ```
 
-## 常用快捷键
+## 完整键位清单
 
 Leader 键为 `<Space>`。
+
+### 核心与窗口
+
+- `<C-h>` / `<C-j>` / `<C-k>` / `<C-l>`：跳转到左 / 下 / 上 / 右窗口
+- `<C-\>`：跳转到上一个窗口
+- `<A-h>` / `<A-j>` / `<A-k>` / `<A-l>`：调整窗口大小
+- `<leader><leader>h` / `j` / `k` / `l`：与相邻窗口交换缓冲区
+- `<leader>wh`：水平分割当前窗口
+- `<leader>wv`：垂直分割当前窗口
+- `<leader>wx`：窗口互换
+- `<leader>wq`：关闭当前窗口
+- `<leader>wo`：关闭其他所有窗口
+
+### 缓冲区
+
+- `<S-h>` / `<S-l>`：切换上一个 / 下一个缓冲区
+- `<leader>q`：关闭当前缓冲区
+- `<leader>bo`：只保留当前缓冲区
+- `<leader>bl` / `<leader>br`：关闭左侧 / 右侧所有缓冲区
+- `<leader>b<` / `<leader>b>`：向左 / 向右移动缓冲区
+- `<leader>bf` / `<leader>bF`：跳到第一个 / 最后一个缓冲区
+- `<leader>1` 到 `<leader>9`：跳转到对应编号缓冲区
 
 ### 文件与搜索
 
 - `<leader>e`：智能打开 Oil
+- `<leader>fe`：以浮窗打开 Oil
+- `<leader>fr`：以浮窗打开项目根目录
 - `<leader>ff`：搜索当前项目文件
+- `<leader>ss`：打开 Telescope 总入口
+- `<leader>sf`：查找文件
+- `<leader>sF`：按 frecency 排序查找文件
 - `<leader>sg`：全文搜索
 - `<leader>sb`：搜索缓冲区
+- `<leader>sh`：搜索帮助文档
+- `<leader>sy` / `<leader>sY`：搜索当前文档 / 工作区符号
 - `<leader>sd`：搜索诊断信息
 
-### 代码操作
+### 代码与 LSP
 
-- `gd`：跳转到定义
-- `grr`：查看引用
-- `gri`：查看实现
-- `K`：悬浮文档
 - `<leader>ca`：代码操作
 - `<leader>cr`：重命名符号
+- `<leader>cd`：显示悬浮诊断
+- `<leader>cf`：格式化当前缓冲区
+- `gd`：跳转到定义
+- `gD`：跳转到声明
+- `gri`：跳转到实现
+- `grr`：查看引用
+- `grt`：查看类型定义
+- `gO`：查看文档符号
+- `gra`：代码操作
+- `grn`：重命名
+- `K`：悬浮文档
 
 ### Git
 
 - `<leader>gg`：打开 Neogit
-- `<leader>gd`：打开 Diffview
-- `<leader>gb`：查看当前行 blame
+- `<leader>gc`：提交
+- `<leader>gp` / `<leader>gP`：拉取 / 推送
+- `<leader>gd` / `<leader>gD`：打开 / 关闭 Diffview
+- `<leader>gb` / `<leader>gB`：单行 blame / 切换当前行 blame
+- `<leader>gr` / `<leader>gR`：回滚 hunk / 回滚整个缓冲区
 - `<leader>gh`：预览 hunk
 
 ### 调试
 
-- `<F5>`：启动/继续调试
-- `<F9>`：切换断点
-- `<F10>` / `<F11>` / `<F12>`：单步调试
-- `<leader>dt`：切换调试 UI
+- `<F5>` / `<leader>dc`：启动或继续调试
+- `<F6>` / `<leader>ds`：断开调试
+- `<F9>` / `<leader>dp`：切换断点
+- `<F10>` / `<leader>dv`：逐过程
+- `<F11>` / `<leader>di`：单步进入
+- `<F12>` / `<leader>do`：单步跳出
+- `<leader>dt`：显示或隐藏调试 UI
 
-### 命令与窗口
+### 多光标
+
+- `<A-Up>` / `<A-Down>`：在上方 / 下方添加光标
+- `<A-S-Up>` / `<A-S-Down>`：跳过上方 / 下方行
+- `<A-n>` / `<A-N>`：向下 / 向上添加匹配光标
+- `<A-s>` / `<A-S>`：向下 / 向上跳过匹配
+- `<C-LeftMouse>`：鼠标添加光标
+- `<C-LeftDrag>`：鼠标拖动
+- `<C-LeftRelease>`：鼠标释放
+
+### Treesitter 文本对象
+
+- `]f` / `[f`：跳到下一个 / 上一个函数开始
+- `]F` / `[F`：跳到下一个 / 上一个函数结束
+- `]c` / `[c`：跳到下一个 / 上一个类开始
+- `]C` / `[C`：跳到下一个 / 上一个类结束
+- `]]` / `[[`：跳到下一个 / 上一个作用域开始
+- `][` / `[]`：跳到下一个 / 上一个作用域结束
+- `]z` / `[z`：跳到下一个 / 上一个折叠开始
+- `]Z` / `[Z`：跳到下一个 / 上一个折叠结束
+- `af` / `if`：选择函数外层 / 内层
+- `ac` / `ic`：选择类外层 / 内层
+- `as`：选择当前作用域
+
+### Flash
+
+- `s`：快速跳转
+- `S`：基于 Treesitter 快速跳转
+- `<C-s>`：切换命令行搜索 Flash
+
+### 命令与终端
 
 - `<M-x>`：快速输入 `:Run`
 - `:sh`：已重定向到 `:Run`
-- `<C-h/j/k/l>`：窗口跳转
-- `<A-h/j/k/l>`：窗口尺寸调整
-- `<S-h>` / `<S-l>`：切换缓冲区
+- 终端模式 `<Esc>` / `jk`：退出终端插入模式
+- 终端模式 `<C-h>` / `<C-j>` / `<C-k>` / `<C-l>`：在窗口间跳转
+- 终端模式 `<C-w>`：进入窗口命令前缀
+
+### Rust 专属
+
+- `<leader>ca`：在 Rust 文件中调用 `RustLsp codeAction`，覆盖默认 LSP code action
 
 ## 自定义命令
 
@@ -156,6 +233,20 @@ Leader 键为 `<Space>`。
 :Run npm run dev
 ```
 
+按语言示例：
+
+- Lua：`:Run lua %`
+- Rust：`:Run cargo run`
+- Zig：`:Run zig build`
+- TypeScript / JavaScript：`:Run npm run dev`、`:Run pnpm test`
+- 通用脚本：`:Run sh %`
+
+补充说明：
+
+- `:Run` 会在底部分屏打开一个 `runner` 窗口显示输出
+- `:sh` 已重定向到 `:Run`
+- 如果需要指定目录，可直接把命令写成 `:Run cwd=路径 实际命令`
+
 ### `:Session`
 
 用于管理会话：
@@ -167,6 +258,58 @@ Leader 键为 `<Space>`。
 ```
 
 此外，仓库已启用基于当前工作目录的自动会话保存与恢复。
+
+## 调试工作流示例
+
+当前调试快捷键统一为：
+
+- 启动 / 继续：`<F5>` 或 `<leader>dc`
+- 断开：`<F6>` 或 `<leader>ds`
+- 断点：`<F9>` 或 `<leader>dp`
+- 单步：`<F10>` / `<F11>` / `<F12>`
+- 调试 UI：`<leader>dt`
+
+按语言示例：
+
+### Zig
+
+Zig 已配置 `codelldb` 调试，进入 `.zig` 文件后可直接使用：
+
+1. 在目标位置按 `<F9>` 下断点
+2. 按 `<F5>` 启动调试
+3. 首次启动会先执行 `zig build`
+4. 默认可执行文件路径为 `zig-out/bin/<当前目录名>`
+
+如果你的产物路径不同，启动时按提示修改即可。
+
+### Rust
+
+当前仓库已配置 Rust 开发环境与 `RustLsp codeAction` 快捷键，但没有在仓库内定义独立的 Rust DAP 启动项。更稳妥的工作流是：
+
+1. 用 `:Run cargo test` 或 `:Run cargo run` 验证构建
+2. 用 `<leader>ca` 调用 `RustLsp codeAction`
+3. 如需 Rust 专属 DAP 启动配置，再补充到 `after/ftplugin/rust.lua`
+
+### Lua
+
+当前为 Lua 配置了 `lua_ls`，但没有单独提供 Lua DAP 启动项。推荐工作流：
+
+1. 先通过 `K`、`gd`、`grr` 等 LSP 能力完成定位
+2. 用 `:Run lua %` 或 `:Run luacheck .` 做快速验证
+
+### TypeScript / JavaScript
+
+当前为前端文件配置了 `ts_ls`、格式化以及基于 `js-debug-adapter` 的 Node 调试。推荐工作流：
+
+1. 用 `:Run npm run dev`、`:Run npm test` 或 `:Run pnpm dev`
+2. 用 `gd`、`gri`、`grr`、`<leader>ca` 配合 LSP 进行排查
+3. 在 `.ts`、`.tsx`、`.js`、`.jsx` 文件中按 `<F5>` 启动 `Launch current file`
+4. 如果需要附加到现有 Node 进程，可选择 `Attach to process`
+
+当前内置的 JS / TS DAP 启动项：
+
+- `Launch current file`
+- `Attach to process`
 
 ## 验证与维护
 
@@ -184,6 +327,5 @@ luacheck .
 
 ## 适合继续完善的方向
 
-- 为 README 补充完整键位清单
 - 为 `:Run` 和调试工作流增加按语言区分的示例
 - 增加截图，展示 Oil、Telescope、Git 和 DAP 的实际界面
