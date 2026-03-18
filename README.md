@@ -9,7 +9,7 @@
 - 内置 `conform.nvim`，保存时自动格式化，支持手动格式化
 - 使用 `telescope.nvim` 负责文件、全文、符号、诊断搜索
 - 使用 `oil.nvim` 作为文件管理器，适合快速浏览和改名移动
-- 内置 `:Run` 命令，在底部分屏执行系统命令
+- 内置 `:Run` 命令，并支持按项目类型动态注入运行键位
 - 使用 `resession.nvim` 自动保存当前目录会话
 - 集成 Git、DAP、状态栏、缓冲区栏、消息增强与窗口布局管理
 
@@ -23,6 +23,7 @@
 │   │   ├── options.lua
 │   │   ├── lazy.lua
 │   │   ├── autocmds/
+│   │   ├── projects/
 │   │   ├── keymaps/
 │   │   └── commands/
 │   └── plugins
@@ -38,6 +39,7 @@
 
 - `init.lua`：配置入口
 - `lua/config`：核心配置，包括选项、快捷键、自动命令和自定义命令
+- `lua/config/projects`：项目运行规则目录，每个文件返回统一接口，用于识别项目类型并生成运行键位
 - `lua/plugins`：插件定义，按职责分组
 - `lua/plugins/core`：核心运行能力，例如会话管理
 - `lua/plugins/editor`：编辑体验相关，例如补全、搜索、Treesitter、文件管理、窗口导航
@@ -211,6 +213,7 @@ Leader 键为 `<Space>`。
 ### 命令与终端
 
 - `<M-x>`：快速输入 `:Run`
+- `<leader>r1` / `<leader>r2` / `<leader>r3`：按当前项目类型执行预设命令
 - `:sh`：已重定向到 `:Run`
 - 终端模式 `<Esc>` / `jk`：退出终端插入模式
 - 终端模式 `<C-h>` / `<C-j>` / `<C-k>` / `<C-l>`：在窗口间跳转
@@ -233,19 +236,34 @@ Leader 键为 `<Space>`。
 :Run npm run dev
 ```
 
-按语言示例：
-
-- Lua：`:Run lua %`
-- Rust：`:Run cargo run`
-- Zig：`:Run zig build`
-- TypeScript / JavaScript：`:Run npm run dev`、`:Run pnpm test`
-- 通用脚本：`:Run sh %`
-
 补充说明：
 
 - `:Run` 会在底部分屏打开一个 `runner` 窗口显示输出
 - `:sh` 已重定向到 `:Run`
 - 如果需要指定目录，可直接把命令写成 `:Run cwd=路径 实际命令`
+
+### 项目运行键位
+
+启动时会扫描 `lua/config/projects/*.lua`。每个规则文件都需要返回一个 table，并统一实现：
+
+- `matches(dir)`：判断某个目录是否属于该项目类型
+- `keymaps(ctx)`：返回当前项目的键位定义列表
+
+`ctx` 会提供 `root`、`file`、`bufnr` 和 `run(cmd, opts)`，规则文件只需要关注项目识别和命令定义，不需要直接改 `run.lua`。
+
+目前已经内置：
+
+- Rust 项目：检测 `Cargo.toml`
+- Node 项目：检测 `package.json`
+- Zig 项目：检测 `build.zig`
+
+进入项目内文件后，会按当前目录向上查找项目根目录，并把对应项目的 `<leader>r1`、`<leader>r2`、`<leader>r3` 作为 buffer-local 键位注入。
+
+示例：
+
+- Rust：`<leader>r1` -> `cargo run`，`<leader>r2` -> `cargo build`，`<leader>r3` -> `cargo test`
+- Node：`<leader>r1` -> `npm run dev`，`<leader>r2` -> `npm run build`，`<leader>r3` -> `npm test`
+- Zig：`<leader>r1` -> `zig build`，`<leader>r2` -> `zig build test`，`<leader>r3` -> `zig fmt .`
 
 ### `:Session`
 
@@ -286,7 +304,7 @@ Zig 已配置 `codelldb` 调试，进入 `.zig` 文件后可直接使用：
 
 当前仓库已配置 Rust 开发环境与 `RustLsp codeAction` 快捷键，但没有在仓库内定义独立的 Rust DAP 启动项。更稳妥的工作流是：
 
-1. 用 `:Run cargo test` 或 `:Run cargo run` 验证构建
+1. 优先使用 `<leader>r1`、`<leader>r2`、`<leader>r3` 执行 `cargo run`、`cargo build`、`cargo test`
 2. 用 `<leader>ca` 调用 `RustLsp codeAction`
 3. 如需 Rust 专属 DAP 启动配置，再补充到 `after/ftplugin/rust.lua`
 
@@ -301,10 +319,11 @@ Zig 已配置 `codelldb` 调试，进入 `.zig` 文件后可直接使用：
 
 当前为前端文件配置了 `ts_ls`、格式化以及基于 `js-debug-adapter` 的 Node 调试。推荐工作流：
 
-1. 用 `:Run npm run dev`、`:Run npm test` 或 `:Run pnpm dev`
-2. 用 `gd`、`gri`、`grr`、`<leader>ca` 配合 LSP 进行排查
-3. 在 `.ts`、`.tsx`、`.js`、`.jsx` 文件中按 `<F5>` 启动 `Launch current file`
-4. 如果需要附加到现有 Node 进程，可选择 `Attach to process`
+1. 在 Node 项目内优先使用 `<leader>r1`、`<leader>r2`、`<leader>r3`
+2. 也可以直接用 `:Run npm run dev`、`:Run npm test` 或 `:Run pnpm dev`
+3. 用 `gd`、`gri`、`grr`、`<leader>ca` 配合 LSP 进行排查
+4. 在 `.ts`、`.tsx`、`.js`、`.jsx` 文件中按 `<F5>` 启动 `Launch current file`
+5. 如果需要附加到现有 Node 进程，可选择 `Attach to process`
 
 当前内置的 JS / TS DAP 启动项：
 
@@ -327,5 +346,5 @@ luacheck .
 
 ## 适合继续完善的方向
 
-- 为 `:Run` 和调试工作流增加按语言区分的示例
+- 为 `lua/config/projects` 增加更多项目模板，例如 Go、Python、Java
 - 增加截图，展示 Oil、Telescope、Git 和 DAP 的实际界面
