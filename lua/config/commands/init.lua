@@ -1,5 +1,5 @@
-require("config.commands.Session")
-require("config.commands.Run").setup({
+require("config.commands.session")
+require("config.commands.run").setup({
 	height = 12,
 	ft = "runner",
 	title = "Run",
