@@ -1,8 +1,14 @@
 # Keymaps Notes
 
-## `project.lua`
+## `project/`
 
-`project.lua` 负责把 `lua/config/projects/` 里的项目规则转换成最终可用的运行键位。
+`project/` 负责把 `lua/config/projects/` 里的项目规则转换成最终可用的运行键位。
+
+当前拆分为：
+
+- `init.lua`：生命周期和 `:ProjectRunRedetect`
+- `loader.lua`：规则扫描和项目识别
+- `runtime.lua`：上下文构造、键位展开和注册
 
 ### 规则接口
 
@@ -29,7 +35,7 @@ return {
 
 ### 键位生成
 
-`project.lua` 会根据条目索引自动生成两套键位：
+`runtime.lua` 会根据条目索引自动生成两套键位：
 
 - `<leader>r1`、`<leader>r2` ...：直接执行
 - `<leader>rr1`、`<leader>rr2` ...：把同一条命令填入命令行

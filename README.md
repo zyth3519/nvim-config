@@ -40,7 +40,7 @@
 - `init.lua`：配置入口
 - `lua/config`：核心配置，包括选项、快捷键、自动命令和自定义命令
 - `lua/config/projects`：项目运行规则目录，负责提供项目识别逻辑和按顺序排列的运行条目
-- `lua/config/keymaps/project.lua`：项目运行键位加载器，统一生成 `<leader>rN` / `<leader>rrN`
+- `lua/config/keymaps/project/`：项目运行键位加载器，统一生成 `<leader>rN` / `<leader>rrN`
 - `lua/plugins`：插件定义，按职责分组
 - `lua/plugins/core`：核心运行能力，例如会话管理
 - `lua/plugins/editor`：编辑体验相关，例如补全、搜索、Treesitter、文件管理、窗口导航
@@ -260,7 +260,7 @@ Leader 键为 `<Space>`。
 }
 ```
 
-`lua/config/keymaps/project.lua` 会统一把这些条目扩展成两套键位：
+`lua/config/keymaps/project/` 会统一把这些条目扩展成两套键位：
 
 - `<leader>rN`：直接执行
 - `<leader>rrN`：把命令填入命令行但不执行
@@ -287,7 +287,7 @@ Leader 键为 `<Space>`。
 
 详细实现说明见：
 
-- [README.md](/home/zyth/.config/nvim/lua/config/keymaps/README.md)
+- [README.md](/home/zyth/.config/nvim/lua/config/keymaps/project/README.md)
 
 ### `:Session`
 
