@@ -12,6 +12,8 @@ local state = {
 	initialized = false,
 	-- 启动阶段异步初始化时，避免重复排队。
 	initializing = false,
+	-- 记录当前会话里由项目规则注册的全局键位，便于手动重检前清理。
+	active_keymaps = {},
 }
 
 local function notify_invalid(path, message)
@@ -119,6 +121,13 @@ local function build_context(root)
 	}
 end
 
+local function clear_active_keymaps()
+	for _, map in ipairs(state.active_keymaps) do
+		pcall(vim.keymap.del, map.mode, map.lhs)
+	end
+	state.active_keymaps = {}
+end
+
 -- 命中项目规则后，把运行键位注册成全局映射。
 -- 因为整个会话只初始化一次，所以这里不再使用 buffer-local 注册。
 local function register_keymaps(keymaps)
@@ -131,6 +140,7 @@ local function register_keymaps(keymaps)
 				nowait = map.nowait,
 			}
 			vim.keymap.set(mode, map.lhs, map.rhs, opts)
+			table.insert(state.active_keymaps, { mode = mode, lhs = map.lhs })
 		end
 	end
 end
@@ -159,10 +169,12 @@ local function register_which_key(keymaps)
 end
 
 local function initialize()
+	clear_active_keymaps()
 	load_projects()
 
 	local project, root = resolve_project()
 	if not project then
+		vim.notify("Project run: no matching project preset", vim.log.levels.INFO)
 		return
 	end
 
@@ -180,10 +192,30 @@ local function initialize()
 	register_which_key(keymaps)
 end
 
+function M.redetect()
+	if state.initializing then
+		return
+	end
+
+	state.initializing = true
+
+	vim.schedule(function()
+		initialize()
+		state.initialized = true
+		state.initializing = false
+	end)
+end
+
 function M.setup()
 	if state.initialized or state.initializing then
 		return
 	end
+
+	vim.api.nvim_create_user_command("ProjectRunRedetect", function()
+		require("config.keymaps.project").redetect()
+	end, {
+		desc = "重新检测项目运行键位",
+	})
 
 	state.initializing = true
 
