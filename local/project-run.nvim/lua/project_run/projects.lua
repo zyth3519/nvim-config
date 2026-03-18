@@ -1,7 +1,5 @@
 local M = {}
 
-local PROJECT_GLOB = "lua/config/projects/*.lua"
-
 local function notify_invalid(path, message)
 	vim.schedule(function()
 		vim.notify(("Project preset %s: %s"):format(path, message), vim.log.levels.WARN)
@@ -16,9 +14,9 @@ local function path_to_module(path)
 	return module:gsub("/", ".")
 end
 
-function M.load_projects()
+function M.load(glob)
 	local projects = {}
-	local paths = vim.api.nvim_get_runtime_file(PROJECT_GLOB, true)
+	local paths = vim.api.nvim_get_runtime_file(glob, true)
 	table.sort(paths)
 
 	for _, path in ipairs(paths) do
@@ -75,7 +73,7 @@ local function iter_parents(start_dir)
 	end
 end
 
-function M.resolve_project(projects)
+function M.resolve(projects)
 	local start_dir = get_start_dir()
 	if not start_dir then
 		return nil

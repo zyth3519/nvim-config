@@ -1,6 +1,6 @@
 local M = {}
 
-function M.build_context(root)
+function M.build_context(root, runner)
 	local function open_run_cmdline(cmd, opts)
 		opts = opts or {}
 		local cwd = opts.cwd or root
@@ -28,7 +28,7 @@ function M.build_context(root)
 		run = function(cmd, opts)
 			opts = opts or {}
 			opts.cwd = opts.cwd or root
-			require("config.commands.run").run(cmd, opts)
+			runner.run(cmd, opts)
 		end,
 		open = function(cmd, opts)
 			open_run_cmdline(cmd, opts)
@@ -44,7 +44,7 @@ local function build_prompt_lhs(index)
 	return "<leader>rr" .. index
 end
 
-function M.expand_keymaps(ctx, entries)
+function M.expand(ctx, entries)
 	local expanded = {}
 
 	for index, entry in ipairs(entries) do
@@ -89,7 +89,7 @@ function M.clear_active_keymaps(state)
 	state.active_keymaps = {}
 end
 
-function M.register_keymaps(state, keymaps)
+function M.register(state, keymaps)
 	for _, map in ipairs(keymaps) do
 		if type(map) == "table" and type(map.lhs) == "string" and type(map.rhs) == "function" then
 			local mode = map.mode or "n"
@@ -116,10 +116,7 @@ function M.register_which_key(keymaps)
 
 	for _, map in ipairs(keymaps) do
 		if map.mode == nil or map.mode == "n" then
-			table.insert(specs, {
-				map.lhs,
-				desc = map.desc,
-			})
+			table.insert(specs, { map.lhs, desc = map.desc })
 		end
 	end
 

@@ -58,10 +58,7 @@ local function normalize_cwd(cwd)
 end
 
 local function normalize_env(env)
-	if env == nil then
-		return nil
-	end
-	if type(env) ~= "table" then
+	if env == nil or type(env) ~= "table" then
 		return nil
 	end
 	return env
@@ -318,23 +315,7 @@ function M.run(cmd, opts)
 	end
 end
 
-function M.stop()
-	stop_runner_job()
-end
-
-function M.close()
-	stop_runner_job()
-
-	if is_valid_win(state.win) then
-		pcall(vim.api.nvim_win_close, state.win, true)
-	end
-
-	state.win = nil
-	state.buf = nil
-	state.job_id = nil
-end
-
-local function paser_args(cmd)
+local function parse_args(cmd)
 	local cwd = nil
 	local env = nil
 	for _, v in ipairs(cmd) do
@@ -344,18 +325,14 @@ local function paser_args(cmd)
 			env = v:sub(5)
 		end
 	end
-	return {
-		cwd = cwd,
-		env = env,
-	}
+	return { cwd = cwd, env = env }
 end
 
 function M.setup(opts)
-	opts = opts or {}
-	config = vim.tbl_extend("force", config, opts)
+	config = vim.tbl_extend("force", config, opts or {})
 
 	vim.api.nvim_create_user_command("Run", function(command_opts)
-		local args = paser_args(command_opts.fargs)
+		local args = parse_args(command_opts.fargs)
 		M.run(command_opts.args, {
 			height = config.height,
 			ft = config.ft,
@@ -388,10 +365,10 @@ function M.setup(opts)
 
 	vim.cmd([[cnoreabbrev <expr> sh ((getcmdtype() == ':' && getcmdline() == 'sh') ? 'Run' : 'sh')]])
 	vim.keymap.set("c", "<C-p>", function()
-		return require("config.commands.run").cmdline_prev_run()
+		return require("project_run").cmdline_prev_run()
 	end, { expr = true, desc = "Run 命令历史向前搜索" })
 	vim.keymap.set("c", "<C-n>", function()
-		return require("config.commands.run").cmdline_next_run()
+		return require("project_run").cmdline_next_run()
 	end, { expr = true, desc = "Run 命令历史向后搜索" })
 end
 
