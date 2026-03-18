@@ -5,18 +5,34 @@ return {
 		build = ":TSUpdate",
 		config = function()
 			require("nvim-treesitter").install({
-				"rust",
-				"javascript",
-				"zig",
 				"lua",
+				"rust",
+				"zig",
+				"javascript",
 				"typescript",
+				"tsx",
+				"json",
+				"toml",
+				"markdown",
+				"markdown_inline",
 			})
 
-			vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
 			vim.api.nvim_create_autocmd("FileType", {
-				pattern = { "lua", "rust", "zig" },
+				pattern = {
+					"lua",
+					"rust",
+					"zig",
+					"javascript",
+					"javascriptreact",
+					"typescript",
+					"typescriptreact",
+					"json",
+					"toml",
+					"markdown",
+				},
 				callback = function()
-					vim.treesitter.start()
+					pcall(vim.treesitter.start)
+					vim.opt_local.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
 				end,
 			})
 		end,

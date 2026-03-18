@@ -30,7 +30,7 @@ return {
 			vim.api.nvim_create_autocmd("VimLeavePre", {
 				callback = function()
 					if vim.fn.argc(-1) == 0 and not vim.g.using_stdin then
-						resession.save(vim.fn.getcwd(), { dir = "dirsession", notify = false })
+						pcall(resession.save, vim.fn.getcwd(), { dir = "dirsession", notify = false })
 					end
 				end,
 			})
