@@ -177,7 +177,7 @@ local function expand_keymaps(ctx, keymaps)
 					table.insert(expanded, {
 						lhs = prompt_lhs,
 						mode = map.mode or "n",
-						desc = "编辑 " .. (map.desc or command),
+						desc = map.desc or command,
 						rhs = function()
 							ctx.open(command, run_opts)
 						end,
