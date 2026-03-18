@@ -144,22 +144,23 @@ local function build_context(root)
 	}
 end
 
-local function derive_prompt_lhs(lhs)
-	local suffix = lhs:match("^<leader>r(.+)$")
-	if not suffix then
-		return nil
-	end
-	return "<leader>rr" .. suffix
+local function build_lhs(index)
+	return "<leader>r" .. index
+end
+
+local function build_prompt_lhs(index)
+	return "<leader>rr" .. index
 end
 
 local function expand_keymaps(ctx, keymaps)
 	local expanded = {}
 
-	for _, map in ipairs(keymaps) do
-		if type(map) == "table" and type(map.lhs) == "string" then
+	for index, map in ipairs(keymaps) do
+		if type(map) == "table" then
 			local command = map.cmd
 			local run_opts = map.run_opts or {}
 			local rhs = map.rhs
+			local lhs = build_lhs(index)
 
 			if rhs == nil and type(command) == "string" then
 				rhs = function()
@@ -169,13 +170,13 @@ local function expand_keymaps(ctx, keymaps)
 
 			if type(rhs) == "function" then
 				table.insert(expanded, vim.tbl_extend("force", map, {
+					lhs = lhs,
 					rhs = rhs,
 				}))
 
-				local prompt_lhs = derive_prompt_lhs(map.lhs)
-				if prompt_lhs and type(command) == "string" then
+				if type(command) == "string" then
 					table.insert(expanded, {
-						lhs = prompt_lhs,
+						lhs = build_prompt_lhs(index),
 						mode = map.mode or "n",
 						desc = map.desc or command,
 						rhs = function()

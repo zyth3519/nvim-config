@@ -89,10 +89,9 @@ local function build_run_command(package_manager, script_name)
 	return ("%s run %s"):format(package_manager, script_name)
 end
 
-local function make_keymap(index, script_name, package_manager)
+local function make_keymap(script_name, package_manager)
 	local command = build_run_command(package_manager, script_name)
 	return {
-		lhs = "<leader>r" .. index,
 		desc = ("%s %s"):format(package_manager:upper(), script_name),
 		cmd = command,
 	}
@@ -118,7 +117,7 @@ return {
 				break
 			end
 
-			table.insert(keymaps, make_keymap(index, script_name, package_manager))
+			table.insert(keymaps, make_keymap(script_name, package_manager))
 		end
 
 		return keymaps
