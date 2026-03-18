@@ -246,12 +246,12 @@ Leader 键为 `<Space>`。
 
 ### 项目运行键位
 
-启动时会扫描 `lua/config/projects/*.lua`。每个规则文件都需要返回一个 table，并统一实现：
+启动时会扫描 `lua/config/projects/*.lua`。每个规则文件都需要返回一个 table，并提供：
 
 - `matches(dir)`：判断某个目录是否属于该项目类型
-- `keymaps(ctx)`：返回当前项目的运行条目列表
+- `keymaps(ctx)`：返回当前项目可用的运行命令
 
-`ctx` 会提供 `root`、`file`、`bufnr`、`run(cmd, opts)` 和 `open(cmd, opts)`。规则文件本身不需要返回 `lhs`，只需要按顺序提供条目，例如：
+`ctx` 会提供 `root`、`file`、`bufnr`、`run(cmd, opts)` 和 `open(cmd, opts)`。规则文件只需要按顺序描述要提供的命令，例如：
 
 ```lua
 {
@@ -260,12 +260,12 @@ Leader 键为 `<Space>`。
 }
 ```
 
-`lua/config/keymaps/project/` 会统一把这些条目扩展成两套键位：
+这些命令会由 `lua/config/keymaps/project/` 统一转换成两套键位：
 
 - `<leader>rN`：直接执行
 - `<leader>rrN`：把命令填入命令行但不执行
 
-如果项目根目录和当前工作目录不同，预填命令会自动带上 `cwd=...`；相同时不会添加。
+如果项目根目录和当前工作目录不同，预填命令会自动带上 `cwd=...`；如果本来就在当前目录下，就不会额外添加。
 
 目前已经内置：
 
@@ -273,7 +273,7 @@ Leader 键为 `<Space>`。
 - Node 项目：检测 `package.json`
 - Zig 项目：检测 `build.zig`
 
-当前实现只在 Neovim 会话启动时识别一次项目类型。后续不会自动重跑；如果你修改了配置或切到了别的项目，需要手动执行：
+当前实现只会在 Neovim 启动时识别一次项目类型。后续不会自动重跑；如果你修改了配置，或者希望重新识别当前项目，可以手动执行：
 
 ```vim
 :ProjectRunRedetect
