@@ -6,7 +6,7 @@ local M = {}
 
 -- 插件级状态。
 -- 这套运行/项目键位默认只在一个 Neovim 会话里初始化一次，
--- 手动执行 `:ProjectRunRedetect` 时会复用这里保存的状态和配置。
+-- 手动执行 `:RunpadRedetect` 时会复用这里保存的状态和配置。
 local state = {
 	initialized = false,
 	initializing = false,
@@ -55,7 +55,7 @@ function M.setup(opts)
 	end
 
 	state.opts = vim.deepcopy(opts)
-	vim.api.nvim_create_user_command("ProjectRunRedetect", function()
+	vim.api.nvim_create_user_command("RunpadRedetect", function()
 		require("runpad").redetect()
 	end, {
 		desc = "重新检测项目运行键位",

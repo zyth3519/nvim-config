@@ -283,7 +283,7 @@ Leader 键为 `<Space>`。
 当前实现只会在 Neovim 启动时识别一次项目类型。后续不会自动重跑；如果你修改了配置，或者希望重新识别当前项目，可以手动执行：
 
 ```vim
-:ProjectRunRedetect
+:RunpadRedetect
 ```
 
 示例：

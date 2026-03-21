@@ -6,7 +6,7 @@ This repository is a personal Neovim config written in Lua. `init.lua` is the en
 Project-aware run behavior is split intentionally:
 - `local/launchbox.nvim/lua/launchbox/init.lua`: command entry, runner window, and command history
 - `lua/config/projects/*.lua`: project detectors and ordered run entries
-- `local/runpad.nvim/lua/runpad/init.lua`: setup and `:ProjectRunRedetect`
+- `local/runpad.nvim/lua/runpad/init.lua`: setup and `:RunpadRedetect`
 - `local/runpad.nvim/lua/runpad/projects.lua`: rule loading and project resolution
 - `local/runpad.nvim/lua/runpad/keymaps.lua`: `<leader>rN` / `<leader>rrN` generation
 

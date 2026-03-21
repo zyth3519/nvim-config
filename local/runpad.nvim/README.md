@@ -8,7 +8,7 @@
 - 支持 `Run` 命令历史搜索
 - 从可配置的 glob 加载项目规则
 - 自动生成 `<leader>rN` 和 `<leader>rrN`
-- 提供 `:ProjectRunRedetect`
+- 提供 `:RunpadRedetect`
 
 命令执行部分由同级插件 `launchbox.nvim` 负责，它主要处理：
 
