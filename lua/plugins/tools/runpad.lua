@@ -8,7 +8,7 @@ return {
 		lazy = false,
 		config = function()
 			require("runpad").setup({
-				project_glob = "lua/config/projects/*.lua",
+				project_glob = "lua/config/project_rules/*.lua",
 			})
 		end,
 	},
