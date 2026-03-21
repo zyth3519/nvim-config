@@ -1,6 +1,6 @@
-# project-run.nvim
+# runpad.nvim
 
-用于当前配置的本地插件，负责提供 `:Run` 命令和按项目生成的运行键位。
+当前配置里使用的本地插件，负责提供 `:Run` 和按项目生成的运行键位。
 
 ## 功能
 
@@ -13,11 +13,13 @@
 ## 配置示例
 
 ```lua
-require("project_run").setup({
+require("runpad").setup({
   runner = {
     height = 12,
     ft = "runner",
   },
   project_glob = "lua/config/projects/*.lua",
 })
+
+vim.cmd([[cnoreabbrev <expr> sh ((getcmdtype() == ':' && getcmdline() == 'sh') ? 'Run' : 'sh')]])
 ```

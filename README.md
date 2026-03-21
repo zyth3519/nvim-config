@@ -40,7 +40,7 @@
 - `init.lua`：配置入口
 - `lua/config`：核心配置，包括选项、快捷键、自动命令和自定义命令
 - `lua/config/projects`：项目运行规则目录，负责提供项目识别逻辑和按顺序排列的运行条目
-- `local/project-run.nvim/`：本地插件，封装 `:Run` 和项目运行键位
+- `local/runpad.nvim/`：本地插件，封装 `:Run` 和项目运行键位
 - `lua/plugins`：插件定义，按职责分组
 - `lua/plugins/core`：核心运行能力，例如会话管理
 - `lua/plugins/editor`：编辑体验相关，例如补全、搜索、Treesitter、文件管理、窗口导航
@@ -260,7 +260,7 @@ Leader 键为 `<Space>`。
 }
 ```
 
-这些命令会由 `local/project-run.nvim/` 统一转换成两套键位：
+这些命令会由 `local/runpad.nvim/` 统一转换成两套键位：
 
 - `<leader>rN`：直接执行
 - `<leader>rrN`：把命令填入命令行但不执行
@@ -287,7 +287,7 @@ Leader 键为 `<Space>`。
 
 详细实现说明见：
 
-- [README.md](/home/zyth/.config/nvim/local/project-run.nvim/README.md)
+- [README.md](/home/zyth/.config/nvim/local/runpad.nvim/README.md)
 
 ### `:Session`
 

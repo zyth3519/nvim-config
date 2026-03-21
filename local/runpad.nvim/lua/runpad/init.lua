@@ -1,6 +1,6 @@
-local runner = require("project_run.runner")
-local projects = require("project_run.projects")
-local keymaps = require("project_run.keymaps")
+local runner = require("runpad.runner")
+local projects = require("runpad.projects")
+local keymaps = require("runpad.keymaps")
 
 local M = {}
 
@@ -58,7 +58,7 @@ function M.setup(opts)
 	runner.setup(opts.runner or {})
 
 	vim.api.nvim_create_user_command("ProjectRunRedetect", function()
-		require("project_run").redetect()
+		require("runpad").redetect()
 	end, {
 		desc = "重新检测项目运行键位",
 	})

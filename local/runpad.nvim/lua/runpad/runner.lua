@@ -364,10 +364,10 @@ function M.setup(opts)
 	})
 
 	vim.keymap.set("c", "<C-p>", function()
-		return require("project_run").cmdline_prev_run()
+		return require("runpad").cmdline_prev_run()
 	end, { expr = true, desc = "Run 命令历史向前搜索" })
 	vim.keymap.set("c", "<C-n>", function()
-		return require("project_run").cmdline_next_run()
+		return require("runpad").cmdline_next_run()
 	end, { expr = true, desc = "Run 命令历史向后搜索" })
 end
 
