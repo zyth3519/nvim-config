@@ -1,4 +1,4 @@
-local launchbox = require("runpad.launchbox")
+local launchbox = require("launchbox")
 local projects = require("runpad.projects")
 local keymaps = require("runpad.keymaps")
 
@@ -47,7 +47,7 @@ end
 
 function M.setup(opts)
 	-- 公开入口。
-	-- 配置层只需要传 launchbox 选项和项目规则的 glob，
+	-- 配置层只需要传项目规则的 glob，
 	-- 不需要关心内部是如何解析项目或生成键位的。
 	opts = opts or {}
 	if state.initialized or state.initializing then
@@ -55,8 +55,6 @@ function M.setup(opts)
 	end
 
 	state.opts = vim.deepcopy(opts)
-	launchbox.setup(opts.launchbox or opts.runner or {})
-
 	vim.api.nvim_create_user_command("ProjectRunRedetect", function()
 		require("runpad").redetect()
 	end, {
@@ -87,18 +85,18 @@ function M.redetect()
 	end)
 end
 
-function M.run(cmd, opts)
-	-- 暴露统一的执行入口，方便外部代码直接调用。
-	launchbox.run(cmd, opts)
-end
-
-function M.cmdline_prev()
-	-- 公开命令行历史搜索能力，供命令行模式映射复用。
-	return launchbox.cmdline_prev()
-end
-
-function M.cmdline_next()
-	return launchbox.cmdline_next()
-end
+-- function M.run(cmd, opts)
+-- 	-- 暴露统一的执行入口，方便外部代码直接调用。
+-- 	launchbox.run(cmd, opts)
+-- end
+--
+-- function M.cmdline_prev()
+-- 	-- 公开命令行历史搜索能力，供命令行模式映射复用。
+-- 	return launchbox.cmdline_prev()
+-- end
+--
+-- function M.cmdline_next()
+-- 	return launchbox.cmdline_next()
+-- end
 
 return M

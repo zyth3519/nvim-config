@@ -368,10 +368,10 @@ function M.setup(opts)
 	})
 
 	vim.keymap.set("c", "<C-p>", function()
-		return require("runpad").cmdline_prev()
+		return require("launchbox").cmdline_prev()
 	end, { expr = true, desc = config.command_name .. " 命令历史向前搜索" })
 	vim.keymap.set("c", "<C-n>", function()
-		return require("runpad").cmdline_next()
+		return require("launchbox").cmdline_next()
 	end, { expr = true, desc = config.command_name .. " 命令历史向后搜索" })
 end
 
