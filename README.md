@@ -39,7 +39,7 @@
 
 - `init.lua`：配置入口
 - `lua/config`：核心配置，包括选项、快捷键、自动命令和自定义命令
-- `lua/config/projects`：项目运行规则目录，用来放不同项目的识别方式和常用命令
+- `lua/config/project_rules`：项目运行规则目录，用来放不同项目的识别方式和常用命令
 - `local/launchbox.nvim/`：本地执行器插件，负责命令入口和底部分屏终端
 - `local/runpad.nvim/`：本地项目运行插件，负责读取项目规则并生成运行键位
 - `lua/plugins`：插件定义，按职责分组
@@ -247,12 +247,12 @@ Leader 键为 `<Space>`。
 
 ### 项目运行键位
 
-启动时会扫描 `lua/config/projects/*.lua`。每个规则文件都需要返回一个 table，并提供：
+启动时会扫描 `lua/config/project_rules/*.lua`。每个规则文件都需要返回一个 table，并提供：
 
 - `matches(dir)`：判断某个目录是否属于该项目类型
-- `keymaps(ctx)`：返回当前项目可用的运行条目
+- `entries(ctx)`：返回当前项目可用的运行条目
 
-`ctx` 会提供 `root`、`file`、`bufnr`、`run(cmd, opts)` 和 `open(cmd, opts)`。规则文件里按顺序写出想提供的条目即可，例如：
+`ctx` 会提供 `root`、`file`、`bufnr`、`run(cmd, opts)` 和 `open(cmd, opts)`。规则文件里通过 `entries(ctx)` 返回一组条目，例如：
 
 ```lua
 {

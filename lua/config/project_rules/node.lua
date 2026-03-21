@@ -102,7 +102,7 @@ return {
 	matches = function(dir)
 		return vim.uv.fs_stat(dir .. "/package.json") ~= nil
 	end,
-	keymaps = function(ctx)
+	entries = function(ctx)
 		local package_json = read_package_json(ctx.root)
 		if type(package_json) ~= "table" or type(package_json.scripts) ~= "table" then
 			return {}
@@ -110,16 +110,16 @@ return {
 
 		local package_manager = detect_package_manager(ctx.root, package_json)
 		local script_names = collect_script_names(package_json.scripts)
-		local keymaps = {}
+		local entries = {}
 
 		for index, script_name in ipairs(script_names) do
 			if index > 9 then
 				break
 			end
 
-			table.insert(keymaps, make_keymap(script_name, package_manager))
+			table.insert(entries, make_keymap(script_name, package_manager))
 		end
 
-		return keymaps
+		return entries
 	end,
 }

@@ -63,7 +63,7 @@ local function resolve_entry_opts(entry)
 	return {}
 end
 
-function M.expand(ctx, entries)
+function M.build(ctx, entries)
 	-- 把规则文件返回的有序条目扩展成真正可注册的键位：
 	--   - rN：直接执行
 	--   - rrN：填入命令行
@@ -109,7 +109,7 @@ function M.expand(ctx, entries)
 	return expanded
 end
 
-function M.clear_active_keymaps(state)
+function M.clear_active_bindings(state)
 	-- 只删除这套插件自己注册过的键位，避免影响别的映射。
 	for _, map in ipairs(state.active_keymaps) do
 		pcall(vim.keymap.del, map.mode, map.lhs)
@@ -117,9 +117,9 @@ function M.clear_active_keymaps(state)
 	state.active_keymaps = {}
 end
 
-function M.register(state, keymaps)
+function M.register(state, bindings)
 	-- 注册键位，同时记录下来，供下次手动重检时清理。
-	for _, map in ipairs(keymaps) do
+	for _, map in ipairs(bindings) do
 		if type(map) == "table" and type(map.lhs) == "string" and type(map.rhs) == "function" then
 			local mode = map.mode or "n"
 			local opts = {
@@ -133,7 +133,7 @@ function M.register(state, keymaps)
 	end
 end
 
-function M.register_which_key(keymaps)
+function M.register_which_key(bindings)
 	-- which-key 是可选增强；没有它时，运行逻辑仍然可用。
 	local wk_ok, wk = pcall(require, "which-key")
 	if not wk_ok then
@@ -144,7 +144,7 @@ function M.register_which_key(keymaps)
 		{ "<leader>r", group = "运行 (Run)", icon = "󰆍" },
 	}
 
-	for _, map in ipairs(keymaps) do
+	for _, map in ipairs(bindings) do
 		if map.mode == nil or map.mode == "n" then
 			table.insert(specs, { map.lhs, desc = map.desc })
 		end

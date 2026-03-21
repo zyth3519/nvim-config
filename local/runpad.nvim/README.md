@@ -23,13 +23,13 @@
 
 ```lua
 require("runpad").setup({
-  project_glob = "lua/config/projects/*.lua",
+  rule_glob = "lua/config/project_rules/*.lua",
 })
 ```
 
 ## 项目条目
 
-项目规则返回的条目会按顺序生成键位：
+规则文件返回的条目会按顺序生成键位：
 
 - `<leader>rN`：直接执行
 - `<leader>rrN`：把命令填入命令行，只对字符串命令生效

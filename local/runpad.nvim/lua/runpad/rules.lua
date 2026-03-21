@@ -3,7 +3,7 @@ local M = {}
 -- 规则文件加载失败时不直接打断启动，而是异步给出提示。
 local function notify_invalid(path, message)
 	vim.schedule(function()
-		vim.notify(("Project preset %s: %s"):format(path, message), vim.log.levels.WARN)
+		vim.notify(("Project rule %s: %s"):format(path, message), vim.log.levels.WARN)
 	end)
 end
 
@@ -20,31 +20,31 @@ function M.load(glob)
 	-- 加载项目规则并做最小约定校验：
 	--   1. 规则文件必须返回 table
 	--   2. 必须提供 `matches(dir)`
-	--   3. 必须提供 `keymaps(ctx)`
-	local projects = {}
+	--   3. 必须提供 `entries(ctx)`
+	local rules = {}
 	local paths = vim.api.nvim_get_runtime_file(glob, true)
 	table.sort(paths)
 
 	for _, path in ipairs(paths) do
 		local module = path_to_module(path)
 		if module then
-			local ok, project = pcall(require, module)
+			local ok, rule = pcall(require, module)
 			if not ok then
-				notify_invalid(path, project)
-			elseif type(project) ~= "table" then
+				notify_invalid(path, rule)
+			elseif type(rule) ~= "table" then
 				notify_invalid(path, "must return a table")
-			elseif type(project.matches) ~= "function" then
+			elseif type(rule.matches) ~= "function" then
 				notify_invalid(path, "missing `matches(dir)` function")
-			elseif type(project.keymaps) ~= "function" then
-				notify_invalid(path, "missing `keymaps(ctx)` function")
+			elseif type(rule.entries) ~= "function" then
+				notify_invalid(path, "missing `entries(ctx)` function")
 			else
-				project.name = project.name or module:match("([^.]+)$")
-				table.insert(projects, project)
+				rule.name = rule.name or module:match("([^.]+)$")
+				table.insert(rules, rule)
 			end
 		end
 	end
 
-	return projects
+	return rules
 end
 
 local function get_start_dir()
@@ -82,7 +82,7 @@ local function iter_parents(start_dir)
 	end
 end
 
-function M.resolve(projects)
+function M.resolve(rules)
 	-- 遍历所有父目录，找到第一个成功命中的项目规则。
 	local start_dir = get_start_dir()
 	if not start_dir then
@@ -90,10 +90,10 @@ function M.resolve(projects)
 	end
 
 	for dir in iter_parents(start_dir) do
-		for _, project in ipairs(projects) do
-			local ok, matched = pcall(project.matches, dir)
+		for _, rule in ipairs(rules) do
+			local ok, matched = pcall(rule.matches, dir)
 			if ok and matched then
-				return project, dir
+				return rule, dir
 			end
 		end
 	end

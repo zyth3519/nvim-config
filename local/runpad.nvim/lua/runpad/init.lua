@@ -1,6 +1,6 @@
 local launchbox = require("launchbox")
-local projects = require("runpad.projects")
-local keymaps = require("runpad.keymaps")
+local rules = require("runpad.rules")
+local bindings = require("runpad.bindings")
 
 local M = {}
 
@@ -16,19 +16,19 @@ local state = {
 
 local function initialize(opts)
 	-- 每次重建时都先清掉旧键位，再重新按当前项目生成。
-	keymaps.clear_active_keymaps(state)
+	bindings.clear_active_bindings(state)
 
-	local loaded_projects = projects.load(opts.project_glob)
-	local project, root = projects.resolve(loaded_projects)
-	if not project then
-		vim.notify("Runpad: no matching project preset", vim.log.levels.INFO)
+	local loaded_rules = rules.load(opts.rule_glob)
+	local rule, root = rules.resolve(loaded_rules)
+	if not rule then
+		vim.notify("Runpad: no matching project rule", vim.log.levels.INFO)
 		return
 	end
 
-	local ctx = keymaps.build_context(root, launchbox)
-	local ok, entries = pcall(project.keymaps, ctx)
+	local ctx = bindings.build_context(root, launchbox)
+	local ok, entries = pcall(rule.entries, ctx)
 	if not ok then
-		vim.notify(("Project preset %s keymaps failed: %s"):format(project.name, entries), vim.log.levels.ERROR)
+		vim.notify(("Project rule %s entries failed: %s"):format(rule.name, entries), vim.log.levels.ERROR)
 		return
 	end
 
@@ -36,13 +36,13 @@ local function initialize(opts)
 		return
 	end
 
-	local generated = keymaps.expand(ctx, entries)
+	local generated = bindings.build(ctx, entries)
 	if #generated == 0 then
 		return
 	end
 
-	keymaps.register(state, generated)
-	keymaps.register_which_key(generated)
+	bindings.register(state, generated)
+	bindings.register_which_key(generated)
 end
 
 function M.setup(opts)

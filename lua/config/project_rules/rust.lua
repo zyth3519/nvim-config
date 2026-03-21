@@ -3,7 +3,7 @@ return {
 	matches = function(dir)
 		return vim.uv.fs_stat(dir .. "/Cargo.toml") ~= nil
 	end,
-	keymaps = function()
+	entries = function()
 		return {
 			{
 				desc = "Cargo Run",

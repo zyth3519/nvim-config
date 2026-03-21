@@ -3,7 +3,7 @@ return {
 	matches = function(dir)
 		return vim.uv.fs_stat(dir .. "/build.zig") ~= nil
 	end,
-	keymaps = function()
+	entries = function()
 		return {
 			{
 				desc = "Zig Build",
