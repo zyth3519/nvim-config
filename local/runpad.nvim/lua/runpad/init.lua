@@ -17,19 +17,16 @@ local state = {
 local function initialize(opts)
 	-- 每次重建时都先清掉旧键位，再重新按当前项目生成。
 	bindings.clear_active_bindings(state)
-
 	local loaded_rules = rules.load(opts.rule_glob)
-	local rule, root = rules.resolve(loaded_rules)
-	if not rule then
-		vim.notify("Runpad: no matching project rule", vim.log.levels.INFO)
-		return
-	end
 
-	local ctx = bindings.build_context(root, launchbox)
-	local ok, entries = pcall(rule.entries, ctx)
-	if not ok then
-		vim.notify(("Project rule %s entries failed: %s"):format(rule.name, entries), vim.log.levels.ERROR)
-		return
+	local matched_rules = rules.resolve(loaded_rules)
+	local ctx = bindings.build_context(launchbox)
+
+	local entries = {}
+	for _, rule in ipairs(matched_rules) do
+		for _, entrie in ipairs(rule.entries(ctx)) do
+			entries[#entries + 1] = entrie
+		end
 	end
 
 	if type(entries) ~= "table" or #entries == 0 then
@@ -84,19 +81,5 @@ function M.redetect()
 		state.initializing = false
 	end)
 end
-
--- function M.run(cmd, opts)
--- 	-- 暴露统一的执行入口，方便外部代码直接调用。
--- 	launchbox.run(cmd, opts)
--- end
---
--- function M.cmdline_prev()
--- 	-- 公开命令行历史搜索能力，供命令行模式映射复用。
--- 	return launchbox.cmdline_prev()
--- end
---
--- function M.cmdline_next()
--- 	return launchbox.cmdline_next()
--- end
 
 return M

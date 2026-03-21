@@ -1,13 +1,13 @@
 local M = {}
 
-function M.build_context(root, launchbox)
+function M.build_context(launchbox)
 	-- 规则文件只需要关心这里暴露出去的上下文：
 	--   - root/file/bufnr：当前项目与缓冲区信息
 	--   - run(cmd, opts)：立即执行
 	--   - open(cmd, opts)：填入命令行但不执行
 	local function open_run_cmdline(cmd, opts)
 		opts = opts or {}
-		local cwd = opts.cwd or root
+		local cwd = opts.cwd
 		local parts = { launchbox.get_command_name() }
 		local current_cwd = vim.fs.normalize(vim.fn.getcwd())
 		local normalized_cwd = cwd and vim.fs.normalize(cwd) or nil
@@ -28,12 +28,12 @@ function M.build_context(root, launchbox)
 	end
 
 	return {
-		root = root,
+		root = vim.fn.getcwd(),
 		file = vim.api.nvim_buf_get_name(0),
 		bufnr = 0,
 		run = function(cmd, opts)
 			opts = opts or {}
-			opts.cwd = opts.cwd or root
+			opts.cwd = opts.cwd
 			launchbox.run(cmd, opts)
 		end,
 		open = function(cmd, opts)
@@ -85,10 +85,13 @@ function M.build(ctx, entries)
 			end
 
 			if type(rhs) == "function" then
-				table.insert(expanded, vim.tbl_extend("force", entry, {
-					lhs = build_lhs(index),
-					rhs = rhs,
-				}))
+				table.insert(
+					expanded,
+					vim.tbl_extend("force", entry, {
+						lhs = build_lhs(index),
+						rhs = rhs,
+					})
+				)
 
 				-- 只有存在稳定命令字符串时，才生成 `rrN` 这组预填命令行键位。
 				if type(command) == "string" then

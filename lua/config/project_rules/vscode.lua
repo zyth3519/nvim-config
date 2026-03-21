@@ -1,5 +1,3 @@
-local MAX_ENTRIES = 9
-
 local function tasks_path(root)
 	return root .. "/.vscode/tasks.json"
 end
@@ -35,9 +33,7 @@ local function replace_workspace_vars(value, root)
 	end
 
 	local basename = vim.fs.basename(root)
-	return value
-		:gsub("${workspaceFolder}", root)
-		:gsub("${workspaceFolderBasename}", basename)
+	return value:gsub("${workspaceFolder}", root):gsub("${workspaceFolderBasename}", basename)
 end
 
 local function read_tasks(root)
@@ -127,9 +123,6 @@ return {
 				local entry = make_entry(task, ctx.root)
 				if entry then
 					table.insert(entries, entry)
-				end
-				if #entries >= MAX_ENTRIES then
-					break
 				end
 			end
 		end

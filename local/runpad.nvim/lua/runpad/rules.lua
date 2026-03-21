@@ -55,58 +55,15 @@ function M.load(glob)
 	return rules
 end
 
-local function get_start_dir()
-	-- 优先从当前缓冲区所在目录开始判断项目类型。
-	-- 对无名缓冲区则退回当前工作目录。
-	local name = vim.api.nvim_buf_get_name(0)
-	if name == "" then
-		return vim.fs.normalize(vim.fn.getcwd())
-	end
-
-	local dir = vim.fs.dirname(vim.fs.normalize(name))
-	if not dir or vim.fn.isdirectory(dir) == 0 then
-		return vim.fs.normalize(vim.fn.getcwd())
-	end
-
-	return dir
-end
-
-local function iter_parents(start_dir)
-	-- 从当前目录逐级向上遍历，确保“离当前文件最近的项目根目录”优先命中。
-	local dir = vim.fs.normalize(start_dir)
-	return function()
-		if not dir then
-			return nil
-		end
-
-		local current = dir
-		local parent = vim.fs.dirname(dir)
-		if parent == dir then
-			dir = nil
-		else
-			dir = parent
-		end
-		return current
-	end
-end
-
 function M.resolve(rules)
-	-- 遍历所有父目录，找到第一个成功命中的项目规则。
-	local start_dir = get_start_dir()
-	if not start_dir then
-		return nil
-	end
-
-	for dir in iter_parents(start_dir) do
-		for _, rule in ipairs(rules) do
-			local ok, matched = pcall(rule.matches, dir)
-			if ok and matched then
-				return rule, dir
-			end
+	local matchs = {}
+	for _, rule in ipairs(rules) do
+		if rule.matches(vim.fn.getcwd()) then
+			matchs[#matchs + 1] = rule
 		end
 	end
 
-	return nil
+	return matchs
 end
 
 return M
