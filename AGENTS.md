@@ -8,7 +8,7 @@ Project-aware run behavior is split intentionally:
 - `local/runpad.nvim/lua/runpad/init.lua`: setup and `:ProjectRunRedetect`
 - `local/runpad.nvim/lua/runpad/projects.lua`: rule loading and project resolution
 - `local/runpad.nvim/lua/runpad/keymaps.lua`: `<leader>rN` / `<leader>rrN` generation
-- `local/runpad.nvim/lua/runpad/runner.lua`: `:Run` implementation
+- `local/runpad.nvim/lua/runpad/launchbox.lua`: `:Run` implementation and command entry
 
 Keep new logic inside the right layer instead of pushing more responsibility into one file.
 

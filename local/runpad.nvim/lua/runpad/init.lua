@@ -1,4 +1,4 @@
-local runner = require("runpad.runner")
+local launchbox = require("runpad.launchbox")
 local projects = require("runpad.projects")
 local keymaps = require("runpad.keymaps")
 
@@ -21,11 +21,11 @@ local function initialize(opts)
 	local loaded_projects = projects.load(opts.project_glob)
 	local project, root = projects.resolve(loaded_projects)
 	if not project then
-		vim.notify("Project run: no matching project preset", vim.log.levels.INFO)
+		vim.notify("Runpad: no matching project preset", vim.log.levels.INFO)
 		return
 	end
 
-	local ctx = keymaps.build_context(root, runner)
+	local ctx = keymaps.build_context(root, launchbox)
 	local ok, entries = pcall(project.keymaps, ctx)
 	if not ok then
 		vim.notify(("Project preset %s keymaps failed: %s"):format(project.name, entries), vim.log.levels.ERROR)
@@ -47,7 +47,7 @@ end
 
 function M.setup(opts)
 	-- 公开入口。
-	-- 配置层只需要传 runner 选项和项目规则的 glob，
+	-- 配置层只需要传 launchbox 选项和项目规则的 glob，
 	-- 不需要关心内部是如何解析项目或生成键位的。
 	opts = opts or {}
 	if state.initialized or state.initializing then
@@ -55,7 +55,7 @@ function M.setup(opts)
 	end
 
 	state.opts = vim.deepcopy(opts)
-	runner.setup(opts.runner or {})
+	launchbox.setup(opts.launchbox or opts.runner or {})
 
 	vim.api.nvim_create_user_command("ProjectRunRedetect", function()
 		require("runpad").redetect()
@@ -89,16 +89,16 @@ end
 
 function M.run(cmd, opts)
 	-- 暴露统一的执行入口，方便外部代码直接调用。
-	runner.run(cmd, opts)
+	launchbox.run(cmd, opts)
 end
 
-function M.cmdline_prev_run()
+function M.cmdline_prev()
 	-- 公开命令行历史搜索能力，供命令行模式映射复用。
-	return runner.cmdline_prev_run()
+	return launchbox.cmdline_prev()
 end
 
-function M.cmdline_next_run()
-	return runner.cmdline_next_run()
+function M.cmdline_next()
+	return launchbox.cmdline_next()
 end
 
 return M

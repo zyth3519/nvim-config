@@ -1,6 +1,6 @@
 local M = {}
 
-function M.build_context(root, runner)
+function M.build_context(root, launchbox)
 	-- 规则文件只需要关心这里暴露出去的上下文：
 	--   - root/file/bufnr：当前项目与缓冲区信息
 	--   - run(cmd, opts)：立即执行
@@ -8,7 +8,7 @@ function M.build_context(root, runner)
 	local function open_run_cmdline(cmd, opts)
 		opts = opts or {}
 		local cwd = opts.cwd or root
-		local parts = { "Run" }
+		local parts = { launchbox.get_command_name() }
 		local current_cwd = vim.fs.normalize(vim.fn.getcwd())
 		local normalized_cwd = cwd and vim.fs.normalize(cwd) or nil
 
@@ -34,7 +34,7 @@ function M.build_context(root, runner)
 		run = function(cmd, opts)
 			opts = opts or {}
 			opts.cwd = opts.cwd or root
-			runner.run(cmd, opts)
+			launchbox.run(cmd, opts)
 		end,
 		open = function(cmd, opts)
 			open_run_cmdline(cmd, opts)

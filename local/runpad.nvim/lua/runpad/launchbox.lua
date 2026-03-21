@@ -15,6 +15,7 @@ local config = {
 	height = 12,
 	ft = "runner",
 	title = "Run",
+	command_name = "Run",
 	cwd = nil,
 	env = nil,
 }
@@ -34,7 +35,7 @@ local function is_job_running(job_id)
 	return vim.fn.jobwait({ job_id }, 0)[1] == -1
 end
 
-local function stop_runner_job()
+local function stop_job()
 	if is_job_running(state.job_id) then
 		pcall(vim.fn.jobstop, state.job_id)
 	end
@@ -69,17 +70,18 @@ local function reset_history_state()
 	history_state.last_cmdline = nil
 end
 
-local function is_run_cmdline(cmdline)
-	return cmdline == "Run" or cmdline:match("^Run%s")
+local function is_launchbox_cmdline(cmdline)
+	local command_name = config.command_name
+	return cmdline == command_name or cmdline:match("^" .. vim.pesc(command_name) .. "%s")
 end
 
-function M.cmdline_prev_run()
+function M.cmdline_prev()
 	if vim.fn.getcmdtype() ~= ":" then
 		return vim.keycode("<C-p>")
 	end
 
 	local cmdline = vim.fn.getcmdline()
-	if not is_run_cmdline(cmdline) then
+	if not is_launchbox_cmdline(cmdline) then
 		reset_history_state()
 		return vim.keycode("<C-p>")
 	end
@@ -98,7 +100,7 @@ function M.cmdline_prev_run()
 
 	for i = start, 1, -1 do
 		local entry = vim.fn.histget(":", i)
-		if type(entry) == "string" and is_run_cmdline(entry) then
+		if type(entry) == "string" and is_launchbox_cmdline(entry) then
 			history_state.index = i
 			history_state.last_cmdline = entry
 			return vim.keycode("<C-u>") .. entry
@@ -108,13 +110,13 @@ function M.cmdline_prev_run()
 	return ""
 end
 
-function M.cmdline_next_run()
+function M.cmdline_next()
 	if vim.fn.getcmdtype() ~= ":" then
 		return vim.keycode("<C-n>")
 	end
 
 	local cmdline = vim.fn.getcmdline()
-	if not is_run_cmdline(cmdline) then
+	if not is_launchbox_cmdline(cmdline) then
 		reset_history_state()
 		return vim.keycode("<C-n>")
 	end
@@ -130,7 +132,7 @@ function M.cmdline_next_run()
 
 	for i = history_state.index + 1, max_hist do
 		local entry = vim.fn.histget(":", i)
-		if type(entry) == "string" and is_run_cmdline(entry) then
+		if type(entry) == "string" and is_launchbox_cmdline(entry) then
 			history_state.index = i
 			history_state.last_cmdline = entry
 			return vim.keycode("<C-u>") .. entry
@@ -141,7 +143,7 @@ function M.cmdline_next_run()
 	return vim.keycode("<C-u>") .. cmdline
 end
 
-local function ensure_runner_win(height)
+local function ensure_win(height)
 	reset_invalid_state()
 
 	if is_valid_win(state.win) then
@@ -149,11 +151,9 @@ local function ensure_runner_win(height)
 	end
 
 	local cur_win = vim.api.nvim_get_current_win()
-
 	vim.cmd("botright " .. height .. "split")
 	local new_win = vim.api.nvim_get_current_win()
 	vim.cmd("resize " .. height)
-
 	state.win = new_win
 
 	if is_valid_win(cur_win) then
@@ -183,14 +183,14 @@ local function set_buffer_options(buf, ft)
 	vim.bo[buf].filetype = ft
 end
 
-local function create_runner_buffer(win, height, ft)
+local function create_buffer(win, height, ft)
 	if is_valid_buf(state.buf) then
 		pcall(vim.api.nvim_buf_delete, state.buf, { force = true })
 		state.buf = nil
 	end
 
 	if not is_valid_win(win) then
-		win = ensure_runner_win(height)
+		win = ensure_win(height)
 		if not is_valid_win(win) then
 			return nil, nil
 		end
@@ -201,7 +201,7 @@ local function create_runner_buffer(win, height, ft)
 
 	local ok = pcall(vim.api.nvim_win_set_buf, win, buf)
 	if not ok then
-		win = ensure_runner_win(height)
+		win = ensure_win(height)
 		if not is_valid_win(win) then
 			pcall(vim.api.nvim_buf_delete, buf, { force = true })
 			state.buf = nil
@@ -223,7 +223,7 @@ local function create_runner_buffer(win, height, ft)
 	return buf, win
 end
 
-local function start_runner_job(cmd, buf, win, ft, cwd, env)
+local function start_job(cmd, buf, win, ft, cwd, env)
 	if not is_valid_win(win) or not is_valid_buf(buf) then
 		return nil
 	end
@@ -269,38 +269,38 @@ function M.run(cmd, opts)
 	local env = normalize_env(opts.env ~= nil and opts.env or config.env)
 
 	if cmd == nil or cmd == "" then
-		vim.notify("Run: empty command", vim.log.levels.WARN)
+		vim.notify(config.command_name .. ": empty command", vim.log.levels.WARN)
 		return
 	end
 
 	if cwd and vim.fn.isdirectory(cwd) == 0 then
-		vim.notify("Run: invalid cwd: " .. cwd, vim.log.levels.ERROR)
+		vim.notify(config.command_name .. ": invalid cwd: " .. cwd, vim.log.levels.ERROR)
 		return
 	end
 
 	if is_job_running(state.job_id) then
-		stop_runner_job()
+		stop_job()
 	end
 
-	local target_win = ensure_runner_win(height)
+	local target_win = ensure_win(height)
 	if not is_valid_win(target_win) then
-		vim.notify("Run: failed to create runner window", vim.log.levels.ERROR)
+		vim.notify(config.command_name .. ": failed to create runner window", vim.log.levels.ERROR)
 		return
 	end
 
-	local buf, win = create_runner_buffer(target_win, height, ft)
+	local buf, win = create_buffer(target_win, height, ft)
 	if not buf or not win then
-		vim.notify("Run: failed to prepare runner buffer", vim.log.levels.ERROR)
+		vim.notify(config.command_name .. ": failed to prepare runner buffer", vim.log.levels.ERROR)
 		return
 	end
 
-	local job_id = start_runner_job(cmd, buf, win, ft, cwd, env)
+	local job_id = start_job(cmd, buf, win, ft, cwd, env)
 	if not job_id or job_id <= 0 then
 		if is_valid_buf(buf) then
 			pcall(vim.api.nvim_buf_delete, buf, { force = true })
 		end
 		state.buf = nil
-		vim.notify("Run: failed to start job", vim.log.levels.ERROR)
+		vim.notify(config.command_name .. ": failed to start job", vim.log.levels.ERROR)
 		return
 	end
 
@@ -328,10 +328,14 @@ local function parse_args(cmd)
 	return { cwd = cwd, env = env }
 end
 
+function M.get_command_name()
+	return config.command_name
+end
+
 function M.setup(opts)
 	config = vim.tbl_extend("force", config, opts or {})
 
-	vim.api.nvim_create_user_command("Run", function(command_opts)
+	vim.api.nvim_create_user_command(config.command_name, function(command_opts)
 		local args = parse_args(command_opts.fargs)
 		M.run(command_opts.args, {
 			height = config.height,
@@ -364,11 +368,11 @@ function M.setup(opts)
 	})
 
 	vim.keymap.set("c", "<C-p>", function()
-		return require("runpad").cmdline_prev_run()
-	end, { expr = true, desc = "Run 命令历史向前搜索" })
+		return require("runpad").cmdline_prev()
+	end, { expr = true, desc = config.command_name .. " 命令历史向前搜索" })
 	vim.keymap.set("c", "<C-n>", function()
-		return require("runpad").cmdline_next_run()
-	end, { expr = true, desc = "Run 命令历史向后搜索" })
+		return require("runpad").cmdline_next()
+	end, { expr = true, desc = config.command_name .. " 命令历史向后搜索" })
 end
 
 return M

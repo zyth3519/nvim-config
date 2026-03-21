@@ -5,10 +5,11 @@ return {
 		lazy = false,
 		config = function()
 			require("runpad").setup({
-				runner = {
+				launchbox = {
 					height = 12,
 					ft = "runner",
 					title = "Run",
+					command_name = "Run",
 					cwd = nil,
 					env = nil,
 				},
