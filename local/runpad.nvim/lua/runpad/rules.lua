@@ -39,10 +39,18 @@ function M.load(glob)
 				notify_invalid(path, "missing `entries(ctx)` function")
 			else
 				rule.name = rule.name or module:match("([^.]+)$")
+				rule.priority = tonumber(rule.priority) or 0
 				table.insert(rules, rule)
 			end
 		end
 	end
+
+	table.sort(rules, function(a, b)
+		if a.priority ~= b.priority then
+			return a.priority > b.priority
+		end
+		return a.name < b.name
+	end)
 
 	return rules
 end
