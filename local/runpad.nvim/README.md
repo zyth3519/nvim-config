@@ -26,3 +26,35 @@ require("runpad").setup({
   project_glob = "lua/config/projects/*.lua",
 })
 ```
+
+## 项目条目
+
+项目规则返回的条目会按顺序生成键位：
+
+- `<leader>rN`：直接执行条目
+- `<leader>rrN`：把命令填入命令行，只给字符串命令生成
+
+常见的字符串条目：
+
+```lua
+{
+  desc = "Cargo Run",
+  cmd = "cargo run",
+  opts = {
+    cwd = "/tmp/demo",
+  },
+}
+```
+
+也可以把 `cmd` 写成函数。函数会收到合并后的 `opts`，并参与 `<leader>rN` 的生成：
+
+```lua
+{
+  desc = "Custom Action",
+  cmd = function(opts)
+    vim.notify(vim.inspect(opts))
+  end,
+}
+```
+
+如果条目里同时存在字符串和函数，`<leader>rrN` 会只对字符串命令单独连续编号，不会出现缺号。

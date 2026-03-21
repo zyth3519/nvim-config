@@ -252,12 +252,18 @@ Leader 键为 `<Space>`。
 - `matches(dir)`：判断某个目录是否属于该项目类型
 - `keymaps(ctx)`：返回当前项目可用的运行命令
 
-`ctx` 会提供 `root`、`file`、`bufnr`、`run(cmd, opts)` 和 `open(cmd, opts)`。规则文件只需要按顺序描述要提供的命令，例如：
+`ctx` 会提供 `root`、`file`、`bufnr`、`run(cmd, opts)` 和 `open(cmd, opts)`。规则文件只需要按顺序描述要提供的条目，例如：
 
 ```lua
 {
   { desc = "Cargo Run", cmd = "cargo run" },
-  { desc = "Cargo Build", cmd = "cargo build" },
+  { desc = "Cargo Build", cmd = "cargo build", opts = { cwd = "/tmp/demo" } },
+  {
+    desc = "Custom Action",
+    cmd = function(opts)
+      vim.notify(vim.inspect(opts))
+    end,
+  },
 }
 ```
 

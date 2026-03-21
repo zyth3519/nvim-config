@@ -52,20 +52,33 @@ local function build_prompt_lhs(index)
 	return "<leader>rr" .. index
 end
 
+local function resolve_entry_opts(entry)
+	-- `opts` 是当前条目的执行选项；保留 `run_opts` 兼容旧配置。
+	if type(entry.opts) == "table" then
+		return entry.opts
+	end
+	if type(entry.run_opts) == "table" then
+		return entry.run_opts
+	end
+	return {}
+end
+
 function M.expand(ctx, entries)
 	-- 把规则文件返回的有序条目扩展成真正可注册的键位：
 	--   - rN：直接执行
 	--   - rrN：填入命令行
+	-- `rrN` 只给字符串命令生成，并且会单独连续编号。
 	local expanded = {}
+	local prompt_index = 0
 
 	for index, entry in ipairs(entries) do
 		if type(entry) == "table" then
 			local command = entry.cmd
-			local run_opts = entry.run_opts or {}
+			local run_opts = resolve_entry_opts(entry)
 			local rhs = entry.rhs
 
 			-- 大多数规则只提供 `cmd`，这里补默认执行逻辑。
-			if rhs == nil and type(command) == "string" then
+			if rhs == nil and (type(command) == "string" or type(command) == "function") then
 				rhs = function()
 					ctx.run(command, run_opts)
 				end
@@ -79,8 +92,9 @@ function M.expand(ctx, entries)
 
 				-- 只有存在稳定命令字符串时，才生成 `rrN` 这组预填命令行键位。
 				if type(command) == "string" then
+					prompt_index = prompt_index + 1
 					table.insert(expanded, {
-						lhs = build_prompt_lhs(index),
+						lhs = build_prompt_lhs(prompt_index),
 						mode = entry.mode or "n",
 						desc = entry.desc or command,
 						rhs = function()

@@ -65,6 +65,16 @@ local function normalize_env(env)
 	return env
 end
 
+local function resolve_run_opts(opts)
+	opts = opts or {}
+	return {
+		height = opts.height or config.height,
+		ft = opts.ft or config.ft,
+		cwd = normalize_cwd(opts.cwd ~= nil and opts.cwd or config.cwd),
+		env = normalize_env(opts.env ~= nil and opts.env or config.env),
+	}
+end
+
 local function reset_history_state()
 	history_state.index = nil
 	history_state.last_cmdline = nil
@@ -262,13 +272,18 @@ local function start_job(cmd, buf, win, ft, cwd, env)
 end
 
 function M.run(cmd, opts)
-	opts = opts or {}
-	local height = opts.height or config.height
-	local ft = opts.ft or config.ft
-	local cwd = normalize_cwd(opts.cwd ~= nil and opts.cwd or config.cwd)
-	local env = normalize_env(opts.env ~= nil and opts.env or config.env)
+	local resolved = resolve_run_opts(opts)
+	local height = resolved.height
+	local ft = resolved.ft
+	local cwd = resolved.cwd
+	local env = resolved.env
 
-	if cmd == nil or cmd == "" then
+	if type(cmd) == "function" then
+		cmd(vim.deepcopy(resolved))
+		return
+	end
+
+	if type(cmd) ~= "string" or cmd == "" then
 		vim.notify(config.command_name .. ": empty command", vim.log.levels.WARN)
 		return
 	end
