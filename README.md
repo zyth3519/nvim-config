@@ -278,7 +278,7 @@ Leader 键为 `<Space>`。
 
 - Rust 项目：检测 `Cargo.toml`
 - Node 项目：检测 `package.json`
-- VS Code 调试项目：检测 `.vscode/launch.json`
+- VS Code 任务项目：检测 `.vscode/tasks.json`
 - Zig 项目：检测 `build.zig`
 
 当前实现只会在 Neovim 启动时识别一次项目类型。后续不会自动重跑；如果你修改了配置，或者希望重新识别当前项目，可以手动执行：

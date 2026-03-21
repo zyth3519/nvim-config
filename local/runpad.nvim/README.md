@@ -9,7 +9,7 @@
 - 从可配置的 glob 加载项目规则
 - 自动生成 `<leader>rN` 和 `<leader>rrN`
 - 提供 `:RunpadRedetect`
-- 支持把 `.vscode/launch.json` 映射成调试条目
+- 支持把 `.vscode/tasks.json` 映射成运行条目
 
 命令执行部分由同级插件 `launchbox.nvim` 负责，它主要处理：
 
