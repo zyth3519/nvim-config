@@ -10,6 +10,7 @@ return {
 		},
 		config = function()
 			local data_path = vim.fn.stdpath("data")
+			local actions = require("telescope.actions")
 			require("telescope").setup({
 				defaults = {
 					file_ignore_patterns = {
@@ -22,6 +23,16 @@ return {
 					history = {
 						path = data_path .. "/telescope_history.sqlite3",
 						limit = 100,
+					},
+					mappings = {
+						i = {
+							["<C-x>"] = actions.select_horizontal,
+							["<C-s>"] = actions.select_vertical,
+						},
+						n = {
+							["<C-x>"] = actions.select_horizontal,
+							["<C-s>"] = actions.select_vertical,
+						},
 					},
 				},
 				extensions = {

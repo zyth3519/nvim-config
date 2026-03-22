@@ -25,6 +25,7 @@ return {
 				["<C-k>"] = false,
 				-- 重新映射可能被覆盖的重要快捷键
 				["<C-x>"] = { "actions.select", opts = { horizontal = true }, desc = "水平分割打开" },
+				["<C-s>"] = { "actions.select", opts = { vertical = true }, desc = "垂直分割打开" },
 				["<C-r>"] = { "actions.refresh", desc = "刷新目录" },
 			},
 		},
