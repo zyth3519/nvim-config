@@ -276,6 +276,7 @@ Leader 键为 `<Space>`。
 
 目前已经内置：
 
+- Make 项目：检测 `Makefile` / `makefile` / `GNUmakefile`
 - Rust 项目：检测 `Cargo.toml`
 - Node 项目：检测 `package.json`
 - VS Code 任务项目：检测 `.vscode/tasks.json`
