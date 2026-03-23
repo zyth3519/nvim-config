@@ -59,6 +59,7 @@ return {
 		opts = {
 			ensure_installed = {
 				-- 代码格式化器
+				"clang-format", -- C/C++ 格式化
 				"stylua", -- Lua 格式化
 				"prettier", -- 前端 & Markdown 格式化
 				-- DAP 调试适配器
