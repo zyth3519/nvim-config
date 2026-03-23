@@ -43,6 +43,7 @@ return {
 		event = { "BufReadPre", "BufNewFile" },
 		opts = {
 			ensure_installed = {
+				"clangd",
 				"lua_ls",
 				"ts_ls",
 				"zls",

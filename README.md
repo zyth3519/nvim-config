@@ -95,7 +95,7 @@ nvim
 
 当前仓库已经配置：
 
-- LSP：`lua_ls`、`ts_ls`、`zls`
+- LSP：`clangd`、`lua_ls`、`ts_ls`、`zls`
 - 自动安装工具：`stylua`、`prettier`、`codelldb`、`js-debug-adapter`
 - 保存时格式化：Lua、Rust、Zig、JavaScript、TypeScript、JSON、HTML、CSS、Markdown、TOML 等
 

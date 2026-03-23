@@ -19,6 +19,15 @@ local function open_welcome_buffer()
 	local win = vim.api.nvim_get_current_win()
 	local width = vim.api.nvim_win_get_width(win)
 	local height = vim.api.nvim_win_get_height(win)
+	local previous_win_opts = {
+		number = vim.wo[win].number,
+		relativenumber = vim.wo[win].relativenumber,
+		signcolumn = vim.wo[win].signcolumn,
+		cursorline = vim.wo[win].cursorline,
+		foldcolumn = vim.wo[win].foldcolumn,
+		colorcolumn = vim.wo[win].colorcolumn,
+		spell = vim.wo[win].spell,
+	}
 
 	local function center(text)
 		local pad = math.max(0, math.floor((width - vim.fn.strdisplaywidth(text)) / 2))
@@ -66,6 +75,20 @@ local function open_welcome_buffer()
 	vim.wo[win].foldcolumn = "0"
 	vim.wo[win].colorcolumn = ""
 	vim.wo[win].spell = false
+
+	vim.api.nvim_create_autocmd("BufWipeout", {
+		buffer = bufnr,
+		once = true,
+		callback = function()
+			if not vim.api.nvim_win_is_valid(win) then
+				return
+			end
+
+			for key, value in pairs(previous_win_opts) do
+				vim.wo[win][key] = value
+			end
+		end,
+	})
 
 	vim.keymap.set("n", "q", "<cmd>bd<cr>", {
 		buffer = bufnr,
