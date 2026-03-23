@@ -44,6 +44,14 @@ local function collect_targets(content)
 	local seen = {}
 
 	for line in content:gmatch("[^\r\n]+") do
+		-- 跳过变量赋值，例如：
+		--   SRCDIR := src
+		--   BUILD ?= debug
+		--   FOO += bar
+		if line:match("^%s*[%w_]+%s*[:+?]?=") then
+			goto continue
+		end
+
 		local target = line:match("^([A-Za-z0-9][A-Za-z0-9%._%-]*)%s*:")
 		if target
 			and not seen[target]
@@ -53,6 +61,8 @@ local function collect_targets(content)
 			seen[target] = true
 			table.insert(targets, target)
 		end
+
+		::continue::
 	end
 
 	return targets
