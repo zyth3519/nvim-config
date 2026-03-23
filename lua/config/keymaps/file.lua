@@ -12,13 +12,13 @@ local function open_oil_smart()
 				if node.type == "file" then
 					path = vim.fn.fnamemodify(path, ":h")
 				end
-				require("oil").open_float(path)
+				require("oil").open(path)
 				return
 			end
 		end
 	end
 	-- 默认打开当前目录
-	require("oil").open_float()
+	require("oil").open()
 end
 
 vim.keymap.set("n", "<leader>e", open_oil_smart, { desc = "打开 Oil" })
