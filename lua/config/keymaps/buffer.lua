@@ -103,10 +103,29 @@ local function close_current_buffer()
 
 	if #buffers <= 1 then
 		open_welcome_buffer()
+
+		if vim.api.nvim_buf_is_valid(current) and vim.bo[current].buflisted then
+			vim.cmd("bd " .. current)
+		end
+		return
+	end
+
+	-- 非最后一个缓冲区时，先切到另一个普通缓冲区，再删除旧缓冲区，
+	-- 避免 edgy 在当前主缓冲区被直接删掉的瞬间接管窗口。
+	local target = nil
+	for _, bufnr in ipairs(buffers) do
+		if bufnr ~= current then
+			target = bufnr
+			break
+		end
+	end
+
+	if target and vim.api.nvim_buf_is_valid(target) then
+		vim.api.nvim_set_current_buf(target)
 	end
 
 	if vim.api.nvim_buf_is_valid(current) and vim.bo[current].buflisted then
-		vim.cmd("bd " .. current)
+		vim.cmd("bdelete " .. current)
 	end
 end
 
