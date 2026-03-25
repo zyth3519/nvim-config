@@ -14,6 +14,14 @@ return {
 				cmd = "cargo build",
 			},
 			{
+				desc = "Cargo Clippy",
+				cmd = "cargo clippy",
+			},
+			{
+				desc = "Cargo Check",
+				cmd = "cargo check",
+			},
+			{
 				desc = "Cargo Test",
 				cmd = "cargo test",
 			},
