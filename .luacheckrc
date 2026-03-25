@@ -12,5 +12,8 @@ ignore = {
 }
 
 include_files = {
+    "init.lua",
     "lua/**/*.lua",
+    "after/**/*.lua",
+    "local/**/*.lua",
 }

@@ -14,6 +14,12 @@ local state = {
 	opts = nil,
 }
 
+local function notify_rule(name, message)
+	vim.schedule(function()
+		vim.notify(("Project rule %s: %s"):format(name, message), vim.log.levels.WARN)
+	end)
+end
+
 local function initialize(opts)
 	-- 每次重建时都先清掉旧键位，再重新按当前项目生成。
 	bindings.clear_active_bindings(state)
@@ -24,8 +30,13 @@ local function initialize(opts)
 
 	local entries = {}
 	for _, rule in ipairs(matched_rules) do
-		for _, entrie in ipairs(rule.entries(ctx)) do
-			entries[#entries + 1] = entrie
+		local ok, rule_entries = pcall(rule.entries, ctx)
+		if not ok then
+			notify_rule(rule.name or "unknown", rule_entries)
+		elseif type(rule_entries) == "table" then
+			for _, entrie in ipairs(rule_entries) do
+				entries[#entries + 1] = entrie
+			end
 		end
 	end
 

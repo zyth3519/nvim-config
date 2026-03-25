@@ -347,7 +347,7 @@ Zig 已配置 `codelldb` 调试，进入 `.zig` 文件后可直接使用：
 当前为 Lua 配置了 `lua_ls`，但没有单独提供 Lua DAP 启动项。推荐工作流：
 
 1. 先通过 `K`、`gd`、`grr` 等 LSP 能力完成定位
-2. 用 `:Run lua %` 或 `:Run luacheck .` 做快速验证
+2. 用 `:Run lua %` 或 `:Run ./scripts/luacheck .` 做快速验证
 
 ### TypeScript / JavaScript
 
@@ -371,9 +371,9 @@ Zig 已配置 `codelldb` 调试，进入 `.zig` 文件后可直接使用：
 ```sh
 nvim --headless "+Lazy! sync" +qa
 nvim --headless "+checkhealth" +qa
-luacheck .
+./scripts/luacheck .
 ```
 
 - `Lazy! sync`：同步插件并检查插件定义是否正常
 - `checkhealth`：检查运行环境和外部依赖
-- `luacheck .`：检查 Lua 代码质量
+- `./scripts/luacheck .`：检查 Lua 代码质量

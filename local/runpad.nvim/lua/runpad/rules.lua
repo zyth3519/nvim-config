@@ -7,6 +7,12 @@ local function notify_invalid(path, message)
 	end)
 end
 
+local function notify_rule(name, message)
+	vim.schedule(function()
+		vim.notify(("Project rule %s: %s"):format(name, message), vim.log.levels.WARN)
+	end)
+end
+
 -- 把 `/.../lua/foo/bar.lua` 转成 `foo.bar` 这种 require 可用的模块名。
 local function path_to_module(path)
 	local module = path:match("/lua/(.+)%.lua$")
@@ -58,7 +64,10 @@ end
 function M.resolve(rules)
 	local matchs = {}
 	for _, rule in ipairs(rules) do
-		if rule.matches(vim.fn.getcwd()) then
+		local ok, matched = pcall(rule.matches, vim.fn.getcwd())
+		if not ok then
+			notify_rule(rule.name or "unknown", matched)
+		elseif matched then
 			matchs[#matchs + 1] = rule
 		end
 	end

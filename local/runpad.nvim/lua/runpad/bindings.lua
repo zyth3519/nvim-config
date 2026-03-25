@@ -9,12 +9,10 @@ function M.build_context(launchbox)
 		opts = opts or {}
 		local cwd = opts.cwd
 		local parts = { launchbox.get_command_name() }
-		local current_cwd = vim.fs.normalize(vim.fn.getcwd())
-		local normalized_cwd = cwd and vim.fs.normalize(cwd) or nil
 
-		-- 只有目标目录和当前 cwd 不同时，才补 `cwd=...`，
-		-- 避免命令行里出现多余参数。
-		if normalized_cwd and normalized_cwd ~= "" and normalized_cwd ~= current_cwd then
+		-- 只要条目显式提供了 cwd，就保留到命令行里，
+		-- 让 `rrN` 和直接执行时的行为保持一致。
+		if type(cwd) == "string" and cwd ~= "" then
 			table.insert(parts, "cwd=" .. vim.fn.fnameescape(cwd))
 		end
 
@@ -30,10 +28,9 @@ function M.build_context(launchbox)
 	return {
 		root = vim.fn.getcwd(),
 		file = vim.api.nvim_buf_get_name(0),
-		bufnr = 0,
+		bufnr = vim.api.nvim_get_current_buf(),
 		run = function(cmd, opts)
 			opts = opts or {}
-			opts.cwd = opts.cwd
 			launchbox.run(cmd, opts)
 		end,
 		open = function(cmd, opts)

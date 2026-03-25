@@ -1,7 +1,7 @@
 -- 终端快捷键映射
 vim.api.nvim_create_autocmd("TermOpen", {
 	pattern = "*",
-	callback = function(args)
+	callback = function()
 		local opts = { buffer = 0 }
 		vim.keymap.set(
 			"t",

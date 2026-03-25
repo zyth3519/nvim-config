@@ -16,4 +16,4 @@ Keep new logic inside the right layer instead of pushing more responsibility int
 Recent history uses short Chinese commit subjects such as `模块化项目运行键位配置` and `优化项目运行文档表述`. Keep commits concise, imperative, and scoped to one change. If a commit needs to be undone, prefer `git revert` over manually re-editing files so history stays clear.
 
 ## Documentation & Configuration Tips
-When behavior changes, update `README.md` and the nearest module README together, especially for `local/runpad.nvim/README.md` and `local/launchbox.nvim/README.md`. Avoid machine-specific paths and secrets. Prefer Neovim APIs such as `vim.fn.stdpath()`, `vim.fs`, and `vim.uv` over ad hoc shell assumptions.
+When behavior changes, update `README.md` and the nearest module README together, especially for `local/runpad.nvim/README.md` and `local/launchbox.nvim/README.md`. Use `./scripts/luacheck .` as the repository lint entrypoint. Avoid machine-specific paths and secrets. Prefer Neovim APIs such as `vim.fn.stdpath()`, `vim.fs`, and `vim.uv` over ad hoc shell assumptions.
