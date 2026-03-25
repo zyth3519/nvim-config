@@ -44,16 +44,12 @@ return {
 							[kinds.Variable] = true,
 							[kinds.Field] = true,
 							[kinds.Property] = true,
-						}
-						local symbol_like = {
-							[kinds.Function] = true,
-							[kinds.Method] = true,
-							[kinds.Module] = true,
+							[kinds.Value] = true,
 						}
 
-						if variable_like[a.kind] and symbol_like[b.kind] then
+						if variable_like[a.kind] and not variable_like[b.kind] then
 							return true
-						elseif symbol_like[a.kind] and variable_like[b.kind] then
+						elseif not variable_like[a.kind] and variable_like[b.kind] then
 							return false
 						end
 					end,
