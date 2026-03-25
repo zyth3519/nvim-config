@@ -249,6 +249,8 @@ local function start_job(cmd, buf, win, ft, cwd, env)
 			vim.schedule(function()
 				if is_valid_buf(buf) then
 					vim.bo[buf].filetype = ft
+					vim.bo[buf].modifiable = false
+					vim.bo[buf].readonly = true
 					vim.b[buf].runner_exited = true
 					vim.b[buf].runner_exit_code = code
 					vim.b[buf].runner_cmd = cmd
