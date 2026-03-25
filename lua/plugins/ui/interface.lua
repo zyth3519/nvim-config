@@ -240,6 +240,11 @@ return {
 					size = { height = 0.25 },
 				},
 				{
+					ft = "man",
+					title = "Man",
+					size = { height = 0.25 },
+				},
+				{
 					ft = "qf",
 					title = "QuickFix",
 				},
