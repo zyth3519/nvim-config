@@ -37,6 +37,26 @@ return {
 							return true
 						end
 					end,
+					-- 当前缓冲区里的变量/字段，通常应当优先于同名的函数或模块项。
+					function(a, b)
+						local kinds = require("blink.cmp.types").CompletionItemKind
+						local variable_like = {
+							[kinds.Variable] = true,
+							[kinds.Field] = true,
+							[kinds.Property] = true,
+						}
+						local symbol_like = {
+							[kinds.Function] = true,
+							[kinds.Method] = true,
+							[kinds.Module] = true,
+						}
+
+						if variable_like[a.kind] and symbol_like[b.kind] then
+							return true
+						elseif symbol_like[a.kind] and variable_like[b.kind] then
+							return false
+						end
+					end,
 					"score",
 					"sort_text",
 				},
