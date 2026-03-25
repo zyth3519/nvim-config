@@ -240,6 +240,12 @@ return {
 					size = { height = 0.40 },
 				},
 				{
+					ft = "zyth_terminal",
+					title = "Terminal",
+					size = { height = 0.40 },
+				},
+
+				{
 					ft = "man",
 					title = "Man",
 					size = { height = 0.40 },
