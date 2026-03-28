@@ -56,15 +56,15 @@ end
 
 local function build_prompt_lhs(index)
 	-- 1-9: <leader>rr1 到 <leader>rr9
-	-- 10-18: <leader>rra1 到 <leader>rra9
+	-- 10-18: <leader>r<leader>a1 到 <leader>r<leader>a9
 	-- ...以此类推
 	if index >= 1 and index <= 9 then
-		return "<leader>rr" .. index
+		return "<leader>r<leader>" .. index
 	else
 		local letter_index = math.floor((index - 10) / 9)
 		local letter = string.char(97 + letter_index)
 		local num = ((index - 10) % 9) + 1
-		return "<leader>rr" .. letter .. num
+		return "<leader>r<leader>" .. letter .. num
 	end
 end
 
@@ -108,7 +108,7 @@ function M.build(ctx, entries)
 					})
 				)
 
-				-- 只有存在稳定命令字符串时，才生成 `rrN` 这组预填命令行键位。
+				-- 只有存在稳定命令字符串时，才生成 `r<leader>N` 这组预填命令行键位。
 				if type(command) == "string" then
 					table.insert(expanded, {
 						lhs = build_prompt_lhs(index),
