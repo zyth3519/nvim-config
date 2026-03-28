@@ -14,6 +14,14 @@ return {
 				extensions = {
 					dap = {}, -- 保存 dap 断点信息
 				},
+				buf_filter = function(bufnr)
+					local name = vim.api.nvim_buf_get_name(bufnr)
+					if name == "" then
+						return false
+					end
+					local cwd = vim.fn.getcwd() .. "/"
+					return name:sub(1, #cwd) == cwd
+				end,
 			})
 
 			vim.api.nvim_create_autocmd("VimEnter", {

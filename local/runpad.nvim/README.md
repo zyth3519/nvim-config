@@ -34,9 +34,10 @@ require("runpad").setup({
 规则文件返回的条目会按顺序生成键位：
 
 - `<leader>rN`：直接执行
-- `<leader>rrN`：把命令填入命令行，只对字符串命令生效
+- `<leader>r<leader>N`：把命令填入命令行，只对字符串命令生效
 
 键位格式：
+
 - 1-9: `<leader>r1` 到 `<leader>r9`
 - 10-18: `<leader>ra1` 到 `<leader>ra9`
 - 19-27: `<leader>rb1` 到 `<leader>rb9`
@@ -65,8 +66,6 @@ require("runpad").setup({
 }
 ```
 
-如果条目里同时有字符串和函数，`<leader>rrN` 会只对字符串命令连续编号，不会出现跳号。
-
 ## 用户自定义命令
 
 使用 `:RunpadEdit` 可以编辑当前项目的自定义命令，命令会保存在 `~/.local/share/nvim/runpad/` 目录下。
@@ -74,6 +73,7 @@ require("runpad").setup({
 配置文件格式为纯文本，每行一条命令：`描述 命令`
 
 例如：
+
 ```
 运行 cargo run
 构建 cargo build
