@@ -8,7 +8,8 @@
 - 支持 `Run` 命令历史搜索
 - 从可配置的 glob 加载项目规则
 - 自动生成 `<leader>rN` 和 `<leader>rrN`
-- 提供 `:RunpadRedetect`
+- 提供 `:RunpadRedetect` 重新检测项目
+- 提供 `:RunpadEdit` 编辑项目自定义命令
 - 支持把 `.vscode/tasks.json` 映射成运行条目
 
 命令执行部分由同级插件 `launchbox.nvim` 负责，它主要处理：
@@ -18,7 +19,7 @@
 - 维护命令历史搜索
 - 执行传入的命令
 
-所以 `runpad.nvim` 只关心“当前是什么项目、要暴露哪些命令”，执行细节交给 `launchbox.nvim`。
+所以 `runpad.nvim` 只关心"当前是什么项目、要暴露哪些命令"，执行细节交给 `launchbox.nvim`。
 
 ## 配置示例
 
@@ -34,6 +35,12 @@ require("runpad").setup({
 
 - `<leader>rN`：直接执行
 - `<leader>rrN`：把命令填入命令行，只对字符串命令生效
+
+键位格式：
+- 1-9: `<leader>r1` 到 `<leader>r9`
+- 10-18: `<leader>ra1` 到 `<leader>ra9`
+- 19-27: `<leader>rb1` 到 `<leader>rb9`
+- ...以此类推
 
 最常见的是字符串命令：
 
@@ -59,3 +66,18 @@ require("runpad").setup({
 ```
 
 如果条目里同时有字符串和函数，`<leader>rrN` 会只对字符串命令连续编号，不会出现跳号。
+
+## 用户自定义命令
+
+使用 `:RunpadEdit` 可以编辑当前项目的自定义命令，命令会保存在 `~/.local/share/nvim/runpad/` 目录下。
+
+配置文件格式为纯文本，每行一条命令：`描述 命令`
+
+例如：
+```
+运行 cargo run
+构建 cargo build
+测试 cargo test
+```
+
+用户自定义命令会排在项目规则命令之前。
