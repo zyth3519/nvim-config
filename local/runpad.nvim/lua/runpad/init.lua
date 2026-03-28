@@ -1,6 +1,7 @@
 local launchbox = require("launchbox")
 local rules = require("runpad.rules")
 local bindings = require("runpad.bindings")
+local config = require("runpad.pcmd")
 
 local M = {}
 
@@ -29,6 +30,14 @@ local function initialize(opts)
 	local ctx = bindings.build_context(launchbox)
 
 	local entries = {}
+
+	local user_entries = config.get_entries()
+	for _, entry in ipairs(user_entries) do
+		if type(entry) == "table" and type(entry.cmd) == "string" then
+			entries[#entries + 1] = entry
+		end
+	end
+
 	for _, rule in ipairs(matched_rules) do
 		local ok, rule_entries = pcall(rule.entries, ctx)
 		if not ok then
@@ -67,6 +76,11 @@ function M.setup(opts)
 		require("runpad").redetect()
 	end, {
 		desc = "重新检测项目运行键位",
+	})
+	vim.api.nvim_create_user_command("RunpadEdit", function()
+		config.open()
+	end, {
+		desc = "编辑项目运行命令",
 	})
 
 	state.initializing = true
