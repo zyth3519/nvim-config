@@ -40,13 +40,32 @@ function M.build_context(launchbox)
 end
 
 local function build_lhs(index)
-	-- 第 N 个项目命令对应 `<leader>rN`
-	return "<leader>r" .. index
+	-- 1-9: <leader>r1 到 <leader>r9
+	-- 10-18: <leader>ra1 到 <leader>ra9
+	-- 19-27: <leader>rb1 到 <leader>rb9
+	-- ...以此类推
+	if index >= 1 and index <= 9 then
+		return "<leader>r" .. index
+	else
+		local letter_index = math.floor((index - 10) / 9)
+		local letter = string.char(97 + letter_index) -- 0->a, 1->b, ...
+		local num = ((index - 10) % 9) + 1
+		return "<leader>r" .. letter .. num
+	end
 end
 
 local function build_prompt_lhs(index)
-	-- 第 N 个“填入命令行”键位对应 `<leader>rrN`
-	return "<leader>rr" .. index
+	-- 1-9: <leader>rr1 到 <leader>rr9
+	-- 10-18: <leader>rra1 到 <leader>rra9
+	-- ...以此类推
+	if index >= 1 and index <= 9 then
+		return "<leader>rr" .. index
+	else
+		local letter_index = math.floor((index - 10) / 9)
+		local letter = string.char(97 + letter_index)
+		local num = ((index - 10) % 9) + 1
+		return "<leader>rr" .. letter .. num
+	end
 end
 
 local function resolve_entry_opts(entry)
@@ -66,7 +85,6 @@ function M.build(ctx, entries)
 	--   - rrN：填入命令行
 	-- `rrN` 只给字符串命令生成，并且会单独连续编号。
 	local expanded = {}
-	local prompt_index = 0
 
 	for index, entry in ipairs(entries) do
 		if type(entry) == "table" then
@@ -92,9 +110,8 @@ function M.build(ctx, entries)
 
 				-- 只有存在稳定命令字符串时，才生成 `rrN` 这组预填命令行键位。
 				if type(command) == "string" then
-					prompt_index = prompt_index + 1
 					table.insert(expanded, {
-						lhs = build_prompt_lhs(prompt_index),
+						lhs = build_prompt_lhs(index),
 						mode = entry.mode or "n",
 						desc = entry.desc or command,
 						rhs = function()
