@@ -72,7 +72,7 @@ function M.setup(opts)
 	end
 
 	state.opts = vim.deepcopy(opts)
-	vim.api.nvim_create_user_command("RunpadRedetect", function()
+	vim.api.nvim_create_user_command("RunpadRefresh", function()
 		require("runpad").redetect()
 	end, {
 		desc = "重新检测项目运行键位",
@@ -82,6 +82,8 @@ function M.setup(opts)
 	end, {
 		desc = "编辑项目运行命令",
 	})
+	vim.keymap.set("n", "<leader>rr", "<cmd>RunpadRefresh<cr>", { desc = "重新检测项目运行键位" })
+	vim.keymap.set("n", "<leader>re", "<cmd>RunpadEdit<cr>", { desc = "编辑项目运行命令" })
 
 	state.initializing = true
 

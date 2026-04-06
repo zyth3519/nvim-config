@@ -6,9 +6,12 @@ local M = {}
 -- 获取当前项目的配置文件路径。
 local function get_config_path()
 	local root = vim.fn.getcwd()
-	local data_dir = vim.fn.stdpath("data") .. "/runpad"
-	local safe_name = root:gsub("^/", ""):gsub("/", "_")
-	return data_dir .. "/" .. safe_name .. ".txt"
+	local config_dir = root .. "/.vim"
+	local stat = vim.uv.fs_stat(config_dir)
+	if not stat then
+		vim.uv.fs_mkdir(config_dir, 493)
+	end
+	return config_dir .. "/runpad.txt"
 end
 
 -- 从配置文件加载命令列表。
@@ -51,7 +54,8 @@ end
 
 -- 打开配置文件编辑窗口。
 function M.open()
-	vim.cmd("vs " .. get_config_path())
+	local path = get_config_path()
+	vim.cmd("vs " .. path)
 end
 
 return M
