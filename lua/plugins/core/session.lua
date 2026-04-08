@@ -4,7 +4,6 @@ return {
 		"stevearc/resession.nvim",
 		config = function()
 			local resession = require("resession")
-			-- 定期保存会话
 			resession.setup({
 				extensions = {
 					dap = {}, -- 保存 dap 断点信息
