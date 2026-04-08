@@ -210,7 +210,7 @@ return {
 			exit_when_last = true,
 			options = {
 				left = { size = 25 },
-				bottom = { size = 0.40 },
+				bottom = { size = 0.20 },
 				right = { size = 30 },
 				top = { size = 10 },
 			},
@@ -237,18 +237,18 @@ return {
 				{
 					ft = "runner",
 					title = "Run",
-					size = { height = 0.40 },
+					size = { height = 0.25 },
 				},
 				{
 					ft = "zyth_terminal",
 					title = "Terminal",
-					size = { height = 0.40 },
+					size = { height = 0.25 },
 				},
 
 				{
 					ft = "man",
 					title = "Man",
-					size = { height = 0.40 },
+					size = { height = 0.25 },
 				},
 				{
 					ft = "qf",

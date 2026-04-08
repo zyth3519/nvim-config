@@ -6,15 +6,14 @@ return {
 			local resession = require("resession")
 			-- 定期保存会话
 			resession.setup({
-				autosave = {
-					enabled = true,
-					interval = 60,
-					notify = false,
-				},
 				extensions = {
 					dap = {}, -- 保存 dap 断点信息
 				},
 				buf_filter = function(bufnr)
+					if not resession.default_buf_filter(bufnr) then
+						return false
+					end
+
 					local name = vim.api.nvim_buf_get_name(bufnr)
 					if name == "" then
 						return false
@@ -37,13 +36,15 @@ return {
 				end,
 				nested = true,
 			})
+
 			vim.api.nvim_create_autocmd("VimLeavePre", {
 				callback = function()
 					if vim.fn.argc(-1) == 0 and not vim.g.using_stdin then
-						pcall(resession.save, vim.fn.getcwd(), { dir = "dirsession", notify = false })
+						resession.save(vim.fn.getcwd(), { dir = "dirsession", notify = false })
 					end
 				end,
 			})
+
 			vim.api.nvim_create_autocmd("StdinReadPre", {
 				callback = function()
 					-- Store this for later
