@@ -158,7 +158,7 @@ function M.register_which_key(bindings)
 	end
 
 	local specs = {
-		{ "<leader>r", group = "运行 (Run)", icon = "󰆍" },
+		-- { "<leader>r", group = "运行 (Run)", icon = "󰆍" },
 	}
 
 	for _, map in ipairs(bindings) do

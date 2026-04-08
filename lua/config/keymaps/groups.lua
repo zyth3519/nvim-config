@@ -14,4 +14,5 @@ wk.add({
 	{ "g", group = "导航/跳转 (Go)", icon = "󰜎" },
 	{ "<leader>e", desc = "打开Oil", icon = "󰉋" },
 	{ "<leader>E", desc = "打开Oil（Root）", icon = "󰉋" },
+	{ "<leader>r", group = "运行 (Run)", icon = "󰆍" },
 })
