@@ -20,7 +20,10 @@ return {
 						return false
 					end
 					local cwd = vim.fn.getcwd() .. "/"
-					return name:sub(1, #cwd) == cwd
+					if name:sub(1, #cwd) ~= cwd then
+						return false
+					end
+					return not name:find(cwd .. ".vim/", 1, true)
 				end,
 			})
 
