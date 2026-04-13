@@ -66,9 +66,32 @@ return {
 				"codelldb", -- C/C++/Rust/Zig 调试器
 				"js-debug-adapter", -- JavaScript / TypeScript 调试器
 			},
-			auto_update = false,
+			auto_update = true,
 			run_on_start = true,
 			start_delay = 3000,
 		},
+	},
+
+	-- LSP 加载进度提示 (Fidget)
+	{
+		"j-hui/fidget.nvim",
+		tag = "legacy",
+		opts = {
+			text = {
+				spinner = "dots",
+				done = "✓",
+				commenced = "启动中...",
+				completed = "加载完成",
+			},
+			window = {
+				relative = "editor",
+				blend = 0,
+				border = "none",
+			},
+			sources = {
+				["*"] = { ignore = false },
+			},
+		},
+		event = "LspAttach",
 	},
 }

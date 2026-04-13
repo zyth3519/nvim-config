@@ -24,10 +24,9 @@ This is a personal Neovim configuration written in Lua. It uses `lazy.nvim` for 
 │       ├── tools/              # Development tools (Git, DAP)
 │       └── ui/                 # UI/appearance plugins
 ├── after/ftplugin/             # Filetype-specific overrides
-├── local/
-│   ├── launchbox.nvim/         # Command runner plugin
-│   └── runpad.nvim/            # Project run keybinding generator
-└── scripts/luacheck            # Linting script
+└──local/
+   ├── launchbox.nvim/         # Command runner plugin
+   └── runpad.nvim/            # Project run keybinding generator
 ```
 
 ### Key Architectural Patterns
@@ -43,21 +42,6 @@ Keep new logic inside the right layer instead of pushing more responsibility int
 
 ## Build, Lint, and Test Commands
 
-### Linting
-
-```bash
-# Lint all Lua files in the repository
-./scripts/luacheck .
-
-# Lint a specific file
-./scripts/luacheck path/to/file.lua
-
-# The luacheck script uses Lua 5.4 and checks:
-# - init.lua
-# - lua/**/*.lua
-# - after/**/*.lua
-# - local/**/*.lua
-```
 
 ### Validation
 
@@ -71,7 +55,6 @@ nvim --headless "+checkhealth" +qa
 # Combined validation (run all)
 nvim --headless "+Lazy! sync" +qa && \
 nvim --headless "+checkhealth" +qa && \
-./scripts/luacheck .
 ```
 
 ### Note on Testing
@@ -256,7 +239,6 @@ Recent history uses short Chinese commit subjects such as `模块化项目运行
 - Keep commits concise and imperative
 - Scope each commit to one logical change
 - If a commit needs to be undone, prefer `git revert` over manually re-editing files
-- Ensure `./scripts/luacheck .` passes before committing
 
 ## External Dependencies
 
