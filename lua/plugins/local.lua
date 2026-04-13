@@ -22,6 +22,7 @@ return {
 		name = "runpad.nvim",
 		dependencies = {
 			"launchbox.nvim",
+			"folke/which-key.nvim",
 		},
 		lazy = false,
 		config = function()
