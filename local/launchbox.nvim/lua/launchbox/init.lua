@@ -384,12 +384,12 @@ function M.setup(opts)
 		callback = reset_history_state,
 	})
 
-	vim.keymap.set("c", "<C-p>", function()
-		return require("launchbox").cmdline_prev()
-	end, { expr = true, desc = config.command_name .. " 命令历史向前搜索" })
-	vim.keymap.set("c", "<C-n>", function()
-		return require("launchbox").cmdline_next()
-	end, { expr = true, desc = config.command_name .. " 命令历史向后搜索" })
+	-- vim.keymap.set("c", "<C-p>", function()
+	-- 	return require("launchbox").cmdline_prev()
+	-- end, { expr = true, desc = config.command_name .. " 命令历史向前搜索" })
+	-- vim.keymap.set("c", "<C-n>", function()
+	-- 	return require("launchbox").cmdline_next()
+	-- end, { expr = true, desc = config.command_name .. " 命令历史向后搜索" })
 end
 
 return M

@@ -10,6 +10,7 @@ require("config.keymaps.git")
 require("config.keymaps.cursor")
 require("config.keymaps.coding")
 require("config.keymaps.debug")
+require("config.keymaps.treesitter")
 
 local wk_ok, wk = pcall(require, "which-key")
 if not wk_ok then

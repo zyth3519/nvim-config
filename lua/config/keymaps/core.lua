@@ -9,11 +9,42 @@ vim.keymap.set("n", "<C-k>", require("smart-splits").move_cursor_up, { desc = "�
 vim.keymap.set("n", "<C-l>", require("smart-splits").move_cursor_right, { desc = "跳转到右侧窗口" })
 vim.keymap.set("n", "<C-\\>", require("smart-splits").move_cursor_previous, { desc = "跳转到上一个窗口" })
 
-vim.keymap.set("n", "<leader><leader>h", require("smart-splits").swap_buf_left, { desc = "与左侧窗口交换缓冲区" })
-vim.keymap.set("n", "<leader><leader>j", require("smart-splits").swap_buf_down, { desc = "与下方窗口交换缓冲区" })
-vim.keymap.set("n", "<leader><leader>k", require("smart-splits").swap_buf_up, { desc = "与上方窗口交换缓冲区" })
-vim.keymap.set("n", "<leader><leader>l", require("smart-splits").swap_buf_right, { desc = "与右侧窗口交换缓冲区" })
+vim.keymap.set(
+	"n",
+	"<leader><leader>h",
+	require("smart-splits").swap_buf_left,
+	{ desc = "与左侧窗口交换缓冲区" }
+)
+vim.keymap.set(
+	"n",
+	"<leader><leader>j",
+	require("smart-splits").swap_buf_down,
+	{ desc = "与下方窗口交换缓冲区" }
+)
+vim.keymap.set(
+	"n",
+	"<leader><leader>k",
+	require("smart-splits").swap_buf_up,
+	{ desc = "与上方窗口交换缓冲区" }
+)
+vim.keymap.set(
+	"n",
+	"<leader><leader>l",
+	require("smart-splits").swap_buf_right,
+	{ desc = "与右侧窗口交换缓冲区" }
+)
 
 vim.keymap.set("n", "<S-h>", "<cmd>bp<cr>", { desc = "上一个缓冲区" })
 vim.keymap.set("n", "<S-l>", "<cmd>bn<cr>", { desc = "下一个缓冲区" })
 vim.keymap.set({ "n" }, "<M-x>", ":Run ", { desc = "执行系统命令" })
+
+vim.keymap.set("n", "<M-c>", '"+yy', { desc = "Copy line" })
+
+-- copy（visual 复制到系统剪贴板）
+vim.keymap.set("v", "<M-c>", '"+y', { desc = "Copy to system clipboard" })
+
+-- paste（normal 粘贴）
+vim.keymap.set("n", "<M-y>", '"+p', { desc = "Paste from system clipboard" })
+
+-- paste（visual，不覆盖寄存器）
+vim.keymap.set("v", "<M-y>", '"_d"+P', { desc = "Paste (keep register)" })

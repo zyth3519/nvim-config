@@ -18,6 +18,15 @@ return {
 
 			-- 添加类型推断
 			vim.lsp.inlay_hint.enable(true)
+
+			local capabilities = require("blink.cmp").get_lsp_capabilities()
+			capabilities.textDocument.completion.completionItem.snippetSupport = false
+
+			-- 全局默认配置：所有 server 都继承这个
+			vim.lsp.config("*", {
+
+				capabilities = capabilities,
+			})
 		end,
 	},
 
