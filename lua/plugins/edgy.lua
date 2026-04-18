@@ -4,16 +4,16 @@ return {
 	opts = {
 		keys = {
 			["<A-h>"] = function(win)
-				win:resize("width", -2)
-			end,
-			["<A-l>"] = function(win)
 				win:resize("width", 2)
 			end,
+			["<A-l>"] = function(win)
+				win:resize("width", -2)
+			end,
 			["<A-j>"] = function(win)
-				win:resize("height", 2)
+				win:resize("height", -2)
 			end,
 			["<A-k>"] = function(win)
-				win:resize("height", -2)
+				win:resize("height", 2)
 			end,
 		},
 		exit_when_last = true,
@@ -55,11 +55,6 @@ return {
 			},
 
 			{
-				ft = "man",
-				title = "Man",
-				size = { height = 0.25 },
-			},
-			{
 				ft = "qf",
 				title = "QuickFix",
 			},
@@ -70,14 +65,6 @@ return {
 			{
 				title = "Dap Console",
 				ft = "dapui_console",
-			},
-			{
-				title = "OverseerList",
-				ft = "OverseerList",
-			},
-			{
-				title = "OverseerOutput",
-				ft = "OverseerOutput",
 			},
 		},
 	},
