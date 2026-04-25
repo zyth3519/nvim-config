@@ -1,6 +1,6 @@
 return {
 
-	-- Zig 官方文件类型与高亮支持
+	-- Zig
 	{
 		"ziglang/zig.vim",
 		ft = { "zig" },
@@ -9,8 +9,15 @@ return {
 			vim.g.zig_fmt_autosave = 0
 		end,
 	},
-
-	-- rustaceanvim
+	-- c3
+	{
+		"ManuLinares/nvim-c3",
+		build = function()
+			require("c3").update()
+		end, -- (Optional) Auto-update binaries
+		config = true,
+	},
+	-- rust
 	{
 		"mrcjkb/rustaceanvim",
 		version = "^8", -- Recommended

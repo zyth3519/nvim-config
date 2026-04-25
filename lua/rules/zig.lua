@@ -6,6 +6,10 @@ return {
 	entries = function()
 		return {
 			{
+				desc = "Zig Run",
+				cmd = "zig build run",
+			},
+			{
 				desc = "Zig Build",
 				cmd = "zig build",
 			},
