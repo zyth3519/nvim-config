@@ -31,8 +31,13 @@ return {
 					"markdown",
 				},
 				callback = function()
+					-- 语法高亮（Neovim 内置）
 					pcall(vim.treesitter.start)
-					vim.opt_local.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+					-- 代码折叠（Neovim 内置）
+					vim.wo[0][0].foldexpr = "v:lua.vim.treesitter.foldexpr()"
+					vim.wo[0][0].foldmethod = "expr"
+					-- 智能缩进（nvim-treesitter 提供，实验性）
+					vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
 				end,
 			})
 		end,
