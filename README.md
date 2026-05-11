@@ -63,6 +63,9 @@
 - `git`
 - `make`
 - `Nerd Font`
+- `npm`
+- `unzip`
+- `rust-analyzer`
 
 其中部分插件会依赖外部命令，例如：
 
